@@ -1,0 +1,14 @@
+<resources>
+    <string name="appId">C3ShoppingMall</string>
+
+    <string name="title_activity_splash">SplashActivity</string>
+    <string name="exit_msg">是否现在退出？</string>
+    <string name="alert_title">提示</string>
+
+    <string name="title_activity_main">MainActivity</string>
+    <string-array name="pd_titles">
+        <item>正在加载首页请稍后...</item>
+        <item>正在分享请稍后...</item>
+        <item>正在请求支付请稍后...</item>
+    </string-array>
+</resources>

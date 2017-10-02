@@ -1,0 +1,81 @@
+apply plugin: 'com.android.application'
+
+android {
+    compileSdkVersion 26
+    buildToolsVersion "26.0.0"
+    defaultConfig {
+        applicationId "com.c3.jbz"
+        minSdkVersion 19
+        targetSdkVersion 26
+        versionCode 1
+        versionName "1.0"
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+    }
+    //签名配置
+    signingConfigs {
+
+        //签名jubaozan
+        sign_jubaozan {
+            keyAlias 'jubaozan'//别名
+            keyPassword 'jubaozan20171002'//别名密码
+            storeFile file('jubaozan.keystore')//签名文件路径
+            storePassword 'jubaozan20171002'//签名密码
+        }
+        //签名2sign_jubaozan2
+        sign_jubaozan2 {
+            storeFile file("jubaozan2.keystore")
+            storePassword "android"
+            keyAlias "androiddebugkey"
+            keyPassword "android"
+        }
+
+        //...你可以配置多个
+
+    }
+    //多包名设置
+    productFlavors {
+        jubaozan {
+            applicationId = "com.c3.jbz"
+            resValue("string","app_name","聚宝赞")//应用名
+            buildConfigField("String","wxAppId","\"wx801d1940ac9e1a03\"")//应用ID，微信用
+            buildConfigField("String","wxAppSecret","\"fc1f3ba759096fbd12f650fef67ee83a\"")//支付key，微信用
+            buildConfigField("String","wxPartnerId","\"1900000109\"")//合作伙伴ID，微信用
+            buildConfigField("String","mainUrl","\"https://wx.jubaozan.cn/client/login.do?siteId=1123\"")//h5页面首页
+            signingConfig signingConfigs.sign_jubaozan
+        }
+        jubaozan2 {
+            applicationId = "com.c3.jbz2"
+            resValue("string","app_name","聚宝赞2")
+            buildConfigField("String","wxAppId","\"wx801d1940ac9e1a03\"")//应用ID，微信用
+            buildConfigField("String","wxAppSecret","\"fc1f3ba759096fbd12f650fef67ee83a\"")//支付key，微信用
+            buildConfigField("String","wxPartnerId","\"1900000109\"")//合作伙伴ID，微信用
+            buildConfigField("String","mainUrl","\"https://wx.jubaozan.cn/client/login.do?siteId=1123\"")//h5页面首页
+            signingConfig signingConfigs.sign_jubaozan2
+        }
+
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+}
+
+dependencies {
+    compile fileTree(dir: 'libs', include: ['*.jar'])
+    androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
+        exclude group: 'com.android.support', module: 'support-annotations'
+    })
+    // Plain MVP
+    // or
+    // MVP + ViewState support
+    compile 'com.android.support:appcompat-v7:26.+'
+    compile 'com.liulishuo.filedownloader:library:1.6.4'
+    compile 'com.hannesdorfmann.mosby3:mvp:3.0.4'
+    compile 'com.android.support:support-v4:26.+'
+    testCompile 'junit:junit:4.12'
+
+    compile 'com.jakewharton:butterknife:'+rootProject.ext.butterknifeVersion
+    annotationProcessor 'com.jakewharton:butterknife-compiler:' + rootProject.ext.butterknifeVersion
+}
