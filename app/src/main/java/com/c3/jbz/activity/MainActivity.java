@@ -13,6 +13,7 @@ import android.os.Handler;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.Window;
 import android.webkit.ValueCallback;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
@@ -73,6 +74,7 @@ public class MainActivity extends MvpActivity<MainView,MainPresenter> implements
 
     @Override
     public void initMainPage(String url,Object jsObject) {
+        onLoading(MainView.LOADINGTYPE_MAINPAGE);
         webView.setWebViewClient(new WebViewClient() {
             @Override
             public void onPageStarted(WebView view, String url, Bitmap favicon) {
@@ -81,7 +83,7 @@ public class MainActivity extends MvpActivity<MainView,MainPresenter> implements
 
             @Override
             public void onPageFinished(WebView view, String url) {
-                onLoading(MainView.LOADINGTYPE_MAINPAGE);
+                hideLoading();
             }
 
         });
@@ -128,6 +130,12 @@ public class MainActivity extends MvpActivity<MainView,MainPresenter> implements
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         finish();
+                    }
+                });
+                b.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+
                     }
                 });
                 b.setCancelable(false);

@@ -1,7 +1,11 @@
 package com.c3.jbz.logic;
 
 import android.os.Handler;
+import android.util.Log;
 import android.webkit.JavascriptInterface;
+
+import com.c3.jbz.util.Constant;
+import com.c3.jbz.db.ShareDataLocal;
 
 /**
  * Created by hedong on 2017/10/3.
@@ -9,6 +13,7 @@ import android.webkit.JavascriptInterface;
 
 public class AndroidJsInvoker {
     private Handler handler;
+    private static final String tag="AndroidJsInvoker";
     public AndroidJsInvoker(Handler handler){
         this.handler=handler;
     }
@@ -18,7 +23,8 @@ public class AndroidJsInvoker {
      */
     @JavascriptInterface
     public void loginOk(){
-
+        Log.d(tag,"loginOK:"+ShareDataLocal.as().getBooleanValue(Constant.KEY_LOGIN_TAG));
+        ShareDataLocal.as().setBooleanValue(Constant.KEY_LOGIN_TAG,true);
     }
 
     /**
@@ -26,7 +32,8 @@ public class AndroidJsInvoker {
      */
     @JavascriptInterface
     public void logoutOk(){
-
+        Log.d(tag,"logoutOk:"+ShareDataLocal.as().getBooleanValue(Constant.KEY_LOGIN_TAG));
+        ShareDataLocal.as().setBooleanValue(Constant.KEY_LOGIN_TAG,false);
     }
 
     /**
@@ -35,7 +42,7 @@ public class AndroidJsInvoker {
      */
     @JavascriptInterface
     public void shareSessionUrl(String url){
-
+        Log.d(tag,"shareSessionUrl:"+url);
     }
 
     /**
@@ -44,7 +51,7 @@ public class AndroidJsInvoker {
      */
     @JavascriptInterface
     public void shareSessionImage(String imgurl){
-
+        Log.d(tag,"shareSessionImage:"+imgurl);
     }
 
     /**
@@ -54,7 +61,7 @@ public class AndroidJsInvoker {
      */
     @JavascriptInterface
     public void shareTimeline (String text,String imgs){
-
+        Log.d(tag,"shareTimeline:"+text+"|"+imgs);
     }
 
     /**
@@ -63,6 +70,6 @@ public class AndroidJsInvoker {
      */
     @JavascriptInterface
     public void  payment(String prepayId){
-
+        Log.d(tag,"payment:"+prepayId);
     }
 }

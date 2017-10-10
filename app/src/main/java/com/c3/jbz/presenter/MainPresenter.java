@@ -5,7 +5,9 @@ import android.os.Looper;
 import android.os.Message;
 
 import com.c3.jbz.BuildConfig;
+import com.c3.jbz.db.ShareDataLocal;
 import com.c3.jbz.logic.AndroidJsInvoker;
+import com.c3.jbz.util.Constant;
 import com.c3.jbz.view.MainView;
 import com.hannesdorfmann.mosby3.mvp.MvpBasePresenter;
 
@@ -22,7 +24,15 @@ public class MainPresenter extends MvpBasePresenter<MainView> implements Handler
         if(handler==null){
             handler=new Handler(Looper.getMainLooper(),this);
         }
-        getView().initMainPage(BuildConfig.mainUrl,new AndroidJsInvoker(handler));
+        getView().initMainPage(isLogin()?BuildConfig.mainUrl:BuildConfig.loginUrl,new AndroidJsInvoker(handler));
+    }
+
+    /**
+     * 是否登陆
+     * @return
+     */
+    private boolean isLogin(){
+        return ShareDataLocal.as().getBooleanValue(Constant.KEY_LOGIN_TAG,false);
     }
 
     @Override

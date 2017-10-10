@@ -40,7 +40,8 @@ android {
             buildConfigField("String","wxAppId","\"wx801d1940ac9e1a03\"")//应用ID，微信用
             buildConfigField("String","wxAppSecret","\"fc1f3ba759096fbd12f650fef67ee83a\"")//支付key，微信用
             buildConfigField("String","wxPartnerId","\"1900000109\"")//合作伙伴ID，微信用
-            buildConfigField("String","mainUrl","\"https://wx.jubaozan.cn/client/login.do?siteId=1123\"")//h5页面首页
+            buildConfigField("String","mainUrl","\"file:///android_asset/test.html\"")//h5页面首页
+            buildConfigField("String","loginUrl","\"file:///android_asset/login.html\"")//h5页面登陆页
             signingConfig signingConfigs.sign_jubaozan
         }
         jubaozan2 {
@@ -50,6 +51,7 @@ android {
             buildConfigField("String","wxAppSecret","\"fc1f3ba759096fbd12f650fef67ee83a\"")//支付key，微信用
             buildConfigField("String","wxPartnerId","\"1900000109\"")//合作伙伴ID，微信用
             buildConfigField("String","mainUrl","\"https://wx.jubaozan.cn/client/login.do?siteId=1123\"")//h5页面首页
+            buildConfigField("String","loginUrl","\"file:///android_asset/login.html\"")//h5页面登陆页
             signingConfig signingConfigs.sign_jubaozan2
         }
 
@@ -78,4 +80,7 @@ dependencies {
 
     compile 'com.jakewharton:butterknife:'+rootProject.ext.butterknifeVersion
     annotationProcessor 'com.jakewharton:butterknife-compiler:' + rootProject.ext.butterknifeVersion
+
+    //wm sdk
+    compile 'com.tencent.mm.opensdk:wechat-sdk-android-with-mta:+'
 }
