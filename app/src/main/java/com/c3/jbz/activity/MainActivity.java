@@ -53,7 +53,7 @@ public class MainActivity extends MvpActivity<MainView,MainPresenter> implements
     @NonNull
     @Override
     public MainPresenter createPresenter() {
-        return new MainPresenter();
+        return new MainPresenter(getApplicationContext());
     }
 
     @Override

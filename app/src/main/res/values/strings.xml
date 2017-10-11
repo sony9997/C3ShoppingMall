@@ -10,5 +10,8 @@
         <item>正在加载首页请稍后...</item>
         <item>正在分享请稍后...</item>
         <item>正在请求支付请稍后...</item>
+        <item>正在加载图片数据请稍后...</item>
     </string-array>
+    <string name="title_share_success">分享成功！</string>
+    <string name="title_share_faild">分享失败！</string>
 </resources>
