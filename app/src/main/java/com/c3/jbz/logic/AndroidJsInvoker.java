@@ -22,10 +22,13 @@ import com.tencent.mm.opensdk.modelmsg.SendMessageToWX;
 import com.tencent.mm.opensdk.modelmsg.WXImageObject;
 import com.tencent.mm.opensdk.modelmsg.WXMediaMessage;
 import com.tencent.mm.opensdk.modelmsg.WXWebpageObject;
+import com.tencent.mm.opensdk.modelpay.PayReq;
 import com.tencent.mm.opensdk.openapi.IWXAPI;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.SortedMap;
+import java.util.TreeMap;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -232,6 +235,23 @@ public class AndroidJsInvoker {
     @JavascriptInterface
     public void payment(String prepayId) {
         Log.d(tag, "payment:" + prepayId);
+        PayReq request = new PayReq();
+        request.appId = BuildConfig.wxAppId;
+        request.partnerId = BuildConfig.wxPartnerId;
+        request.prepayId= prepayId;
+        request.packageValue = "Sign=WXPay";
+        request.nonceStr= ToolsUtil.createRandom(false,32);
+        request.timeStamp= String.valueOf(System.currentTimeMillis()/1000);
+        SortedMap<Object, Object> parameters = new TreeMap<Object, Object>();
+        parameters.put("appid", request.appId);
+        parameters.put("noncestr", request.nonceStr);
+        parameters.put("package", request.packageValue);
+        parameters.put("partnerid", request.partnerId);
+        parameters.put("prepayid", request.prepayId);
+        parameters.put("timestamp", request.timeStamp);
+        request.sign= ToolsUtil.createWXSign(parameters);
+        Log.d(tag, "request.sign:" + request.sign);
+        iwxapi.sendReq(request);
     }
 
     private String buildTransaction(final String type) {
