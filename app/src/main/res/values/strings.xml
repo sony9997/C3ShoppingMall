@@ -14,4 +14,6 @@
     </string-array>
     <string name="title_share_success">分享成功！</string>
     <string name="title_share_faild">分享失败！</string>
+    <string name="toast_not_install_wx">请先安装微信客户端！</string>
+    <string name="toast_not_support_wxapi">请确定微信客户端为最新版本！</string>
 </resources>

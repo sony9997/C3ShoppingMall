@@ -6,8 +6,8 @@
 
 		<script type="text/javascript">
 			//androidInvoker app里的返回函数
-			function loginOk() {
-				androidInvoker.loginOk();
+			function loginOk(userId) {
+				androidInvoker.loginOk(userId);
 				window.location.href="test.html";
 			}
 
@@ -15,12 +15,21 @@
 			function isTopLevelPage() {
 				return false;
 			}
+
+			urlinfo=window.location.href; //获取当前页面的url
+			len=urlinfo.length;//获取url的长度
+			offset=urlinfo.indexOf("?");//设置参数字符串开始的位置
+			newsidinfo=urlinfo.substr(offset,len)//取出参数字符串 这里会获得类似“id=1”这样的字符串
+			newsids=newsidinfo.split("userId=");//对获得的参数字符串按照“=”进行分割
+			newsid=newsids[1];//得到参数值
+			if(newsid)
+				window.location.href="test.html";
 		</script>
 	</head>
 	<body>
 		<table width="100%" height="100" border="0" cellpadding="0" cellspacing="0" bordercolor="F2F2F2" align="center">
 			<tr style="border-spacing:10px;">
-				<td><input type="button"  value="登陆" onclick="loginOk();" style="font-size:22px"/></td>
+				<td><input type="button"  value="登陆" onclick="loginOk('111');" style="font-size:22px"/></td>
 			</tr>
 		</table>
 	</body>

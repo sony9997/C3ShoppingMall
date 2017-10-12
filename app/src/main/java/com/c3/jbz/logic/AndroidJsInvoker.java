@@ -51,9 +51,9 @@ public class AndroidJsInvoker {
      * 登陆成功
      */
     @JavascriptInterface
-    public void loginOk() {
-        Log.d(tag, "loginOK:" + ShareDataLocal.as().getBooleanValue(Constant.KEY_LOGIN_TAG));
-        ShareDataLocal.as().setBooleanValue(Constant.KEY_LOGIN_TAG, true);
+    public void loginOk(String userId) {
+        Log.d(tag, "loginOK:" + userId);
+        ShareDataLocal.as().setStringValue(Constant.KEY_USERID,userId);
     }
 
     /**
@@ -61,8 +61,8 @@ public class AndroidJsInvoker {
      */
     @JavascriptInterface
     public void logoutOk() {
-        Log.d(tag, "logoutOk:" + ShareDataLocal.as().getBooleanValue(Constant.KEY_LOGIN_TAG));
-        ShareDataLocal.as().setBooleanValue(Constant.KEY_LOGIN_TAG, false);
+        Log.d(tag, "logoutOk:" +  ShareDataLocal.as().getStringValue(Constant.KEY_USERID,null));
+        ShareDataLocal.as().removeValue(Constant.KEY_USERID);
     }
 
     /**
@@ -73,6 +73,8 @@ public class AndroidJsInvoker {
     @JavascriptInterface
     public void shareSessionUrl(String url, String title, String text, String imgurl) {
         Log.d(tag, "shareSessionUrl:" + url);
+        if(!checkWXStatus())
+            return;
         if (url != null) {
             final String transaction="webpage";
             WXWebpageObject webpage = new WXWebpageObject();
@@ -136,6 +138,8 @@ public class AndroidJsInvoker {
     @JavascriptInterface
     public void shareSessionImage(String imgurl) {
         Log.d(tag, "shareSessionImage:" + imgurl);
+        if(!checkWXStatus())
+            return;
         if (imgurl != null) {
             ToolsUtil.getBitmap(imgurl, new ImageLoadingListener() {
                 @Override
@@ -183,6 +187,8 @@ public class AndroidJsInvoker {
     @JavascriptInterface
     public synchronized void shareTimeline(final String text, String imgs) {
         Log.d(tag, "shareTimeline:" + text + "|" + imgs);
+        if(!checkWXStatus())
+            return;
         if(inShareImgs.get()){
             return;
         }
@@ -235,6 +241,8 @@ public class AndroidJsInvoker {
     @JavascriptInterface
     public void payment(String prepayId) {
         Log.d(tag, "payment:" + prepayId);
+        if(!checkWXStatus())
+            return;
         PayReq request = new PayReq();
         request.appId = BuildConfig.wxAppId;
         request.partnerId = BuildConfig.wxPartnerId;
@@ -256,5 +264,21 @@ public class AndroidJsInvoker {
 
     private String buildTransaction(final String type) {
         return (type == null) ? String.valueOf(System.currentTimeMillis()) : type + System.currentTimeMillis();
+    }
+
+    /**
+     * 检测微信api状态
+     * @return
+     */
+    private boolean checkWXStatus(){
+        if(!this.iwxapi.isWXAppInstalled()){
+            handler.sendEmptyMessage(MainPresenter.MSG_ERR_NOT_INSTALL_WX);
+            return false;
+        }
+        if(!iwxapi.isWXAppSupportAPI()){
+            handler.sendEmptyMessage(MainPresenter.MSG_ERR_NOT_SUPPORT_WX);
+            return false;
+        }
+        return true;
     }
 }

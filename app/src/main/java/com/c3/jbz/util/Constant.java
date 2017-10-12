@@ -5,5 +5,5 @@ package com.c3.jbz.util;
  */
 
 public final class Constant {
-    public static final String KEY_LOGIN_TAG="KEY_LOGIN_TAG";
+    public static final String KEY_USERID="KEY_USERID";//用户id
 }

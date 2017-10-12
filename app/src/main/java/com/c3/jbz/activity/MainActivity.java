@@ -3,8 +3,11 @@ package com.c3.jbz.activity;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.Bitmap;
+import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -14,10 +17,12 @@ import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
+import android.webkit.DownloadListener;
 import android.webkit.ValueCallback;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.Toast;
 
 import com.c3.jbz.BuildConfig;
 import com.c3.jbz.R;
@@ -35,7 +40,7 @@ import butterknife.ButterKnife;
  * An example full-screen activity that shows and hides the system UI (i.e.
  * status bar and navigation/system bar) with user interaction.
  */
-public class MainActivity extends MvpActivity<MainView,MainPresenter> implements MainView {
+public class MainActivity extends MvpActivity<MainView, MainPresenter> implements MainView {
     @BindView(R.id.wv_main)
     WebView webView;
 
@@ -58,8 +63,8 @@ public class MainActivity extends MvpActivity<MainView,MainPresenter> implements
 
     @Override
     public void onLoading(int type) {
-        if(pd==null){
-            pd=new ProgressDialog(this);
+        if (pd == null) {
+            pd = new ProgressDialog(this);
         }
 
         pd.setCancelable(false);
@@ -68,12 +73,17 @@ public class MainActivity extends MvpActivity<MainView,MainPresenter> implements
     }
 
     @Override
+    public void toast(int msgId) {
+        Toast.makeText(this, msgId, Toast.LENGTH_LONG).show();
+    }
+
+    @Override
     public void loadMainPage() {
         getPresenter().loadMainPage();
     }
 
     @Override
-    public void initMainPage(String url,Object jsObject) {
+    public void initMainPage(String url, Object jsObject) {
         onLoading(MainView.LOADINGTYPE_MAINPAGE);
         webView.setWebViewClient(new WebViewClient() {
             @Override
@@ -92,37 +102,57 @@ public class MainActivity extends MvpActivity<MainView,MainPresenter> implements
         webViewSettings.setJavaScriptEnabled(true);
         webViewSettings.setSavePassword(false);
         setPageCacheCapacity(webViewSettings);
-        webViewSettings.setCacheMode(WebSettings.LOAD_NO_CACHE);
         // 设置允许JS弹窗
         webViewSettings.setJavaScriptCanOpenWindowsAutomatically(true);
-        webView.addJavascriptInterface(jsObject,"androidInvoker");
+        webView.setDownloadListener(downloadListener);
+        webView.addJavascriptInterface(jsObject, "androidInvoker");
         webView.loadUrl(url);
     }
 
     protected void setPageCacheCapacity(WebSettings webSettings) {
-        try {
-            Class<?> c = Class.forName("android.webkit.WebSettingsClassic");
-            Method tt = c.getMethod("setPageCacheCapacity", new Class[] { int.class });
-            tt.invoke(webSettings, 5);
-        } catch (ClassNotFoundException e) {
-            System.out.println("No such class: " + e);
-        } catch (Exception e) {
-            Log.e("ERROR:", e.getMessage());
-        }
+        webSettings.setAppCacheMaxSize(1024 * 1024 * 8);//设置缓冲大小，我设的是8M
+// 开启 DOM storage API 功能
+        webSettings.setDomStorageEnabled(true);
+//开启 database storage API 功能
+        webSettings.setDatabaseEnabled(true);
+        String appCacheDir = this.getApplicationContext().getDir("cache", Context.MODE_PRIVATE).getPath();
+//设置数据库缓存路径
+        webSettings.setDatabasePath(appCacheDir);
+//设置  Application Caches 缓存目录
+        webSettings.setAppCachePath(appCacheDir);
+//开启 Application Caches 功能
+        webSettings.setAppCacheEnabled(true);
+        webSettings.setLoadWithOverviewMode(true);
+//设置可以访问文件
+        webSettings.setAllowFileAccess(true);
+        webSettings.setCacheMode(WebSettings.LOAD_DEFAULT);
     }
+
+    /**
+     * 下载监听，当页面有可以下载的链接时触发
+     */
+    private DownloadListener downloadListener=new DownloadListener() {
+        @Override
+        public void onDownloadStart(String url, String userAgent, String contentDisposition, String mimetype,
+                                    long contentLength) {
+            Uri uri = Uri.parse(url);
+            Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+            startActivity(intent);
+        }
+    };
 
     @Override
     public void hideLoading() {
-        if(pd!=null&&pd.isShowing()){
+        if (pd != null && pd.isShowing()) {
             pd.dismiss();
         }
-        pd=null;
+        pd = null;
     }
 
-    private ValueCallback<String> valueCallback= new ValueCallback<String>() {
+    private ValueCallback<String> valueCallback = new ValueCallback<String>() {
         @Override
         public void onReceiveValue(String s) {
-            if(Boolean.valueOf(s)){
+            if (Boolean.valueOf(s)) {
                 AlertDialog.Builder b = new AlertDialog.Builder(MainActivity.this);
                 b.setTitle(R.string.alert_title);
                 b.setMessage(R.string.exit_msg);
@@ -146,7 +176,7 @@ public class MainActivity extends MvpActivity<MainView,MainPresenter> implements
 
     @Override
     public void checkTopLevelPage() {
-        webView.evaluateJavascript("javascript:isTopLevelPage()",valueCallback);
+        webView.evaluateJavascript("javascript:isTopLevelPage()", valueCallback);
     }
 
     @Override

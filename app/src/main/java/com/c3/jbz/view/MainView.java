@@ -18,6 +18,11 @@ public interface MainView extends MvpView {
      * @param type
      */
     public void onLoading(int type);
+    /**
+     * 显示提示
+     * @param msgId
+     */
+    public void toast(int msgId);
 
     /**
      * 加载主页

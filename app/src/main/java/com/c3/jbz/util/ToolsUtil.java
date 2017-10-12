@@ -1,6 +1,10 @@
 package com.c3.jbz.util;
 
+import android.content.Context;
 import android.graphics.Bitmap;
+import android.os.Build;
+import android.provider.Settings;
+import android.telephony.TelephonyManager;
 
 import com.c3.jbz.BuildConfig;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
@@ -9,6 +13,8 @@ import com.nostra13.universalimageloader.core.listener.ImageLoadingListener;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
@@ -65,11 +71,12 @@ public final class ToolsUtil {
 
     /**
      * 创建指定数量的随机字符串
+     *
      * @param numberFlag 是否是数字
      * @param length
      * @return
      */
-    public static String createRandom(boolean numberFlag, int length){
+    public static String createRandom(boolean numberFlag, int length) {
         String retStr = "";
         String strTable = numberFlag ? "1234567890" : "1234567890abcdefghijkmnpqrstuvwxyz";
         int len = strTable.length();
@@ -96,19 +103,20 @@ public final class ToolsUtil {
 
     /**
      * 微信支付签名算法sign
+     *
      * @param parameters
      * @return
      */
     @SuppressWarnings("unchecked")
-    public static String createWXSign(SortedMap<Object,Object> parameters){
+    public static String createWXSign(SortedMap<Object, Object> parameters) {
         StringBuffer sb = new StringBuffer();
         Set es = parameters.entrySet();//所有参与传参的参数按照accsii排序（升序）
         Iterator it = es.iterator();
-        while(it.hasNext()) {
-            Map.Entry entry = (Map.Entry)it.next();
-            String k = (String)entry.getKey();
+        while (it.hasNext()) {
+            Map.Entry entry = (Map.Entry) it.next();
+            String k = (String) entry.getKey();
             Object v = entry.getValue();
-            if(null != v && !"".equals(v)
+            if (null != v && !"".equals(v)
                     && !"sign".equals(k) && !"key".equals(k)) {
                 sb.append(k + "=" + v + "&");
             }
@@ -117,5 +125,45 @@ public final class ToolsUtil {
         String characterEncoding = "UTF-8";
         String sign = MD5Util.MD5Encode(sb.toString(), characterEncoding).toUpperCase();
         return sign;
+    }
+
+    /**
+     * 获取设备唯一ID
+     * @param context
+     * @return
+     */
+    public static String getUniqueId(Context context) {
+        String androidID = Settings.Secure.getString(context.getContentResolver(), Settings.Secure.ANDROID_ID);
+        String id = androidID + Build.SERIAL;
+        try {
+            return toMD5(id);
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+            return id;
+        }
+    }
+
+
+    public static String toMD5(String text) throws NoSuchAlgorithmException {
+        //获取摘要器 MessageDigest
+        MessageDigest messageDigest = MessageDigest.getInstance("MD5");
+        //通过摘要器对字符串的二进制字节数组进行hash计算
+        byte[] digest = messageDigest.digest(text.getBytes());
+
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < digest.length; i++) {
+            //循环每个字符 将计算结果转化为正整数;
+            int digestInt = digest[i] & 0xff;
+            //将10进制转化为较短的16进制
+            String hexString = Integer.toHexString(digestInt);
+            //转化结果如果是个位数会省略0,因此判断并补0
+            if (hexString.length() < 2) {
+                sb.append(0);
+            }
+            //将循环结果添加到缓冲区
+            sb.append(hexString);
+        }
+        //返回整个结果
+        return sb.toString();
     }
 }

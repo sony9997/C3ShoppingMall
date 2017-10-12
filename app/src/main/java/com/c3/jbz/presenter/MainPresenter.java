@@ -5,11 +5,14 @@ import android.content.Intent;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
+import android.util.Log;
 
 import com.c3.jbz.BuildConfig;
+import com.c3.jbz.R;
 import com.c3.jbz.db.ShareDataLocal;
 import com.c3.jbz.logic.AndroidJsInvoker;
 import com.c3.jbz.util.Constant;
+import com.c3.jbz.util.ToolsUtil;
 import com.c3.jbz.view.MainView;
 import com.hannesdorfmann.mosby3.mvp.MvpBasePresenter;
 import com.nostra13.universalimageloader.cache.disc.naming.Md5FileNameGenerator;
@@ -30,6 +33,8 @@ public class MainPresenter extends MvpBasePresenter<MainView> implements Handler
     public static final int MSG_LOADING_IMG=0;
     public static final int MSG_LOADED_IMG=1;
     public static final int MSG_SHARE_IMGS_TIMELINE=2;//分享图片到朋友圈
+    public static final int MSG_ERR_NOT_INSTALL_WX=-1;//未安装微信
+    public static final int MSG_ERR_NOT_SUPPORT_WX=-2;//不支持的微信api
     public MainPresenter(Context context){
         this.context=context;
     }
@@ -56,7 +61,11 @@ public class MainPresenter extends MvpBasePresenter<MainView> implements Handler
         ImageLoader.getInstance().init(config);
 
         //加载主页面
-        getView().initMainPage(isLogin()?BuildConfig.mainUrl:BuildConfig.loginUrl,new AndroidJsInvoker(handler,iwxapi));
+        String url=String.format(BuildConfig.mainUrl, ToolsUtil.getUniqueId(context));
+        if(isLogin()){
+            url+="&userId="+ShareDataLocal.as().getStringValue(Constant.KEY_USERID,null);
+        }
+        getView().initMainPage(url,new AndroidJsInvoker(handler,iwxapi));
     }
 
     /**
@@ -64,7 +73,7 @@ public class MainPresenter extends MvpBasePresenter<MainView> implements Handler
      * @return
      */
     private boolean isLogin(){
-        return ShareDataLocal.as().getBooleanValue(Constant.KEY_LOGIN_TAG,false);
+        return ShareDataLocal.as().getStringValue(Constant.KEY_USERID,null)!=null;
     }
 
     @Override
@@ -83,6 +92,14 @@ public class MainPresenter extends MvpBasePresenter<MainView> implements Handler
                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 context.startActivity(intent);
                 getView().hideLoading();
+                break;
+            }
+            case MSG_ERR_NOT_INSTALL_WX:{
+                getView().toast(R.string.toast_not_install_wx);
+                break;
+            }
+            case MSG_ERR_NOT_SUPPORT_WX:{
+                getView().toast(R.string.toast_not_support_wxapi);
                 break;
             }
         }
