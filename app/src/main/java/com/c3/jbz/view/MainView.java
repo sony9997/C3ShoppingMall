@@ -7,7 +7,6 @@ import com.hannesdorfmann.mosby3.mvp.MvpView;
  */
 
 public interface MainView extends MvpView {
-    final int LOADINGTYPE_MAINPAGE=0;
     final int LOADINGTYPE_SHARE=1;
     final int LOADINGTYPE_PAY=2;
     final int LOADINGTYPE_LOADIMAGE=3;

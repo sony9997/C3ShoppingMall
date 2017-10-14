@@ -92,6 +92,7 @@ public class MainActivity extends MvpActivity<MainView, MainPresenter> implement
         webView.setWebViewClient(new WebViewClient() {
             @Override
             public void onPageStarted(WebView view, String url, Bitmap favicon) {
+                Log.d("onPageStarted",url);
                 super.onPageStarted(view, url, favicon);
             }
 
