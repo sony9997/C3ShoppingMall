@@ -33,8 +33,11 @@ public class MainPresenter extends MvpBasePresenter<MainView> implements Handler
     public static final int MSG_LOADING_IMG=0;
     public static final int MSG_LOADED_IMG=1;
     public static final int MSG_SHARE_IMGS_TIMELINE=2;//分享图片到朋友圈
+    public static final int MSG_LOGOUT=3;//登出
     public static final int MSG_ERR_NOT_INSTALL_WX=-1;//未安装微信
     public static final int MSG_ERR_NOT_SUPPORT_WX=-2;//不支持的微信api
+
+    private AndroidJsInvoker androidJsInvoker=null;
     public MainPresenter(Context context){
         this.context=context;
     }
@@ -59,13 +62,18 @@ public class MainPresenter extends MvpBasePresenter<MainView> implements Handler
                 .discCacheFileNameGenerator(new Md5FileNameGenerator())
                 .tasksProcessingOrder(QueueProcessingType.LIFO).build();
         ImageLoader.getInstance().init(config);
+        androidJsInvoker=new AndroidJsInvoker(handler,iwxapi);
 
+        go2MainPage();
+    }
+
+    private void go2MainPage(){
         //加载主页面
         String url=String.format(BuildConfig.mainUrl, ToolsUtil.getUniqueId(context));
         if(isLogin()){
             url+="&userId="+ShareDataLocal.as().getStringValue(Constant.KEY_USERID,null);
         }
-        getView().initMainPage(url,new AndroidJsInvoker(handler,iwxapi));
+        getView().initMainPage(url,androidJsInvoker);
     }
 
     /**
@@ -100,6 +108,10 @@ public class MainPresenter extends MvpBasePresenter<MainView> implements Handler
             }
             case MSG_ERR_NOT_SUPPORT_WX:{
                 getView().toast(R.string.toast_not_support_wxapi);
+                break;
+            }
+            case MSG_LOGOUT:{
+                go2MainPage();
                 break;
             }
         }

@@ -63,6 +63,7 @@ public class AndroidJsInvoker {
     public void logoutOk() {
         Log.d(tag, "logoutOk:" +  ShareDataLocal.as().getStringValue(Constant.KEY_USERID,null));
         ShareDataLocal.as().removeValue(Constant.KEY_USERID);
+        handler.sendEmptyMessage(MainPresenter.MSG_LOGOUT);
     }
 
     /**

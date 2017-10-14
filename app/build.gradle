@@ -34,7 +34,7 @@ android {
     }
     //多包名设置
     productFlavors {
-        //https://t.jubaozan.cn/client/login.do 测试环境地址
+        //https://t.jubaozan.cn/client/start.do?deviceType=1&deviceId=%s&siteId=1123&versionCode=${defaultConfig.versionCode} 测试环境地址
         jubaozan {
             applicationId = "com.c3.jbz"
             resValue("string", "app_name", "聚宝赞")//应用名
@@ -42,7 +42,7 @@ android {
             buildConfigField("String", "wxBizSecretKey", "\"fc1f3ba759096fbd12f650fef67ee83a\"")//微信商户秘钥
             buildConfigField("String", "wxPartnerId", "\"1900000109\"")//合作伙伴ID，微信用
             buildConfigField("String", "mainUrl",
-                    "\"file:///android_asset/login.html?deviceType=1&deviceId=%s&siteId=123&versionCode=${defaultConfig.versionCode}\"")//h5页面首页
+                    "\"https://t.jubaozan.cn/client/start.do?deviceType=1&deviceId=%s&siteId=1123&versionCode=${defaultConfig.versionCode}\"")//h5页面首页
             signingConfig signingConfigs.sign_jubaozan
         }
         jubaozan2 {

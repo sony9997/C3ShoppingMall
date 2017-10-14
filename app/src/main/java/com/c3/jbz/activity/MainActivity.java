@@ -19,9 +19,11 @@ import android.view.View;
 import android.view.Window;
 import android.webkit.DownloadListener;
 import android.webkit.ValueCallback;
+import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.c3.jbz.BuildConfig;
@@ -43,6 +45,9 @@ import butterknife.ButterKnife;
 public class MainActivity extends MvpActivity<MainView, MainPresenter> implements MainView {
     @BindView(R.id.wv_main)
     WebView webView;
+
+    @BindView(R.id.pb_main)
+    ProgressBar pbMain;
 
     private ProgressDialog pd;
 
@@ -84,7 +89,6 @@ public class MainActivity extends MvpActivity<MainView, MainPresenter> implement
 
     @Override
     public void initMainPage(String url, Object jsObject) {
-        onLoading(MainView.LOADINGTYPE_MAINPAGE);
         webView.setWebViewClient(new WebViewClient() {
             @Override
             public void onPageStarted(WebView view, String url, Bitmap favicon) {
@@ -97,6 +101,23 @@ public class MainActivity extends MvpActivity<MainView, MainPresenter> implement
             }
 
         });
+
+        webView.setWebChromeClient(new WebChromeClient(){
+            @Override
+            public void onProgressChanged(WebView view, int newProgress) {
+                // TODO 自动生成的方法存根
+
+                if(newProgress==100){
+                    pbMain.setVisibility(View.GONE);//加载完网页进度条消失
+                }
+                else{
+                    pbMain.setVisibility(View.VISIBLE);//开始加载网页时显示进度条
+                    pbMain.setProgress(newProgress);//设置进度值
+                }
+
+            }
+        });
+
         // 设置WebView属性，能够执行Javascript脚本
         WebSettings webViewSettings = webView.getSettings();
         webViewSettings.setJavaScriptEnabled(true);
@@ -152,6 +173,8 @@ public class MainActivity extends MvpActivity<MainView, MainPresenter> implement
     private ValueCallback<String> valueCallback = new ValueCallback<String>() {
         @Override
         public void onReceiveValue(String s) {
+            if(s==null)
+                return;
             if (Boolean.valueOf(s)) {
                 AlertDialog.Builder b = new AlertDialog.Builder(MainActivity.this);
                 b.setTitle(R.string.alert_title);
