@@ -1,6 +1,5 @@
 package com.c3.jbz.activity;
 
-import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -9,36 +8,29 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Build;
-import android.support.annotation.NonNull;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.os.Handler;
+import android.support.annotation.NonNull;
 import android.util.Log;
 import android.view.KeyEvent;
-import android.view.MotionEvent;
-import android.view.View;
-import android.view.Window;
 import android.webkit.DownloadListener;
 import android.webkit.ValueCallback;
-import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
-import com.c3.jbz.BuildConfig;
 import com.c3.jbz.R;
+import com.c3.jbz.comp.C3WebChromeClient;
 import com.c3.jbz.presenter.MainPresenter;
+import com.c3.jbz.util.ToolsUtil;
 import com.c3.jbz.view.MainView;
 import com.hannesdorfmann.mosby3.mvp.MvpActivity;
-import com.hannesdorfmann.mosby3.mvp.MvpPresenter;
-
-import java.lang.reflect.Method;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+
+import static com.c3.jbz.R.id.pb_main;
 
 /**
  * An example full-screen activity that shows and hides the system UI (i.e.
@@ -48,10 +40,12 @@ public class MainActivity extends MvpActivity<MainView, MainPresenter> implement
     @BindView(R.id.wv_main)
     WebView webView;
 
-    @BindView(R.id.pb_main)
+    @BindView(pb_main)
     ProgressBar pbMain;
 
     private ProgressDialog pd;
+
+    private C3WebChromeClient c3WebChromeClient;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,8 +53,11 @@ public class MainActivity extends MvpActivity<MainView, MainPresenter> implement
         setContentView(R.layout.main);
 
         ButterKnife.bind(this);
+        c3WebChromeClient=new C3WebChromeClient(this,pbMain);
         loadMainPage();
+        ToolsUtil.verifyStoragePermissions(this);
     }
+
 
     @NonNull
     @Override
@@ -94,7 +91,7 @@ public class MainActivity extends MvpActivity<MainView, MainPresenter> implement
         webView.setWebViewClient(new WebViewClient() {
             @Override
             public void onPageStarted(WebView view, String url, Bitmap favicon) {
-                Log.d("onPageStarted",url);
+                Log.d("onPageStarted", url);
                 super.onPageStarted(view, url, favicon);
             }
 
@@ -105,21 +102,7 @@ public class MainActivity extends MvpActivity<MainView, MainPresenter> implement
 
         });
 
-        webView.setWebChromeClient(new WebChromeClient(){
-            @Override
-            public void onProgressChanged(WebView view, int newProgress) {
-                // TODO 自动生成的方法存根
-
-                if(newProgress==100){
-                    pbMain.setVisibility(View.GONE);//加载完网页进度条消失
-                }
-                else{
-                    pbMain.setVisibility(View.VISIBLE);//开始加载网页时显示进度条
-                    pbMain.setProgress(newProgress);//设置进度值
-                }
-
-            }
-        });
+        webView.setWebChromeClient(c3WebChromeClient);
 
         // 设置WebView属性，能够执行Javascript脚本
         WebSettings webViewSettings = webView.getSettings();
@@ -152,14 +135,14 @@ public class MainActivity extends MvpActivity<MainView, MainPresenter> implement
         webSettings.setCacheMode(WebSettings.LOAD_DEFAULT);
 
         webSettings.setBlockNetworkImage(false);//解决图片不显示
-        if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.LOLLIPOP)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
             webSettings.setMixedContentMode(WebSettings.MIXED_CONTENT_ALWAYS_ALLOW);
     }
 
     /**
      * 下载监听，当页面有可以下载的链接时触发
      */
-    private DownloadListener downloadListener=new DownloadListener() {
+    private DownloadListener downloadListener = new DownloadListener() {
         @Override
         public void onDownloadStart(String url, String userAgent, String contentDisposition, String mimetype,
                                     long contentLength) {
@@ -180,7 +163,7 @@ public class MainActivity extends MvpActivity<MainView, MainPresenter> implement
     private ValueCallback<String> valueCallback = new ValueCallback<String>() {
         @Override
         public void onReceiveValue(String s) {
-            if ((s!=null&&s.trim().toLowerCase().equals("true"))||!webView.canGoBack()) {
+            if ((s != null && s.trim().toLowerCase().equals("true")) || !webView.canGoBack()) {
                 AlertDialog.Builder b = new AlertDialog.Builder(MainActivity.this);
                 b.setTitle(R.string.alert_title);
                 b.setMessage(R.string.exit_msg);
@@ -198,8 +181,8 @@ public class MainActivity extends MvpActivity<MainView, MainPresenter> implement
                 });
                 b.setCancelable(false);
                 b.create().show();
-            }else{
-                if(webView.canGoBack()){
+            } else {
+                if (webView.canGoBack()) {
                     webView.goBack();
                 }
             }
@@ -224,11 +207,17 @@ public class MainActivity extends MvpActivity<MainView, MainPresenter> implement
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
-        if(keyCode==KeyEvent.KEYCODE_MENU){
-            if(webView!=null){
+        if (keyCode == KeyEvent.KEYCODE_MENU) {
+            if (webView != null) {
                 webView.reload();
             }
         }
         return super.onKeyDown(keyCode, event);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        c3WebChromeClient.onActivityResult(requestCode,resultCode,data);
     }
 }

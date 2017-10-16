@@ -1,9 +1,13 @@
 package com.c3.jbz.util;
 
+import android.Manifest;
+import android.app.Activity;
 import android.content.Context;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.os.Build;
 import android.provider.Settings;
+import android.support.v4.app.ActivityCompat;
 import android.telephony.TelephonyManager;
 
 import com.c3.jbz.BuildConfig;
@@ -165,5 +169,27 @@ public final class ToolsUtil {
         }
         //返回整个结果
         return sb.toString();
+    }
+
+    private static final int REQUEST_EXTERNAL_STORAGE = 1;
+    private static String[] PERMISSIONS_STORAGE = {
+            Manifest.permission.READ_EXTERNAL_STORAGE,
+            Manifest.permission.WRITE_EXTERNAL_STORAGE};
+    /**
+     * 验证扩展卡读写权限
+     * @param activity
+     */
+    public static void verifyStoragePermissions(Activity activity) {
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
+            // Check if we have write permission
+            int permission = ActivityCompat.checkSelfPermission(activity,
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE);
+
+            if (permission != PackageManager.PERMISSION_GRANTED) {
+                // We don't have permission so prompt the user
+                ActivityCompat.requestPermissions(activity, PERMISSIONS_STORAGE,
+                        REQUEST_EXTERNAL_STORAGE);
+            }
+        }
     }
 }

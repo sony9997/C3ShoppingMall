@@ -216,14 +216,7 @@ public class AndroidJsInvoker {
                             if(max==0)
                                 break;
                         }
-                        Intent intent = new Intent();
-                        ComponentName comp = new ComponentName("com.tencent.mm",
-                                "com.tencent.mm.ui.tools.ShareToTimeLineUI");
-                        intent.setComponent(comp);
-                        intent.setAction(Intent.ACTION_SEND_MULTIPLE);
-                        intent.setType("image/*");
-                        intent.putExtra("Kdescription", text);
-                        intent.putParcelableArrayListExtra(Intent.EXTRA_STREAM, imageUris);
+                        Intent intent = getTimeLineIntent(text,imageUris);
                         Message message=handler.obtainMessage(MainPresenter.MSG_SHARE_IMGS_TIMELINE);
                         message.obj=intent;
                         handler.sendMessage(message);
@@ -232,6 +225,18 @@ public class AndroidJsInvoker {
                 }).start();
             }
         }
+    }
+
+    public static final Intent getTimeLineIntent(String text,ArrayList<Uri> imageUris){
+        Intent intent = new Intent();
+        ComponentName comp = new ComponentName("com.tencent.mm",
+                "com.tencent.mm.ui.tools.ShareToTimeLineUI");
+        intent.setComponent(comp);
+        intent.setAction(Intent.ACTION_SEND_MULTIPLE);
+        intent.setType("image/*");
+        intent.putExtra("Kdescription", text);
+        intent.putParcelableArrayListExtra(Intent.EXTRA_STREAM, imageUris);
+        return intent;
     }
 
     /**
