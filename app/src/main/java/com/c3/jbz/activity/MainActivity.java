@@ -174,9 +174,7 @@ public class MainActivity extends MvpActivity<MainView, MainPresenter> implement
     private ValueCallback<String> valueCallback = new ValueCallback<String>() {
         @Override
         public void onReceiveValue(String s) {
-            if(s==null)
-                return;
-            if (Boolean.valueOf(s)) {
+            if ((s!=null&&s.trim().toLowerCase().equals("true"))||!webView.canGoBack()) {
                 AlertDialog.Builder b = new AlertDialog.Builder(MainActivity.this);
                 b.setTitle(R.string.alert_title);
                 b.setMessage(R.string.exit_msg);
@@ -194,6 +192,10 @@ public class MainActivity extends MvpActivity<MainView, MainPresenter> implement
                 });
                 b.setCancelable(false);
                 b.create().show();
+            }else{
+                if(webView.canGoBack()){
+                    webView.goBack();
+                }
             }
         }
     };
