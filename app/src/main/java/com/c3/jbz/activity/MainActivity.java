@@ -8,12 +8,14 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
+import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
@@ -148,6 +150,10 @@ public class MainActivity extends MvpActivity<MainView, MainPresenter> implement
 //设置可以访问文件
         webSettings.setAllowFileAccess(true);
         webSettings.setCacheMode(WebSettings.LOAD_DEFAULT);
+
+        webSettings.setBlockNetworkImage(false);//解决图片不显示
+        if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.LOLLIPOP)
+            webSettings.setMixedContentMode(WebSettings.MIXED_CONTENT_ALWAYS_ALLOW);
     }
 
     /**
@@ -214,5 +220,15 @@ public class MainActivity extends MvpActivity<MainView, MainPresenter> implement
     @Override
     public void onBackPressed() {
         checkTopLevelPage();
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if(keyCode==KeyEvent.KEYCODE_MENU){
+            if(webView!=null){
+                webView.reload();
+            }
+        }
+        return super.onKeyDown(keyCode, event);
     }
 }
