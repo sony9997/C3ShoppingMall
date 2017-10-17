@@ -2,6 +2,7 @@ package com.c3.jbz.presenter;
 
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
@@ -22,6 +23,8 @@ import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 import com.nostra13.universalimageloader.core.assist.QueueProcessingType;
 import com.tencent.mm.opensdk.openapi.IWXAPI;
 import com.tencent.mm.opensdk.openapi.WXAPIFactory;
+
+import java.util.ArrayList;
 
 /**
  * Created by hedong on 2017/10/3.
@@ -97,6 +100,13 @@ public class MainPresenter extends MvpBasePresenter<MainView> implements Handler
             }
             case MSG_SHARE_IMGS_TIMELINE:{
                 Intent intent= (Intent) message.obj;
+                if(message.arg1==1){
+                    ArrayList<Uri> imageUris=intent.getParcelableArrayListExtra(Intent.EXTRA_STREAM);
+                    if(imageUris!=null) {
+                        for(Uri uri:imageUris)
+                            context.sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, uri));
+                    }
+                }
                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 context.startActivity(intent);
                 getView().hideLoading();

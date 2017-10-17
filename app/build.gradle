@@ -43,7 +43,7 @@ android {
             buildConfigField("String", "wxBizSecretKey", "\"fc1f3ba759096fbd12f650fef67ee83a\"")//微信商户秘钥
             buildConfigField("String", "wxPartnerId", "\"1900000109\"")//合作伙伴ID，微信用
             buildConfigField("String", "mainUrl",
-                    "\"https://t.jubaozan.cn/client/start.do?deviceType=1&deviceId=%s&siteId=1123&versionCode=${defaultConfig.versionCode}\"")//h5页面首页
+                    "https://t.jubaozan.cn/client/start.do?deviceType=1&deviceId=%s&siteId=1123&versionCode=${defaultConfig.versionCode}")//h5页面首页
             signingConfig signingConfigs.sign_jubaozan
         }
         jubaozan2 {
@@ -60,7 +60,7 @@ android {
     }
     buildTypes {
         release {
-            minifyEnabled true
+            minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }

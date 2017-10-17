@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
@@ -38,7 +39,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 public class AndroidJsInvoker {
     private Handler handler;
-    private static final String tag = "AndroidJsInvoker";
+    public static final String tag = "AndroidJsInvoker";
     private IWXAPI iwxapi;
     private static final int THUMB_SIZE = 150;
 
@@ -209,8 +210,9 @@ public class AndroidJsInvoker {
                         }
                         ArrayList<Uri> imageUris = new ArrayList<Uri>();
                         int max=9;//微信朋友圈限制了最多传9个图片
+                        boolean save2DICM=Build.VERSION.SDK_INT >= Build.VERSION_CODES.M;
                         for (String imgUrl:imgUrls){
-                            File file=ToolsUtil.getBitmapFileSync(imgUrl);
+                            File file=ToolsUtil.getBitmapFileSync(imgUrl,save2DICM);
                             imageUris.add(Uri.fromFile(file));
                             max--;
                             if(max==0)
@@ -219,6 +221,7 @@ public class AndroidJsInvoker {
                         Intent intent = getTimeLineIntent(text,imageUris);
                         Message message=handler.obtainMessage(MainPresenter.MSG_SHARE_IMGS_TIMELINE);
                         message.obj=intent;
+                        message.arg1=save2DICM?1:0;
                         handler.sendMessage(message);
                         inShareImgs.set(false);
                     }
