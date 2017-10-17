@@ -65,6 +65,7 @@ public final class ToolsUtil {
             String fileName=imageUrl.substring(imageUrl.lastIndexOf("/")+1);
             file=new File(dir,fileName);
             copyFile(source.getAbsolutePath(),file.getAbsolutePath());
+            source.delete();
         }else
             file= ImageLoader.getInstance().getDiskCache().get(imageUrl);
 
