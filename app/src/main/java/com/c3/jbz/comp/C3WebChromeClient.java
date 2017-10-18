@@ -16,6 +16,7 @@ import android.webkit.ValueCallback;
 import android.webkit.WebChromeClient;
 import android.webkit.WebView;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import com.c3.jbz.R;
 import com.c3.jbz.activity.MainActivity;
@@ -36,10 +37,12 @@ import butterknife.ButterKnife;
 public class C3WebChromeClient extends WebChromeClient {
     private Activity activity;
     private ProgressBar pbMain;
+    private TextView tv_title;
 
-    public C3WebChromeClient(Activity activity,ProgressBar pbMain){
+    public C3WebChromeClient(Activity activity,ProgressBar pbMain,TextView tv_title){
         this.activity=activity;
         this.pbMain=pbMain;
+        this.tv_title=tv_title;
     }
     public static final int INPUT_FILE_REQUEST_CODE = 1;
     private ValueCallback<Uri> mUploadMessage;
@@ -224,5 +227,12 @@ public class C3WebChromeClient extends WebChromeClient {
             pbMain.setVisibility(View.VISIBLE);//开始加载网页时显示进度条
             pbMain.setProgress(newProgress);//设置进度值
         }
+    }
+
+    @Override
+    public void onReceivedTitle(WebView view, String title) {
+        super.onReceivedTitle(view, title);
+        if(tv_title!=null)
+            tv_title.setText(title);
     }
 }

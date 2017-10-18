@@ -3,17 +3,47 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#0099cc"
-    tools:context=".activity.MainActivity"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    tools:context=".activity.MainActivity">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <ImageButton
+            android:id="@+id/iv_back"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:src="@mipmap/back" android:layout_marginLeft="2dp" android:layout_marginTop="1dp" android:layout_marginBottom="1dp"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:textColor="@android:color/white"
+            android:textSize="20sp" android:id="@+id/tv_title" android:ellipsize="end" android:maxLines="1" android:maxLength="15"
+            />
+
+        <ImageButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" android:src="@mipmap/share" android:layout_alignParentRight="true"
+            android:id="@+id/iv_share" android:layout_marginRight="2dp" android:layout_marginTop="1dp" android:layout_marginBottom="1dp"/>
+
+    </RelativeLayout>
+
     <ProgressBar
         android:id="@+id/pb_main"
         style="?android:attr/progressBarStyleHorizontal"
         android:layout_width="match_parent"
         android:layout_height="3dip"
         android:progressDrawable="@drawable/pg"
-        android:visibility="gone"/>
+        android:visibility="gone" />
+
     <WebView
+        android:id="@+id/wv_main"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" android:id="@+id/wv_main" android:scrollbars="vertical"></WebView>
+        android:layout_height="match_parent"
+        android:scrollbars="vertical"></WebView>
 
 </LinearLayout>

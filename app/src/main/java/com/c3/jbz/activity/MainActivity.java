@@ -12,12 +12,14 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.util.Log;
 import android.view.KeyEvent;
+import android.view.View;
 import android.webkit.DownloadListener;
 import android.webkit.ValueCallback;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.c3.jbz.R;
@@ -29,6 +31,7 @@ import com.hannesdorfmann.mosby3.mvp.MvpActivity;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 
 import static com.c3.jbz.R.id.pb_main;
 
@@ -43,6 +46,9 @@ public class MainActivity extends MvpActivity<MainView, MainPresenter> implement
     @BindView(pb_main)
     ProgressBar pbMain;
 
+    @BindView(R.id.tv_title)
+    TextView tv_title;
+
     private ProgressDialog pd;
 
     private C3WebChromeClient c3WebChromeClient;
@@ -53,7 +59,7 @@ public class MainActivity extends MvpActivity<MainView, MainPresenter> implement
         setContentView(R.layout.main);
 
         ButterKnife.bind(this);
-        c3WebChromeClient=new C3WebChromeClient(this,pbMain);
+        c3WebChromeClient=new C3WebChromeClient(this,pbMain,tv_title);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
             ToolsUtil.verifyStoragePermissions(this);
         loadMainPage();
@@ -220,5 +226,14 @@ public class MainActivity extends MvpActivity<MainView, MainPresenter> implement
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         c3WebChromeClient.onActivityResult(requestCode,resultCode,data);
+    }
+
+    @OnClick(R.id.iv_back)
+    public void goPre(View view){
+        webView.evaluateJavascript("javascript:goPre()", valueCallback);
+    }
+    @OnClick(R.id.iv_share)
+    public void goShare(View view){
+        webView.evaluateJavascript("javascript:goShare()", null);
     }
 }
