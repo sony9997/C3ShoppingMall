@@ -54,8 +54,9 @@ public class MainActivity extends MvpActivity<MainView, MainPresenter> implement
 
         ButterKnife.bind(this);
         c3WebChromeClient=new C3WebChromeClient(this,pbMain);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
+            ToolsUtil.verifyStoragePermissions(this);
         loadMainPage();
-        ToolsUtil.verifyStoragePermissions(this);
     }
 
 

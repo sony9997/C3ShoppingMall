@@ -20,7 +20,6 @@ public class SplashActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.splash);
-        ShareDataLocal.as().init(getApplicationContext());
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {

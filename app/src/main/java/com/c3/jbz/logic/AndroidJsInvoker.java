@@ -26,6 +26,9 @@ import com.tencent.mm.opensdk.modelmsg.WXWebpageObject;
 import com.tencent.mm.opensdk.modelpay.PayReq;
 import com.tencent.mm.opensdk.openapi.IWXAPI;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.SortedMap;
@@ -268,7 +271,8 @@ public class AndroidJsInvoker {
         parameters.put("timestamp", request.timeStamp);
         request.sign= ToolsUtil.createWXSign(parameters);
         Log.d(tag, "request.sign:" + request.sign);
-        iwxapi.sendReq(request);
+        boolean result=iwxapi.sendReq(request);
+        Log.d(tag, "sendReq:" + result);
     }
 
     private String buildTransaction(final String type) {

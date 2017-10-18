@@ -4,6 +4,9 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.util.Base64;
+import android.util.Log;
+
+import com.c3.jbz.app.C3App;
 
 public class ShareDataLocal {
 	private static ShareDataLocal cm = null;
@@ -24,13 +27,17 @@ public class ShareDataLocal {
 	private int mode;
 
 	public void init(Context context) {
+		Log.d("sd","init:"+context);
+		this.context = context;
 		String packageName = context.getApplicationInfo().packageName;
 		name = String.format("sd_%s", packageName);
 		mode = Context.MODE_PRIVATE;
-		this.context = context;
 	}
 
 	public SharedPreferences getSharedPreferences() {
+		if(context==null)
+			context= C3App.app;
+//		Log.d("sd","getSharedPreferences:"+context);
 		return context.getSharedPreferences(name, mode);
 	}
 
