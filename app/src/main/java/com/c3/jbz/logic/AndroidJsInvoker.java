@@ -71,7 +71,7 @@ public class AndroidJsInvoker {
     }
 
     /**
-     * 分享商品详情页到微信
+     * 分享商品详情页到微信好友
      *
      * @param url
      */
@@ -80,6 +80,23 @@ public class AndroidJsInvoker {
         Log.d(tag, "shareSessionUrl:" + url);
         if(!checkWXStatus())
             return;
+        shareUrl(url,title,text,imgurl,false);
+    }
+
+    /**
+     * 分享商品详情页到微信朋友圈
+     *
+     * @param url
+     */
+    @JavascriptInterface
+    public void shareTimeLineUrl(String url, String title, String text, String imgurl) {
+        Log.d(tag, "shareTimeLineUrl:" + url);
+        if(!checkWXStatus())
+            return;
+        shareUrl(url,title,text,imgurl,true);
+    }
+
+    private void shareUrl(String url, String title, String text, String imgurl,final boolean isTimeLine){
         if (url != null) {
             final String transaction="webpage";
             WXWebpageObject webpage = new WXWebpageObject();
@@ -101,7 +118,7 @@ public class AndroidJsInvoker {
                             if (failReason.getCause() != null)
                                 failReason.getCause().printStackTrace();
                         }
-                        sendWXMediaMessage2Session(msg,transaction);
+                        sendWXMediaMessage2Session(msg,transaction,isTimeLine);
                     }
 
                     @Override
@@ -109,27 +126,27 @@ public class AndroidJsInvoker {
                         Bitmap thumbBmp = Bitmap.createScaledBitmap(loadedImage, THUMB_SIZE, THUMB_SIZE, true);
                         loadedImage.recycle();
                         msg.thumbData = ToolsUtil.bmpToByteArray(thumbBmp, true);
-                        sendWXMediaMessage2Session(msg,transaction);
+                        sendWXMediaMessage2Session(msg,transaction,isTimeLine);
                     }
 
                     @Override
                     public void onLoadingCancelled(String imageUri, View view) {
-                        sendWXMediaMessage2Session(msg,transaction);
+                        sendWXMediaMessage2Session(msg,transaction,isTimeLine);
                     }
                 });
 
             } else {
-                sendWXMediaMessage2Session(msg,transaction);
+                sendWXMediaMessage2Session(msg,transaction,isTimeLine);
             }
         }
     }
 
-    private void sendWXMediaMessage2Session(WXMediaMessage mediaMessage,String transaction) {
+    private void sendWXMediaMessage2Session(WXMediaMessage mediaMessage,String transaction,boolean isTimeLine) {
         if(mediaMessage!=null) {
             SendMessageToWX.Req req = new SendMessageToWX.Req();
             req.transaction = buildTransaction(transaction);
             req.message = mediaMessage;
-            req.scene = SendMessageToWX.Req.WXSceneSession;
+            req.scene = isTimeLine?SendMessageToWX.Req.WXSceneTimeline:SendMessageToWX.Req.WXSceneSession;
             iwxapi.sendReq(req);
         }
         handler.sendEmptyMessage(MainPresenter.MSG_LOADED_IMG);
@@ -159,7 +176,7 @@ public class AndroidJsInvoker {
                         if (failReason.getCause() != null)
                             failReason.getCause().printStackTrace();
                     }
-                    sendWXMediaMessage2Session(null,null);
+                    sendWXMediaMessage2Session(null,null,false);
                 }
 
                 @Override
@@ -171,12 +188,12 @@ public class AndroidJsInvoker {
                     loadedImage.recycle();
                     wxMediaMessage.thumbData = ToolsUtil.bmpToByteArray(thumbBmp, true);
                     final String transaction="img";
-                    sendWXMediaMessage2Session(wxMediaMessage,transaction);
+                    sendWXMediaMessage2Session(wxMediaMessage,transaction,false);
                 }
 
                 @Override
                 public void onLoadingCancelled(String imageUri, View view) {
-                    sendWXMediaMessage2Session(null,null);
+                    sendWXMediaMessage2Session(null,null,false);
                 }
             });
         }

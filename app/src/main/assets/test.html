@@ -21,6 +21,9 @@
 			function shareTimeline(text,imgs) {
 				androidInvoker.shareTimeline(text,imgs);
 			}
+			function shareTimeLineUrl(surl,title,text,imgurl) {
+				androidInvoker.shareTimeLineUrl(surl,title,text,imgurl);
+			}
 			function payment(prepayId) {
 				androidInvoker.payment(prepayId);
 			}
@@ -38,6 +41,9 @@
 			</tr>
 			<tr style="border-spacing:10px;">
 				<td><input type="button"  value="分享链接到微信好友" onclick="shareSessionUrl('www.baidu.com','分享链接到微信好友','分享链接到微信好友Content','https://www.baidu.com/img/bd_logo1.png');" style="font-size:22px"/></td>
+			</tr>
+			<tr style="border-spacing:10px;">
+				<td><input type="button"  value="分享链接到微信朋友圈" onclick="shareTimeLineUrl('www.baidu.com','分享链接到微信好友','分享链接到微信好友Content','https://www.baidu.com/img/bd_logo1.png');" style="font-size:22px"/></td>
 			</tr>
 			<tr style="border-spacing:10px;">
 				<td><input type="button" style="font-size:22px"  value="分享图片到微信好友" onclick="shareSessionImage('https://www.baidu.com/img/bd_logo1.png');" /></td>
