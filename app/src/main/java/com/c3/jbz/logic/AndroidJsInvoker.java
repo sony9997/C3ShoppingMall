@@ -3,7 +3,6 @@ package com.c3.jbz.logic;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Handler;
@@ -26,17 +25,11 @@ import com.tencent.mm.opensdk.modelmsg.WXWebpageObject;
 import com.tencent.mm.opensdk.modelpay.PayReq;
 import com.tencent.mm.opensdk.openapi.IWXAPI;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.io.File;
 import java.util.ArrayList;
 import java.util.SortedMap;
 import java.util.TreeMap;
-import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.atomic.AtomicBoolean;
-
-import butterknife.BindView;
 
 /**
  * Created by hedong on 2017/10/3.
@@ -181,9 +174,43 @@ public class AndroidJsInvoker {
     @JavascriptInterface
     public void shareSessionImage(String imgurl) {
         Log.d(tag, "shareSessionImage:" + imgurl);
+        if (imgurl != null) {
+            shareImages(imgurl,null,false);
+        }
+    }
+
+    private AtomicBoolean inShareImgs=new AtomicBoolean(false);
+    /**
+     * 分享商品信息到微信朋友圈,分享多张图片+文字
+     *
+     * @param text
+     * @param imgs
+     */
+    @JavascriptInterface
+    public synchronized void shareTimeline(final String text, String imgs) {
+        Log.d(tag, "shareTimeline:" + text + "|" + imgs);
+
+        if(imgs!=null&&imgs.trim().length()>0){
+            shareImages(imgs,text,true);
+        }
+    }
+
+    /**
+     * 分享图片到朋友或者朋友圈
+     * @param imgurl
+     * @param text
+     * @param isTimeLine
+     */
+    private void shareImages(String imgurl,final String text,final boolean isTimeLine){
         if(!checkWXStatus())
             return;
-        if (imgurl != null) {
+        final String[] imgUrls=imgurl.split(",");
+        Log.d(tag,"imgUrls len:"+imgUrls.length);
+        if(imgUrls.length<=0){
+            Log.e(tag,"share images len is 0!");
+            return;
+        }
+        if(imgUrls.length==1){//单张
             ToolsUtil.getBitmap(imgurl, new ImageLoadingListener() {
                 @Override
                 public void onLoadingStarted(String imageUri, View view) {
@@ -215,52 +242,29 @@ public class AndroidJsInvoker {
                     sendWXMediaMessage2Session(null,null,false);
                 }
             });
-        }
-    }
-
-    private AtomicBoolean inShareImgs=new AtomicBoolean(false);
-    /**
-     * 分享商品信息到微信朋友圈,分享多张图片+文字
-     *
-     * @param text
-     * @param imgs
-     */
-    @JavascriptInterface
-    public synchronized void shareTimeline(final String text, String imgs) {
-        Log.d(tag, "shareTimeline:" + text + "|" + imgs);
-        if(!checkWXStatus())
-            return;
-        if(inShareImgs.get()){
-            return;
-        }
-        if(imgs!=null&&imgs.trim().length()>0){
-            final String[] imgUrls=imgs.split(",");
+        }else{//多张
+            if(inShareImgs.get()){
+                return;
+            }
             if(imgUrls!=null) {
-                Log.d(tag,"imgUrls len:"+imgUrls.length);
                 inShareImgs.set(true);
                 handler.sendEmptyMessage(MainPresenter.MSG_LOADING_IMG);
                 new Thread(new Runnable() {
                     @Override
                     public void run() {
-                        if(imgUrls.length<=0){
-                            inShareImgs.set(false);
-                            Log.e(tag,"share images len is 0!");
-                            return;
-                        }
                         ArrayList<Uri> imageUris = new ArrayList<Uri>();
                         int max=9;//微信朋友圈限制了最多传9个图片
-                        boolean save2DICM=Build.VERSION.SDK_INT >= Build.VERSION_CODES.M;
                         for (String imgUrl:imgUrls){
-                            File file=ToolsUtil.getBitmapFileSync(imgUrl,save2DICM);
+                            File file=ToolsUtil.getBitmapFileSync(imgUrl,true);
                             imageUris.add(Uri.fromFile(file));
                             max--;
                             if(max==0)
                                 break;
                         }
-                        Intent intent = getTimeLineIntent(text,imageUris);
+                        Intent intent = getShareImgIntent(text,imageUris,isTimeLine);
                         Message message=handler.obtainMessage(MainPresenter.MSG_SHARE_IMGS_TIMELINE);
                         message.obj=intent;
-                        message.arg1=save2DICM?1:0;
+                        message.arg1=1;
                         handler.sendMessage(message);
                         inShareImgs.set(false);
                     }
@@ -269,14 +273,16 @@ public class AndroidJsInvoker {
         }
     }
 
-    public static final Intent getTimeLineIntent(String text,ArrayList<Uri> imageUris){
+    private static final String COMP_CLS_NAME_TIMELINE="com.tencent.mm.ui.tools.ShareToTimeLineUI";
+    private static final String COMP_CLS_NAME_SESSION="com.tencent.mm.ui.tools.ShareImgUI";
+    private static final Intent getShareImgIntent(String text, ArrayList<Uri> imageUris, boolean isTimeLine){
         Intent intent = new Intent();
         ComponentName comp = new ComponentName("com.tencent.mm",
-                "com.tencent.mm.ui.tools.ShareToTimeLineUI");
+                isTimeLine?COMP_CLS_NAME_TIMELINE:COMP_CLS_NAME_SESSION);
         intent.setComponent(comp);
         intent.setAction(Intent.ACTION_SEND_MULTIPLE);
         intent.setType("image/*");
-        intent.putExtra("Kdescription", text);
+        intent.putExtra(isTimeLine?"Kdescription":Intent.EXTRA_TEXT, text);
         intent.putParcelableArrayListExtra(Intent.EXTRA_STREAM, imageUris);
         return intent;
     }

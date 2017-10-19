@@ -230,7 +230,7 @@ public class MainActivity extends MvpActivity<MainView, MainPresenter> implement
 
     @OnClick(R.id.iv_back)
     public void goPre(View view){
-        webView.evaluateJavascript("javascript:goPre()", valueCallback);
+        checkTopLevelPage();
     }
     @OnClick(R.id.iv_share)
     public void goShare(View view){
