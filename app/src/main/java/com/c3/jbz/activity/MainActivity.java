@@ -22,12 +22,15 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.c3.jbz.BuildConfig;
 import com.c3.jbz.R;
 import com.c3.jbz.comp.C3WebChromeClient;
 import com.c3.jbz.presenter.MainPresenter;
 import com.c3.jbz.util.ToolsUtil;
 import com.c3.jbz.view.MainView;
 import com.hannesdorfmann.mosby3.mvp.MvpActivity;
+import com.tencent.mm.opensdk.constants.ConstantsAPI;
+import com.tencent.mm.opensdk.modelbase.BaseResp;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -105,6 +108,8 @@ public class MainActivity extends MvpActivity<MainView, MainPresenter> implement
             @Override
             public void onPageFinished(WebView view, String url) {
                 hideLoading();
+                if(tv_title!=null)
+                    tv_title.setText(view.getTitle());
             }
 
         });
@@ -198,7 +203,38 @@ public class MainActivity extends MvpActivity<MainView, MainPresenter> implement
 
     @Override
     public void checkTopLevelPage() {
-        webView.evaluateJavascript("javascript:isTopLevelPage()", valueCallback);
+        webView.evaluateJavascript(BuildConfig.WEB_JS_NAME_ISTOP, valueCallback);
+    }
+
+    @Override
+    public void handleWXRespEvent(BaseResp resp) {
+        String errStr=resp.errStr;
+        errStr=errStr!=null&&errStr.trim().length()>0?errStr:"";
+        webView.evaluateJavascript(String.format(BuildConfig.WEB_JS_NAME_handleWXRespEvent,resp.getType(),resp.errCode,errStr), null);
+        switch (resp.getType()){
+            case ConstantsAPI.COMMAND_SENDMESSAGE_TO_WX:{
+                if(resp.errCode==BaseResp.ErrCode.ERR_OK){
+                    Toast.makeText(this,R.string.title_share_success,Toast.LENGTH_LONG).show();
+                }else if(resp.errCode==BaseResp.ErrCode.ERR_USER_CANCEL){
+                    Toast.makeText(this,R.string.title_share_cancel,Toast.LENGTH_LONG).show();
+                }else {
+                    errStr=errStr.length()>0?errStr:getString(R.string.title_share_faild);
+                    Toast.makeText(this,errStr,Toast.LENGTH_LONG).show();
+                }
+                break;
+            }
+            case ConstantsAPI.COMMAND_PAY_BY_WX:{
+                if(resp.errCode==BaseResp.ErrCode.ERR_OK){
+                    Toast.makeText(this,R.string.title_pay_success,Toast.LENGTH_LONG).show();
+                }else if(resp.errCode==BaseResp.ErrCode.ERR_USER_CANCEL){
+                    Toast.makeText(this,R.string.title_pay_cancel,Toast.LENGTH_LONG).show();
+                }else {
+                    errStr=errStr.length()>0?errStr:getString(R.string.title_pay_faild);
+                    Toast.makeText(this,errStr,Toast.LENGTH_LONG).show();
+                }
+                break;
+            }
+        }
     }
 
     @Override
@@ -234,6 +270,6 @@ public class MainActivity extends MvpActivity<MainView, MainPresenter> implement
     }
     @OnClick(R.id.iv_share)
     public void goShare(View view){
-        webView.evaluateJavascript("javascript:goShare()", null);
+        webView.evaluateJavascript(BuildConfig.WEB_JS_NAME_goShare, null);
     }
 }

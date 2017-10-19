@@ -4,7 +4,6 @@ import android.content.ComponentName;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
@@ -12,9 +11,8 @@ import android.view.View;
 import android.webkit.JavascriptInterface;
 
 import com.c3.jbz.BuildConfig;
-import com.c3.jbz.presenter.MainPresenter;
-import com.c3.jbz.util.Constant;
 import com.c3.jbz.db.ShareDataLocal;
+import com.c3.jbz.presenter.MainPresenter;
 import com.c3.jbz.util.ToolsUtil;
 import com.nostra13.universalimageloader.core.assist.FailReason;
 import com.nostra13.universalimageloader.core.listener.ImageLoadingListener;
@@ -53,7 +51,7 @@ public class AndroidJsInvoker {
     @JavascriptInterface
     public void loginOk(String userId) {
         Log.d(tag, "loginOK:" + userId);
-        ShareDataLocal.as().setStringValue(Constant.KEY_USERID,userId);
+        ShareDataLocal.as().setStringValue(BuildConfig.KEY_USERID,userId);
     }
 
     /**
@@ -61,8 +59,8 @@ public class AndroidJsInvoker {
      */
     @JavascriptInterface
     public void logoutOk() {
-        Log.d(tag, "logoutOk:" +  ShareDataLocal.as().getStringValue(Constant.KEY_USERID,null));
-        ShareDataLocal.as().removeValue(Constant.KEY_USERID);
+        Log.d(tag, "logoutOk:" +  ShareDataLocal.as().getStringValue(BuildConfig.KEY_USERID,null));
+        ShareDataLocal.as().removeValue(BuildConfig.KEY_USERID);
         handler.sendEmptyMessage(MainPresenter.MSG_LOGOUT);
     }
 

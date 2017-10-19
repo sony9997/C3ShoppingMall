@@ -10,6 +10,10 @@ android {
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        buildConfigField("String", "KEY_USERID", "\"KEY_USERID\"")//用户id
+        buildConfigField("String", "WEB_JS_NAME_ISTOP", "\"javascript:isTopLevelPage()\"")
+        buildConfigField("String", "WEB_JS_NAME_goShare", "\"javascript:goShare()\"")
+        buildConfigField("String", "WEB_JS_NAME_handleWXRespEvent", "\"javascript:handleWXRespEvent(%d,%d,'%s')\"")
     }
     //签名配置
     signingConfigs {
@@ -32,6 +36,7 @@ android {
         //...你可以配置多个
 
     }
+
     //多包名设置
     productFlavors {
         //https://t.jubaozan.cn/client/start.do?deviceType=1&deviceId=%s&siteId=1123&versionCode=${defaultConfig.versionCode} 测试环境地址
@@ -40,20 +45,24 @@ android {
             applicationId = "com.c3.jbz"
             resValue("string", "app_name", "聚宝赞")//应用名
             buildConfigField("String", "wxAppId", "\"wxf5f118813820e57f\"")//应用ID，微信用
-            buildConfigField("String", "wxBizSecretKey", "\"QX5J8mnwyc7hZt2ZjiaZnyZQvzpIPWuw\"")//微信商户秘钥
+            buildConfigField("String", "wxBizSecretKey", "\"QX5J8mnwyc7hZt2ZjiaZnyZQvzpIPWuw\"")
+//微信商户秘钥
             buildConfigField("String", "wxPartnerId", "\"1490518122\"")//合作伙伴ID，微信用
             buildConfigField("String", "mainUrl",
-                    "\"https://t.jubaozan.cn/client/start.do?deviceType=1&deviceId=%s&siteId=1123&versionCode=${defaultConfig.versionCode} \"")//h5页面首页
+                    "\"https://t.jubaozan.cn/client/start.do?deviceType=1&deviceId=%s&siteId=1123&versionCode=${defaultConfig.versionCode}\"")
+//h5页面首页
             signingConfig signingConfigs.sign_jubaozan
         }
         jubaozan2 {
             applicationId = "com.c3.jbz2"
             resValue("string", "app_name", "聚宝赞2")
             buildConfigField("String", "wxAppId", "\"wx801d1940ac9e1a03\"")//应用ID，微信用
-            buildConfigField("String", "wxBizSecretKey", "\"fc1f3ba759096fbd12f650fef67ee83a\"")//微信商户秘钥
+            buildConfigField("String", "wxBizSecretKey", "\"fc1f3ba759096fbd12f650fef67ee83a\"")
+//微信商户秘钥
             buildConfigField("String", "wxPartnerId", "\"1900000109\"")//合作伙伴ID，微信用
             buildConfigField("String", "mainUrl",
-                    "\"file:///android_asset/login.html?deviceType=1&deviceId=%s&siteId=123&versionCode=${defaultConfig.versionCode}\"")//h5页面首页
+                    "\"file:///android_asset/login.html?deviceType=1&deviceId=%s&siteId=123&versionCode=${defaultConfig.versionCode}\"")
+//h5页面首页
             signingConfig signingConfigs.sign_jubaozan2
         }
 
@@ -74,9 +83,9 @@ dependencies {
     // Plain MVP
     // or
     // MVP + ViewState support
-    
 
-    compile 'com.jakewharton:butterknife:'+rootProject.ext.butterknifeVersion
+
+    compile 'com.jakewharton:butterknife:' + rootProject.ext.butterknifeVersion
     annotationProcessor 'com.jakewharton:butterknife-compiler:' + rootProject.ext.butterknifeVersion
 
     //wm sdk
@@ -86,6 +95,6 @@ dependencies {
     compile 'com.android.support:support-v4:26.+'
     compile 'com.tencent.mm.opensdk:wechat-sdk-android-with-mta:+'
     compile 'com.android.support.constraint:constraint-layout:1.0.2'
-    testCompile 'junit:junit:4.12'
     compile 'com.nostra13.universalimageloader:universal-image-loader:1.9.5'
+    testCompile 'junit:junit:4.12'
 }

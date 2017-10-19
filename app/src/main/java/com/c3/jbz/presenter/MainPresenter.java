@@ -6,13 +6,12 @@ import android.net.Uri;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
-import android.util.Log;
 
 import com.c3.jbz.BuildConfig;
 import com.c3.jbz.R;
 import com.c3.jbz.db.ShareDataLocal;
 import com.c3.jbz.logic.AndroidJsInvoker;
-import com.c3.jbz.util.Constant;
+import com.c3.jbz.logic.C3WXEventHandler;
 import com.c3.jbz.util.ToolsUtil;
 import com.c3.jbz.view.MainView;
 import com.hannesdorfmann.mosby3.mvp.MvpBasePresenter;
@@ -21,6 +20,7 @@ import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 import com.nostra13.universalimageloader.core.assist.QueueProcessingType;
+import com.tencent.mm.opensdk.modelbase.BaseResp;
 import com.tencent.mm.opensdk.openapi.IWXAPI;
 import com.tencent.mm.opensdk.openapi.WXAPIFactory;
 
@@ -65,6 +65,7 @@ public class MainPresenter extends MvpBasePresenter<MainView> implements Handler
                 .discCacheFileNameGenerator(new Md5FileNameGenerator())
                 .tasksProcessingOrder(QueueProcessingType.LIFO).build();
         ImageLoader.getInstance().init(config);
+        C3WXEventHandler.as().init(this);
         androidJsInvoker=new AndroidJsInvoker(handler,iwxapi);
 
         go2MainPage();
@@ -74,7 +75,7 @@ public class MainPresenter extends MvpBasePresenter<MainView> implements Handler
         //加载主页面
         String url=String.format(BuildConfig.mainUrl, ToolsUtil.getUniqueId(context));
         if(isLogin()){
-            url+="&userId="+ShareDataLocal.as().getStringValue(Constant.KEY_USERID,null);
+            url+="&userId="+ShareDataLocal.as().getStringValue(BuildConfig.KEY_USERID,null);
         }
         getView().initMainPage(url,androidJsInvoker);
     }
@@ -84,7 +85,7 @@ public class MainPresenter extends MvpBasePresenter<MainView> implements Handler
      * @return
      */
     private boolean isLogin(){
-        return ShareDataLocal.as().getStringValue(Constant.KEY_USERID,null)!=null;
+        return ShareDataLocal.as().getStringValue(BuildConfig.KEY_USERID,null)!=null;
     }
 
     @Override
@@ -126,5 +127,13 @@ public class MainPresenter extends MvpBasePresenter<MainView> implements Handler
             }
         }
         return false;
+    }
+
+    /**
+     * 处理微信回调
+     * @param resp
+     */
+    public void handleWXRespEvent(BaseResp resp){
+        getView().handleWXRespEvent(resp);
     }
 }

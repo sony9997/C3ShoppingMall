@@ -35,6 +35,11 @@
 			function goShare(){
 			    shareSessionUrl('www.baidu.com','分享链接到微信好友','分享链接到微信好友Content','https://www.baidu.com/img/bd_logo1.png')
 			}
+
+			//处理微信SDK调用返回
+			function handleWXRespEvent(type,errCode,errStr){
+				alert(type+'|'+errCode+'|'+errStr);
+			}
 		</script>
 	</head>
 	<body>

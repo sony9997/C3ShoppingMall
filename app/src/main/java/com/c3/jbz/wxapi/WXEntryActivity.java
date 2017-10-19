@@ -8,6 +8,7 @@ import android.widget.Toast;
 
 import com.c3.jbz.BuildConfig;
 import com.c3.jbz.R;
+import com.c3.jbz.logic.C3WXEventHandler;
 import com.tencent.mm.opensdk.constants.ConstantsAPI;
 import com.tencent.mm.opensdk.modelbase.BaseReq;
 import com.tencent.mm.opensdk.modelbase.BaseResp;
@@ -15,6 +16,9 @@ import com.tencent.mm.opensdk.openapi.IWXAPI;
 import com.tencent.mm.opensdk.openapi.IWXAPIEventHandler;
 import com.tencent.mm.opensdk.openapi.WXAPIFactory;
 
+/**
+ * 分享的回调页面
+ */
 public class WXEntryActivity extends Activity implements IWXAPIEventHandler {
     // IWXAPI 是第三方app和微信通信的openapi接口
     private IWXAPI api;
@@ -45,28 +49,13 @@ public class WXEntryActivity extends Activity implements IWXAPIEventHandler {
     // 微信发送请求到第三方应用时，会回调到该方法
     @Override
     public void onReq(BaseReq req) {
-        System.out.println("onReq=======>>" + req.openId +  "|" + req.getType());
-        switch (req.getType()) {
-            case ConstantsAPI.COMMAND_GETMESSAGE_FROM_WX:
-                break;
-            case ConstantsAPI.COMMAND_SHOWMESSAGE_FROM_WX:
-                break;
-            default:
-                break;
-        }
+        C3WXEventHandler.as().onReq(req);
     }
 
     // 第三方应用发送到微信的请求处理后的响应结果，会回调到该方法
     @Override
     public void onResp(BaseResp resp) {
-        System.out.println("onResp=======>>" + resp.errCode + "|" + resp.errStr + "|" + resp.getType());
-        if(resp.getType()==ConstantsAPI.COMMAND_SENDMESSAGE_TO_WX) {
-            if (resp.errCode != BaseResp.ErrCode.ERR_OK) {
-                Toast.makeText(this,R.string.title_share_faild,Toast.LENGTH_LONG).show();
-            }else{
-                Toast.makeText(this,R.string.title_share_success,Toast.LENGTH_LONG).show();
-            }
-        }
+        C3WXEventHandler.as().onResp(resp);
         finish();
     }
 }

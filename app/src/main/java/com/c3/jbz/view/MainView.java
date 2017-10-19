@@ -1,6 +1,7 @@
 package com.c3.jbz.view;
 
 import com.hannesdorfmann.mosby3.mvp.MvpView;
+import com.tencent.mm.opensdk.modelbase.BaseResp;
 
 /**
  * Created by hedong on 2017/10/3.
@@ -44,4 +45,10 @@ public interface MainView extends MvpView {
      * 是否在顶级页面
      */
     public void checkTopLevelPage();
+
+    /**
+     * 处理微信返回
+     * @param resp
+     */
+    public void handleWXRespEvent(BaseResp resp);
 }
