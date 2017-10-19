@@ -74,7 +74,7 @@ public final class ToolsUtil {
 
     public static byte[] bmpToByteArray(final Bitmap bmp, final boolean needRecycle) {
         ByteArrayOutputStream output = new ByteArrayOutputStream();
-        bmp.compress(Bitmap.CompressFormat.PNG, 100, output);
+        bmp.compress(Bitmap.CompressFormat.PNG, 85, output);
         if (needRecycle) {
             bmp.recycle();
         }

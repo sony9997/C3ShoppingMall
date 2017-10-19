@@ -36,6 +36,8 @@ import java.util.TreeMap;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import butterknife.BindView;
+
 /**
  * Created by hedong on 2017/10/3.
  */
@@ -45,6 +47,7 @@ public class AndroidJsInvoker {
     public static final String tag = "AndroidJsInvoker";
     private IWXAPI iwxapi;
     private static final int THUMB_SIZE = 150;
+    private static final int thumbDataMaxLen='耀';//缩略图数据最大长度，微信要求
 
     public AndroidJsInvoker(Handler handler, IWXAPI iwxapi) {
         this.handler = handler;
@@ -77,7 +80,7 @@ public class AndroidJsInvoker {
      */
     @JavascriptInterface
     public void shareSessionUrl(String url, String title, String text, String imgurl) {
-        Log.d(tag, "shareSessionUrl:" + url);
+        Log.d(tag, String.format("shareSessionUrl:%s|%s|%s|%s",url,title,text,imgurl));
         if(!checkWXStatus())
             return;
         shareUrl(url,title,text,imgurl,false);
@@ -90,7 +93,7 @@ public class AndroidJsInvoker {
      */
     @JavascriptInterface
     public void shareTimeLineUrl(String url, String title, String text, String imgurl) {
-        Log.d(tag, "shareTimeLineUrl:" + url);
+        Log.d(tag, String.format("shareTimeLineUrl:%s|%s|%s|%s",url,title,text,imgurl));
         if(!checkWXStatus())
             return;
         shareUrl(url,title,text,imgurl,true);
@@ -123,9 +126,7 @@ public class AndroidJsInvoker {
 
                     @Override
                     public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage) {
-                        Bitmap thumbBmp = Bitmap.createScaledBitmap(loadedImage, THUMB_SIZE, THUMB_SIZE, true);
-                        loadedImage.recycle();
-                        msg.thumbData = ToolsUtil.bmpToByteArray(thumbBmp, true);
+                        msg.thumbData=getThumbData(loadedImage);
                         sendWXMediaMessage2Session(msg,transaction,isTimeLine);
                     }
 
@@ -139,6 +140,26 @@ public class AndroidJsInvoker {
                 sendWXMediaMessage2Session(msg,transaction,isTimeLine);
             }
         }
+    }
+
+    /**
+     * 获得缩略图数据
+     * @param loadedImage
+     * @return
+     */
+    private byte[] getThumbData(Bitmap loadedImage){
+        Bitmap thumbBmp = Bitmap.createScaledBitmap(loadedImage, THUMB_SIZE, THUMB_SIZE, true);
+        loadedImage.recycle();
+        byte[] thumbData = ToolsUtil.bmpToByteArray(thumbBmp, false);
+        int curSize=THUMB_SIZE;
+        while(thumbData.length>thumbDataMaxLen){
+            thumbData=null;
+            curSize-=10;
+            Bitmap tmp=Bitmap.createScaledBitmap(thumbBmp, curSize, curSize, true);
+            thumbData = ToolsUtil.bmpToByteArray(tmp, true);
+        }
+        thumbBmp.recycle();
+        return thumbData;
     }
 
     private void sendWXMediaMessage2Session(WXMediaMessage mediaMessage,String transaction,boolean isTimeLine) {
@@ -184,9 +205,7 @@ public class AndroidJsInvoker {
                     WXImageObject wxImageObject=new WXImageObject(loadedImage);
                     WXMediaMessage wxMediaMessage=new WXMediaMessage();
                     wxMediaMessage.mediaObject=wxImageObject;
-                    Bitmap thumbBmp = Bitmap.createScaledBitmap(loadedImage, THUMB_SIZE, THUMB_SIZE, true);
-                    loadedImage.recycle();
-                    wxMediaMessage.thumbData = ToolsUtil.bmpToByteArray(thumbBmp, true);
+                    wxMediaMessage.thumbData = getThumbData(loadedImage);
                     final String transaction="img";
                     sendWXMediaMessage2Session(wxMediaMessage,transaction,false);
                 }

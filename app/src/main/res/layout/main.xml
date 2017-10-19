@@ -8,14 +8,15 @@
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content" android:background="@color/top_bg">
 
         <ImageButton
             android:id="@+id/iv_back"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
-            android:src="@mipmap/back" android:layout_marginLeft="2dp" android:layout_marginTop="1dp" android:layout_marginBottom="1dp"/>
+            android:background="@drawable/selector_back"
+            android:src="@mipmap/back" android:paddingTop="3dp" android:paddingBottom="3dp" android:paddingLeft="1dp"/>
 
         <TextView
             android:layout_width="wrap_content"
@@ -27,8 +28,10 @@
 
         <ImageButton
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content" android:src="@mipmap/share" android:layout_alignParentRight="true"
-            android:id="@+id/iv_share" android:layout_marginRight="2dp" android:layout_marginTop="1dp" android:layout_marginBottom="1dp"/>
+            android:layout_height="wrap_content"
+            android:background="@drawable/selector_back"
+            android:src="@mipmap/share" android:layout_alignParentRight="true"
+            android:id="@+id/iv_share" android:paddingTop="3dp" android:paddingBottom="3dp" android:paddingRight="1dp"/>
 
     </RelativeLayout>
 
