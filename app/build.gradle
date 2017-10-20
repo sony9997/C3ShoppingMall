@@ -43,7 +43,7 @@ android {
         //\"file:///android_asset/login.html?deviceType=1&deviceId=%s&siteId=123&versionCode=${defaultConfig.versionCode}\"
         jubaozan {
             applicationId = "com.c3.jbz"
-            resValue("string", "app_name", "聚宝赞")//应用名
+            resValue("string", "app_name", "全心官方商城")//应用名
             buildConfigField("String", "wxAppId", "\"wxf5f118813820e57f\"")//应用ID，微信用
             buildConfigField("String", "wxBizSecretKey", "\"QX5J8mnwyc7hZt2ZjiaZnyZQvzpIPWuw\"")
 //微信商户秘钥

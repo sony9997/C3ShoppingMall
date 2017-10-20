@@ -112,6 +112,16 @@ public class MainActivity extends MvpActivity<MainView, MainPresenter> implement
                     tv_title.setText(view.getTitle());
             }
 
+            @Override
+            public boolean shouldOverrideUrlLoading(WebView view, String url) {
+                if (url.startsWith("tel:")) {
+                    Intent intent = new Intent(Intent.ACTION_DIAL, Uri.parse(url));
+                    startActivity(intent);
+                    return true;
+                }
+                return super.shouldOverrideUrlLoading(view,url);
+            }
+
         });
 
         webView.setWebChromeClient(c3WebChromeClient);
