@@ -15,6 +15,11 @@ android {
         buildConfigField("String", "WEB_JS_NAME_goShare", "\"javascript:goShare()\"")
         buildConfigField("String", "WEB_JS_NAME_handleWXRespEvent", "\"javascript:handleWXRespEvent(%d,%d,'%s')\"")
     }
+    
+    lintOptions {
+    	abortOnError false
+		}
+
     //签名配置
     signingConfigs {
 
