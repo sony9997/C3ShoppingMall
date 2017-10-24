@@ -57,4 +57,10 @@ public interface MainView extends MvpView {
      * @param isShow
      */
     public void setShowShareButton(boolean isShow);
+    /**
+     * 设置是否显示页眉
+     * @param isShow
+     */
+    public void setShowHeader(boolean isShow);
+
 }

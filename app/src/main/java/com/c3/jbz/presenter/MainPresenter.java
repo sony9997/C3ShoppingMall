@@ -38,6 +38,7 @@ public class MainPresenter extends MvpBasePresenter<MainView> implements Handler
     public static final int MSG_SHARE_IMGS_TIMELINE=2;//分享图片到朋友圈
     public static final int MSG_LOGOUT=3;//登出
     public static final int MSG_SHOWSHARE=4;//设置分享按钮是否显示
+    public static final int MSG_SHOWHEADER=5;//设置页眉是否显示
     public static final int MSG_ERR_NOT_INSTALL_WX=-1;//未安装微信
     public static final int MSG_ERR_NOT_SUPPORT_WX=-2;//不支持的微信api
 
@@ -129,6 +130,11 @@ public class MainPresenter extends MvpBasePresenter<MainView> implements Handler
             case MSG_SHOWSHARE:{
                 boolean isShow=message.arg1==1;
                 getView().setShowShareButton(isShow);
+                break;
+            }
+            case MSG_SHOWHEADER:{
+                boolean isShow=message.arg1==1;
+                getView().setShowHeader(isShow);
                 break;
             }
         }

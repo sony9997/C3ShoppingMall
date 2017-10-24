@@ -350,4 +350,19 @@ public class AndroidJsInvoker {
             }
         }
     }
+
+    @JavascriptInterface
+    public void setShowHeader(String isShow) {
+        Log.d(tag, "setShowHeader:" + isShow);
+        if(!TextUtils.isEmpty(isShow)){
+            try {
+                boolean show=Boolean.parseBoolean(isShow);
+                Message message=handler.obtainMessage(MainPresenter.MSG_SHOWHEADER);
+                message.arg1=show?1:0;
+                handler.sendMessage(message);
+            }catch (Exception e){
+                e.printStackTrace();
+            }
+        }
+    }
 }

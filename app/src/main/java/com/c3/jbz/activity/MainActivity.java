@@ -57,6 +57,8 @@ public class MainActivity extends MvpActivity<MainView, MainPresenter> implement
 
     @BindView(R.id.ll_empty)
     View ll_empty;
+    @BindView(R.id.ll_header)
+    View ll_header;
     @BindView(R.id.iv_share)
     ImageButton iv_share;
 
@@ -289,6 +291,12 @@ public class MainActivity extends MvpActivity<MainView, MainPresenter> implement
     public void setShowShareButton(boolean isShow) {
         if(iv_share!=null)
             iv_share.setVisibility(isShow?View.VISIBLE:View.INVISIBLE);
+    }
+
+    @Override
+    public void setShowHeader(boolean isShow) {
+        if(ll_header!=null)
+            ll_header.setVisibility(isShow?View.VISIBLE:View.INVISIBLE);
     }
 
     @Override
