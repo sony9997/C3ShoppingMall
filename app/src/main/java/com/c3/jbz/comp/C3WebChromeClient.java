@@ -9,6 +9,7 @@ import android.net.Uri;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.provider.Settings;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.webkit.JsResult;
@@ -234,5 +235,9 @@ public class C3WebChromeClient extends WebChromeClient {
         super.onReceivedTitle(view, title);
         if(tv_title!=null)
             tv_title.setText(title);
+        //判断标题 title 中是否包含有“error”字段，如果包含“error”字段，则设置加载失败，显示加载失败的视图
+        if(!TextUtils.isEmpty(title)&&title.toLowerCase().contains("error")){
+            ((MainActivity)activity).setLoadError(true);
+        }
     }
 }

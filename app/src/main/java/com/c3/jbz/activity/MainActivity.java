@@ -2,6 +2,7 @@ package com.c3.jbz.activity;
 
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -52,9 +53,14 @@ public class MainActivity extends MvpActivity<MainView, MainPresenter> implement
     @BindView(R.id.tv_title)
     TextView tv_title;
 
+    @BindView(R.id.ll_empty)
+    View ll_empty;
+
     private ProgressDialog pd;
 
     private C3WebChromeClient c3WebChromeClient;
+    private Toast toast;
+    private boolean loadError;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,6 +68,8 @@ public class MainActivity extends MvpActivity<MainView, MainPresenter> implement
         setContentView(R.layout.main);
 
         ButterKnife.bind(this);
+        toast=new Toast(this);
+        toast.setDuration(Toast.LENGTH_SHORT);
         c3WebChromeClient=new C3WebChromeClient(this,pbMain,tv_title);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
             ToolsUtil.verifyStoragePermissions(this);
@@ -88,7 +96,10 @@ public class MainActivity extends MvpActivity<MainView, MainPresenter> implement
 
     @Override
     public void toast(int msgId) {
-        Toast.makeText(this, msgId, Toast.LENGTH_LONG).show();
+        if(toast!=null) {
+            toast.setText(msgId);
+            toast.show();
+        }
     }
 
     @Override
@@ -103,6 +114,7 @@ public class MainActivity extends MvpActivity<MainView, MainPresenter> implement
             public void onPageStarted(WebView view, String url, Bitmap favicon) {
                 Log.d("onPageStarted", url);
                 super.onPageStarted(view, url, favicon);
+                loadError=false;
             }
 
             @Override
@@ -110,6 +122,13 @@ public class MainActivity extends MvpActivity<MainView, MainPresenter> implement
                 hideLoading();
                 if(tv_title!=null)
                     tv_title.setText(view.getTitle());
+                if(loadError){
+                    webView.setVisibility(View.GONE);
+                    ll_empty.setVisibility(View.VISIBLE);
+                }else{
+                    webView.setVisibility(View.VISIBLE);
+                    ll_empty.setVisibility(View.GONE);
+                }
             }
 
             @Override
@@ -120,6 +139,19 @@ public class MainActivity extends MvpActivity<MainView, MainPresenter> implement
                     return true;
                 }
                 return super.shouldOverrideUrlLoading(view,url);
+            }
+
+            /**
+             * 页面加载错误时执行的方法，但是在6.0以下，有时候会不执行这个方法
+             * @param view
+             * @param errorCode
+             * @param description
+             * @param failingUrl
+             */
+            @Override
+            public void onReceivedError(WebView view, int errorCode, String description, String failingUrl) {
+                super.onReceivedError(view, errorCode, description, failingUrl);
+                loadError = true;
             }
 
         });
@@ -224,24 +256,26 @@ public class MainActivity extends MvpActivity<MainView, MainPresenter> implement
         switch (resp.getType()){
             case ConstantsAPI.COMMAND_SENDMESSAGE_TO_WX:{
                 if(resp.errCode==BaseResp.ErrCode.ERR_OK){
-                    Toast.makeText(this,R.string.title_share_success,Toast.LENGTH_LONG).show();
+                    toast.setText(R.string.title_share_success);
                 }else if(resp.errCode==BaseResp.ErrCode.ERR_USER_CANCEL){
-                    Toast.makeText(this,R.string.title_share_cancel,Toast.LENGTH_LONG).show();
+                    toast.setText(R.string.title_share_cancel);
                 }else {
                     errStr=errStr.length()>0?errStr:getString(R.string.title_share_faild);
-                    Toast.makeText(this,errStr,Toast.LENGTH_LONG).show();
+                    toast.setText(errStr);
                 }
+                toast.show();
                 break;
             }
             case ConstantsAPI.COMMAND_PAY_BY_WX:{
                 if(resp.errCode==BaseResp.ErrCode.ERR_OK){
-                    Toast.makeText(this,R.string.title_pay_success,Toast.LENGTH_LONG).show();
+                    toast.setText(R.string.title_pay_success);
                 }else if(resp.errCode==BaseResp.ErrCode.ERR_USER_CANCEL){
-                    Toast.makeText(this,R.string.title_pay_cancel,Toast.LENGTH_LONG).show();
+                    toast.setText(R.string.title_pay_cancel);
                 }else {
                     errStr=errStr.length()>0?errStr:getString(R.string.title_pay_faild);
-                    Toast.makeText(this,errStr,Toast.LENGTH_LONG).show();
+                    toast.setText(errStr);
                 }
+                toast.show();
                 break;
             }
         }
@@ -250,6 +284,10 @@ public class MainActivity extends MvpActivity<MainView, MainPresenter> implement
     @Override
     protected void onDestroy() {
         hideLoading();
+        if(toast!=null){
+            toast.cancel();
+            toast=null;
+        }
         super.onDestroy();
     }
 
@@ -281,5 +319,31 @@ public class MainActivity extends MvpActivity<MainView, MainPresenter> implement
     @OnClick(R.id.iv_share)
     public void goShare(View view){
         webView.evaluateJavascript(BuildConfig.WEB_JS_NAME_goShare, null);
+    }
+
+    public void setLoadError(boolean loadError){
+        this.loadError=loadError;
+    }
+
+    @OnClick(R.id.tv_set)
+    public void go2SettingNetwork(View view){
+        Intent intent=null;
+        //判断手机系统的版本  即API大于10 就是3.0或以上版本
+        if(android.os.Build.VERSION.SDK_INT>10){
+            intent = new Intent(android.provider.Settings.ACTION_WIRELESS_SETTINGS);
+        }else{
+            intent = new Intent();
+            ComponentName component = new ComponentName("com.android.settings","com.android.settings.WirelessSettings");
+            intent.setComponent(component);
+            intent.setAction("android.intent.action.VIEW");
+        }
+        startActivity(intent);
+    }
+
+    @OnClick(R.id.tv_fresh)
+    public void urlReload(View view){
+        if (webView != null) {
+            webView.reload();
+        }
     }
 }

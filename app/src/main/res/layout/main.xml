@@ -2,39 +2,50 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#0099cc"
+    android:background="@android:color/white"
     android:orientation="vertical"
     tools:context=".activity.MainActivity">
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" android:background="@color/top_bg" android:orientation="horizontal">
+        android:layout_height="wrap_content"
+        android:background="@color/top_bg"
+        android:orientation="horizontal">
 
         <ImageButton
             android:id="@+id/iv_back"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@drawable/selector_back"
-            android:src="@mipmap/back"
             android:layout_weight="0"
-            android:paddingTop="2dp" android:paddingBottom="2dp" android:paddingLeft="1dp" android:paddingRight="1dp"/>
+            android:background="@drawable/selector_back"
+            android:paddingBottom="2dp"
+            android:paddingLeft="1dp"
+            android:paddingRight="1dp"
+            android:paddingTop="2dp"
+            android:src="@mipmap/back" />
 
         <TextView
+            android:id="@+id/tv_title"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:textColor="@android:color/white"
-            android:gravity="center"
             android:layout_weight="1"
-            android:textSize="18sp" android:id="@+id/tv_title"  android:ellipsize="end" android:maxLines="1"
-            />
+            android:ellipsize="end"
+            android:gravity="center"
+            android:maxLines="1"
+            android:textColor="@android:color/white"
+            android:textSize="18sp" />
 
         <ImageButton
+            android:id="@+id/iv_share"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@drawable/selector_back"
-            android:src="@mipmap/share"
             android:layout_weight="0"
-            android:id="@+id/iv_share" android:paddingTop="2dp" android:paddingBottom="2dp" android:paddingLeft="1dp" android:paddingRight="1dp"/>
+            android:background="@drawable/selector_back"
+            android:paddingBottom="2dp"
+            android:paddingLeft="1dp"
+            android:paddingRight="1dp"
+            android:paddingTop="2dp"
+            android:src="@mipmap/share" />
 
     </LinearLayout>
 
@@ -46,10 +57,61 @@
         android:progressDrawable="@drawable/pg"
         android:visibility="gone" />
 
-    <WebView
-        android:id="@+id/wv_main"
+    <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:scrollbars="vertical"></WebView>
+        android:layout_height="match_parent">
+
+        <WebView
+            android:id="@+id/wv_main"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scrollbars="vertical" />
+
+        <LinearLayout
+            android:id="@+id/ll_empty"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:orientation="vertical" android:visibility="gone">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@mipmap/nosign" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="10dp"
+                android:layout_marginTop="10dp"
+                android:text="@string/title_nonetwork"
+                android:textColor="@android:color/darker_gray"
+                android:textSize="16sp" />
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/tv_fresh"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="10dp"
+                    android:text="@string/title_fresh"
+                    android:textColor="@android:color/black"
+                    android:textSize="20sp" android:autoLink="all"/>
+
+                <TextView
+                    android:id="@+id/tv_set"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/title_go2Setting"
+                    android:textColor="@android:color/black"
+                    android:textSize="20sp" android:autoLink="all"/>
+            </LinearLayout>
+        </LinearLayout>
+    </FrameLayout>
 
 </LinearLayout>

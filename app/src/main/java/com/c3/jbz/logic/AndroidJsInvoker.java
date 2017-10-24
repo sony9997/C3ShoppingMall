@@ -232,7 +232,7 @@ public class AndroidJsInvoker {
                     wxMediaMessage.mediaObject=wxImageObject;
                     wxMediaMessage.thumbData = getThumbData(loadedImage);
                     final String transaction="img";
-                    sendWXMediaMessage2Session(wxMediaMessage,transaction,false);
+                    sendWXMediaMessage2Session(wxMediaMessage,transaction,isTimeLine);
                 }
 
                 @Override

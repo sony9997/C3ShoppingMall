@@ -21,4 +21,7 @@
     <string name="toast_not_install_wx">请先安装微信客户端！</string>
     <string name="toast_not_support_wxapi">请确定微信客户端为最新版本！</string>
     <string name="image_chooser">选择图片</string>
+    <string name="title_fresh"><u>刷新重试</u></string>
+    <string name="title_go2Setting"><u>设置网络</u></string>
+    <string name="title_nonetwork">无法连接到网络，请稍后再试</string>
 </resources>
