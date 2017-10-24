@@ -51,4 +51,10 @@ public interface MainView extends MvpView {
      * @param resp
      */
     public void handleWXRespEvent(BaseResp resp);
+
+    /**
+     * 设置是否显示分享按钮
+     * @param isShow
+     */
+    public void setShowShareButton(boolean isShow);
 }

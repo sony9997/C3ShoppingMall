@@ -19,6 +19,8 @@ import android.webkit.ValueCallback;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -55,6 +57,8 @@ public class MainActivity extends MvpActivity<MainView, MainPresenter> implement
 
     @BindView(R.id.ll_empty)
     View ll_empty;
+    @BindView(R.id.iv_share)
+    ImageButton iv_share;
 
     private ProgressDialog pd;
 
@@ -279,6 +283,12 @@ public class MainActivity extends MvpActivity<MainView, MainPresenter> implement
                 break;
             }
         }
+    }
+
+    @Override
+    public void setShowShareButton(boolean isShow) {
+        if(iv_share!=null)
+            iv_share.setVisibility(isShow?View.VISIBLE:View.INVISIBLE);
     }
 
     @Override

@@ -6,6 +6,7 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Handler;
 import android.os.Message;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.webkit.JavascriptInterface;
@@ -333,5 +334,20 @@ public class AndroidJsInvoker {
             return false;
         }
         return true;
+    }
+
+    @JavascriptInterface
+    public void setShowShareBtn(String isShow) {
+        Log.d(tag, "setShowShare:" + isShow);
+        if(!TextUtils.isEmpty(isShow)){
+            try {
+                boolean show=Boolean.parseBoolean(isShow);
+                Message message=handler.obtainMessage(MainPresenter.MSG_SHOWSHARE);
+                message.arg1=show?1:0;
+                handler.sendMessage(message);
+            }catch (Exception e){
+                e.printStackTrace();
+            }
+        }
     }
 }

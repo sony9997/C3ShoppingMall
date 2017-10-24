@@ -40,6 +40,14 @@
 			function handleWXRespEvent(type,errCode,errStr){
 				alert(type+'|'+errCode+'|'+errStr);
 			}
+
+			isShow=false;
+
+			//设置是否显示分享按钮
+			function setShowShareBtn() {
+			    isShow=!isShow;
+				androidInvoker.setShowShareBtn(isShow);
+			}
 		</script>
 	</head>
 	<body>
@@ -67,6 +75,9 @@
 			</tr>
 			<tr>
 				<td><a href="tel:18573194921">打电话</a></td>
+			</tr>
+			<tr>
+				<td><input type="button" style="font-size:22px"  value="设置是否显示分享按钮" onclick="setShowShareBtn();" /></td>
 			</tr>
 		</table>
 	</body>
