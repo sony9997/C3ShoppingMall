@@ -41,6 +41,11 @@
 				alert(type+'|'+errCode+'|'+errStr);
 			}
 
+			//处理支付宝SDK调用返回
+			function handleALIRespEvent(resultStatus){
+				alert('resultStatus:'+resultStatus);
+			}
+
 			isShow=false;
 
 			//设置是否显示分享按钮
@@ -73,7 +78,10 @@
 				<td><input type="button" style="font-size:22px"  value="分享图文到微信朋友圈" onclick="shareTimeline('www.baidu.com','https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1507722288871&di=d9bf44290d37d97690b0a93bf0e5fd55&imgtype=0&src=http%3A%2F%2Fg.hiphotos.baidu.com%2Fimage%2Fpic%2Fitem%2F728da9773912b31b66a8d0048d18367adbb4e1d3.jpg,https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1507722288870&di=9c9e313e269b45a3199e68142a1ccd92&imgtype=0&src=http%3A%2F%2Fg.hiphotos.baidu.com%2Fimage%2Fpic%2Fitem%2F9922720e0cf3d7ca7dc83a5bf91fbe096b63a9e4.jpg,https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1507722288870&di=9c9e313e269b45a3199e68142a1ccd92&imgtype=0&src=http%3A%2F%2Fg.hiphotos.baidu.com%2Fimage%2Fpic%2Fitem%2F9922720e0cf3d7ca7dc83a5bf91fbe096b63a9e4.jpg,https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1507722288870&di=4a3354a637bef75ef9082a5a402aa557&imgtype=0&src=http%3A%2F%2Fc.hiphotos.baidu.com%2Fimage%2Fpic%2Fitem%2Fb17eca8065380cd78b97d3c0aa44ad3459828115.jpg,https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1507722288869&di=7a2c5090b3801a33e52d5f55879b3a34&imgtype=0&src=http%3A%2F%2Fh.hiphotos.baidu.com%2Fimage%2Fpic%2Fitem%2Fe1fe9925bc315c6053f677c286b1cb13495477bf.jpg,https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1507722288869&di=7a2c5090b3801a33e52d5f55879b3a34&imgtype=0&src=http%3A%2F%2Fh.hiphotos.baidu.com%2Fimage%2Fpic%2Fitem%2Fe1fe9925bc315c6053f677c286b1cb13495477bf.jpg,https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1507722288871&di=d9bf44290d37d97690b0a93bf0e5fd55&imgtype=0&src=http%3A%2F%2Fg.hiphotos.baidu.com%2Fimage%2Fpic%2Fitem%2F728da9773912b31b66a8d0048d18367adbb4e1d3.jpg,https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1507722288870&di=9c9e313e269b45a3199e68142a1ccd92&imgtype=0&src=http%3A%2F%2Fg.hiphotos.baidu.com%2Fimage%2Fpic%2Fitem%2F9922720e0cf3d7ca7dc83a5bf91fbe096b63a9e4.jpg,https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1507722288870&di=9c9e313e269b45a3199e68142a1ccd92&imgtype=0&src=http%3A%2F%2Fg.hiphotos.baidu.com%2Fimage%2Fpic%2Fitem%2F9922720e0cf3d7ca7dc83a5bf91fbe096b63a9e4.jpg,https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1507722288870&di=4a3354a637bef75ef9082a5a402aa557&imgtype=0&src=http%3A%2F%2Fc.hiphotos.baidu.com%2Fimage%2Fpic%2Fitem%2Fb17eca8065380cd78b97d3c0aa44ad3459828115.jpg,https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1507722288869&di=7a2c5090b3801a33e52d5f55879b3a34&imgtype=0&src=http%3A%2F%2Fh.hiphotos.baidu.com%2Fimage%2Fpic%2Fitem%2Fe1fe9925bc315c6053f677c286b1cb13495477bf.jpg,https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1507722288869&di=7a2c5090b3801a33e52d5f55879b3a34&imgtype=0&src=http%3A%2F%2Fh.hiphotos.baidu.com%2Fimage%2Fpic%2Fitem%2Fe1fe9925bc315c6053f677c286b1cb13495477bf.jpg');" /></td>
 			</tr>
 			<tr>
-				<td><input type="button" style="font-size:22px"  value="微信支付" onclick="payment('1101000000140415649af9fc314aa427');" /></td>
+				<td><input type="button" style="font-size:22px"  value="微信支付" onclick="payment('{paytype:0,orderInfo:{appid:\'wxf5f118813820e57f\',noncestr:\'005z0pn0hf1afxn1wh5np8ij4vpruin6\',package:\'Sign=WXPay\',partnerid:\'1490518122\',prepayid:\'1101000000140415649af9fc314aa427\',timestamp:\'1510146387\',sign:\'CDE44936961700E63F80617FB7BF107C\'}}');" /></td>
+			</tr>
+			<tr>
+				<td><input type="button" style="font-size:22px"  value="支付宝支付" onclick="payment('{paytype:1,orderInfo:\'app_id=2015052600090779&biz_content=%7B%22timeout_express%22%3A%2230m%22%2C%22seller_id%22%3A%22%22%2C%22product_code%22%3A%22QUICK_MSECURITY_PAY%22%2C%22total_amount%22%3A%220.02%22%2C%22subject%22%3A%221%22%2C%22body%22%3A%22%E6%88%91%E6%98%AF%E6%B5%8B%E8%AF%95%E6%95%B0%E6%8D%AE%22%2C%22out_trade_no%22%3A%22314VYGIAGG7ZOYY%22%7D&charset=utf-8&method=alipay.trade.app.pay&sign_type=RSA2&timestamp=2016-08-15%2012%3A12%3A15&version=1.0&sign=MsbylYkCzlfYLy9PeRwUUIg9nZPeN9SfXPNavUCroGKR5Kqvx0nEnd3eRmKxJuthNUx4ERCXe552EV9PfwexqW%2B1wbKOdYtDIb4%2B7PL3Pc94RZL0zKaWcaY3tSL89%2FuAVUsQuFqEJdhIukuKygrXucvejOUgTCfoUdwTi7z%2BZzQ%3D\'}');" /></td>
 			</tr>
 			<tr>
 				<td><input type="file" style="font-size:22px"  value="图片上传" onchange="form.submit()"/></td>
