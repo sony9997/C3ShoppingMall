@@ -1,5 +1,6 @@
 package com.c3.jbz.activity;
 
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.ComponentName;
@@ -11,6 +12,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
@@ -29,11 +31,14 @@ import com.c3.jbz.BuildConfig;
 import com.c3.jbz.R;
 import com.c3.jbz.comp.C3WebChromeClient;
 import com.c3.jbz.presenter.MainPresenter;
+import com.c3.jbz.util.PayResult;
 import com.c3.jbz.util.ToolsUtil;
 import com.c3.jbz.view.MainView;
 import com.hannesdorfmann.mosby3.mvp.MvpActivity;
 import com.tencent.mm.opensdk.constants.ConstantsAPI;
 import com.tencent.mm.opensdk.modelbase.BaseResp;
+
+import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -74,8 +79,7 @@ public class MainActivity extends MvpActivity<MainView, MainPresenter> implement
         setContentView(R.layout.main);
 
         ButterKnife.bind(this);
-        toast=new Toast(this);
-        toast.setDuration(Toast.LENGTH_SHORT);
+        toast=Toast.makeText(this,"",Toast.LENGTH_SHORT);
         c3WebChromeClient=new C3WebChromeClient(this,pbMain,tv_title);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
             ToolsUtil.verifyStoragePermissions(this);
@@ -86,7 +90,7 @@ public class MainActivity extends MvpActivity<MainView, MainPresenter> implement
     @NonNull
     @Override
     public MainPresenter createPresenter() {
-        return new MainPresenter(getApplicationContext());
+        return new MainPresenter(this);
     }
 
     @Override
@@ -113,6 +117,7 @@ public class MainActivity extends MvpActivity<MainView, MainPresenter> implement
         getPresenter().loadMainPage();
     }
 
+    @SuppressLint("JavascriptInterface")
     @Override
     public void initMainPage(String url, Object jsObject) {
         webView.setWebViewClient(new WebViewClient() {
@@ -297,6 +302,30 @@ public class MainActivity extends MvpActivity<MainView, MainPresenter> implement
     public void setShowHeader(boolean isShow) {
         if(ll_header!=null)
             ll_header.setVisibility(isShow?View.VISIBLE:View.INVISIBLE);
+    }
+
+    @Override
+    public void handleAliRespEvent(Map<String, String> result) {
+        PayResult payResult = new PayResult((Map<String, String>) result);
+        /**
+         对于支付结果，请商户依赖服务端的异步通知结果。同步通知结果，仅作为支付结束的通知。
+         */
+        String resultInfo = payResult.getResult();// 同步返回需要验证的信息
+        String resultStatus = payResult.getResultStatus();
+        webView.evaluateJavascript(String.format(BuildConfig.WEB_JS_NAME_handleALIRespEvent,resultStatus), null);
+        // 判断resultStatus 为9000则代表支付成功
+        if (TextUtils.equals(resultStatus, "9000")) {
+            // 该笔订单是否真实支付成功，需要依赖服务端的异步通知。
+            toast.setText(R.string.title_pay_success);
+        }
+        else if(TextUtils.equals(resultStatus,"6001")){
+            toast.setText(R.string.title_pay_cancel);
+        }
+        else {
+            // 该笔订单真实的支付结果，需要依赖服务端的异步通知。
+            toast.setText(getString(R.string.title_pay_faild)+"errorCode:"+resultStatus);
+        }
+        toast.show();
     }
 
     @Override

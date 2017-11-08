@@ -3,6 +3,8 @@ package com.c3.jbz.view;
 import com.hannesdorfmann.mosby3.mvp.MvpView;
 import com.tencent.mm.opensdk.modelbase.BaseResp;
 
+import java.util.Map;
+
 /**
  * Created by hedong on 2017/10/3.
  */
@@ -62,5 +64,11 @@ public interface MainView extends MvpView {
      * @param isShow
      */
     public void setShowHeader(boolean isShow);
+
+    /**
+     * 支付宝支付返回结果处理
+     * @param result
+     */
+    public void handleAliRespEvent(Map<String, String> result);
 
 }

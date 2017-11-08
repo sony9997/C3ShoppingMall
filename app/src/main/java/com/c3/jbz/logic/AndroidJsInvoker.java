@@ -1,6 +1,7 @@
 package com.c3.jbz.logic;
 
 import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
@@ -11,7 +12,9 @@ import android.util.Log;
 import android.view.View;
 import android.webkit.JavascriptInterface;
 
+import com.alipay.sdk.app.PayTask;
 import com.c3.jbz.BuildConfig;
+import com.c3.jbz.activity.MainActivity;
 import com.c3.jbz.db.ShareDataLocal;
 import com.c3.jbz.presenter.MainPresenter;
 import com.c3.jbz.util.ToolsUtil;
@@ -23,9 +26,14 @@ import com.tencent.mm.opensdk.modelmsg.WXMediaMessage;
 import com.tencent.mm.opensdk.modelmsg.WXWebpageObject;
 import com.tencent.mm.opensdk.modelpay.PayReq;
 import com.tencent.mm.opensdk.openapi.IWXAPI;
+import com.tencent.mm.opensdk.openapi.WXAPIFactory;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Map;
 import java.util.SortedMap;
 import java.util.TreeMap;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -40,10 +48,14 @@ public class AndroidJsInvoker {
     private IWXAPI iwxapi;
     private static final int THUMB_SIZE = 150;
     private static final int thumbDataMaxLen='耀';//缩略图数据最大长度，微信要求
+    private Context context;
 
-    public AndroidJsInvoker(Handler handler, IWXAPI iwxapi) {
+    public AndroidJsInvoker(Handler handler, Context context) {
         this.handler = handler;
-        this.iwxapi = iwxapi;
+        this.context=context;
+        //初始化微信API对象
+        iwxapi= WXAPIFactory.createWXAPI(context, BuildConfig.wxAppId,true);
+        iwxapi.registerApp(BuildConfig.wxAppId);
     }
 
     /**
@@ -289,10 +301,74 @@ public class AndroidJsInvoker {
     /**
      * 发起支付
      *
-     * @param prepayId 预付订单id
+     * @param req 请求参数，json格式数据
      */
     @JavascriptInterface
-    public void payment(String prepayId) {
+    public void payment(String req) {
+        Log.d(tag,"payment:"+req);
+        if(TextUtils.isEmpty(req)){
+            return;
+        }
+        try {
+            JSONObject jsonObject=new JSONObject(req);
+            int paytype=jsonObject.getInt("paytype");
+
+            switch (paytype){
+                case 0:{//wx
+                    JSONObject param=jsonObject.getJSONObject("orderInfo");
+                    wxPayment(param);
+                    break;
+                }
+                case 1:{//ali
+                    String param=jsonObject.getString("orderInfo");
+                    aliPayment(param);
+                    break;
+                }
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void wxPayment(JSONObject reqParam){
+        if(!checkWXStatus())
+            return;
+        try {
+            PayReq request = new PayReq();
+            request.appId = reqParam.getString("appid");
+            request.partnerId = reqParam.getString("partnerid");
+            request.prepayId= reqParam.getString("prepayid");
+            request.packageValue = reqParam.getString("appid");
+            request.nonceStr= reqParam.getString("noncestr");
+            request.timeStamp= reqParam.getString("timestamp");
+            request.sign=reqParam.getString("sign");
+            boolean result=iwxapi.sendReq(request);
+            Log.d(tag, "sendReq:" + result);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void aliPayment(final String orderInfo){
+
+        Runnable payRunnable = new Runnable() {
+
+            @Override
+            public void run() {
+                PayTask alipay = new PayTask((MainActivity)context);
+                Map<String, String> result = alipay.payV2(orderInfo, true);
+                Log.d(tag, result.toString());
+                Message message=handler.obtainMessage(MainPresenter.MSG_ALIPAY_RESULT,result);
+                handler.sendMessage(message);
+            }
+        };
+
+        Thread payThread = new Thread(payRunnable);
+        payThread.start();
+
+    }
+
+    public void payment_old(String prepayId) {
         Log.d(tag, "payment:" + prepayId);
         if(!checkWXStatus())
             return;

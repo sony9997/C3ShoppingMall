@@ -25,6 +25,7 @@ import com.tencent.mm.opensdk.openapi.IWXAPI;
 import com.tencent.mm.opensdk.openapi.WXAPIFactory;
 
 import java.util.ArrayList;
+import java.util.Map;
 
 /**
  * Created by hedong on 2017/10/3.
@@ -39,6 +40,7 @@ public class MainPresenter extends MvpBasePresenter<MainView> implements Handler
     public static final int MSG_LOGOUT=3;//登出
     public static final int MSG_SHOWSHARE=4;//设置分享按钮是否显示
     public static final int MSG_SHOWHEADER=5;//设置页眉是否显示
+    public static final int MSG_ALIPAY_RESULT=6;//支付宝支付返回结果
     public static final int MSG_ERR_NOT_INSTALL_WX=-1;//未安装微信
     public static final int MSG_ERR_NOT_SUPPORT_WX=-2;//不支持的微信api
 
@@ -53,9 +55,6 @@ public class MainPresenter extends MvpBasePresenter<MainView> implements Handler
         if(handler==null){
             handler=new Handler(Looper.getMainLooper(),this);
         }
-        //初始化微信API对象
-        IWXAPI iwxapi=WXAPIFactory.createWXAPI(context, BuildConfig.wxAppId,true);
-        iwxapi.registerApp(BuildConfig.wxAppId);
 
         //初始化图片加载工具
         DisplayImageOptions defaultOptions = new DisplayImageOptions.Builder()
@@ -68,7 +67,7 @@ public class MainPresenter extends MvpBasePresenter<MainView> implements Handler
                 .tasksProcessingOrder(QueueProcessingType.LIFO).build();
         ImageLoader.getInstance().init(config);
         C3WXEventHandler.as().init(this);
-        androidJsInvoker=new AndroidJsInvoker(handler,iwxapi);
+        androidJsInvoker=new AndroidJsInvoker(handler,context);
 
         go2MainPage();
     }
@@ -135,6 +134,10 @@ public class MainPresenter extends MvpBasePresenter<MainView> implements Handler
             case MSG_SHOWHEADER:{
                 boolean isShow=message.arg1==1;
                 getView().setShowHeader(isShow);
+                break;
+            }
+            case MSG_ALIPAY_RESULT:{
+                getView().handleAliRespEvent((Map<String, String>) message.obj);
                 break;
             }
         }
