@@ -24,6 +24,11 @@
 			function shareTimeLineUrl(surl,title,text,imgurl) {
 				androidInvoker.shareTimeLineUrl(surl,title,text,imgurl);
 			}
+			function getAppId(paytype) {
+				appid=androidInvoker.getAppId(paytype);
+				alert('appid：'+appid);
+			}
+
 			function payment(paytype) {
 				appid=androidInvoker.getAppId(paytype);
 				if(paytype==0){
@@ -100,6 +105,9 @@
 			</tr>
 			<tr>
 				<td><input type="button" style="font-size:22px"  value="设置是否显示页眉" onclick="setShowHeader();" /></td>
+			</tr>
+			<tr>
+				<td><input type="button" style="font-size:22px"  value="获取AppId" onclick="getAppId(1);" /></td>
 			</tr>
 		</table>
 	</body>

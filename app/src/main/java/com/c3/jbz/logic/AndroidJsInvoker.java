@@ -349,14 +349,14 @@ public class AndroidJsInvoker {
         }
     }
 
-    private void aliPayment(final String orderInfo){
-
+    private void aliPayment(String orderInfo){
+        final String orderParam=orderInfo.replace("|","&");
         Runnable payRunnable = new Runnable() {
 
             @Override
             public void run() {
                 PayTask alipay = new PayTask((MainActivity)context);
-                Map<String, String> result = alipay.payV2(orderInfo, true);
+                Map<String, String> result = alipay.payV2(orderParam, true);
                 Log.d(tag, result.toString());
                 Message message=handler.obtainMessage(MainPresenter.MSG_ALIPAY_RESULT,result);
                 handler.sendMessage(message);
