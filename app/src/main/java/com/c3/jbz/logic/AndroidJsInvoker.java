@@ -441,4 +441,10 @@ public class AndroidJsInvoker {
             }
         }
     }
+
+    @JavascriptInterface
+    public String getAppId(int type) {
+        String appid=type==0?BuildConfig.wxAppId:BuildConfig.aliAppId;
+        return  appid;
+    }
 }

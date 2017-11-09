@@ -52,6 +52,7 @@ android {
             applicationId = "com.c3.jbz"
             resValue("string", "app_name", "全心官方商城")//应用名
             buildConfigField("String", "wxAppId", "\"wxf5f118813820e57f\"")//应用ID，微信用
+            buildConfigField("String", "aliAppId", "\"2015052600090779\"")//应用ID，支付宝用
             buildConfigField("String", "wxBizSecretKey", "\"QX5J8mnwyc7hZt2ZjiaZnyZQvzpIPWuw\"")
 //微信商户秘钥
             buildConfigField("String", "wxPartnerId", "\"1490518122\"")//合作伙伴ID，微信用
