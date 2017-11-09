@@ -8,6 +8,7 @@ import android.widget.Toast;
 
 import com.c3.jbz.BuildConfig;
 import com.c3.jbz.R;
+import com.c3.jbz.db.ShareDataLocal;
 import com.c3.jbz.logic.C3WXEventHandler;
 import com.tencent.mm.opensdk.constants.ConstantsAPI;
 import com.tencent.mm.opensdk.modelbase.BaseReq;
@@ -27,7 +28,7 @@ public class WXPayEntryActivity extends Activity implements IWXAPIEventHandler {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        api = WXAPIFactory.createWXAPI(this, BuildConfig.wxAppId, false);
+        api = WXAPIFactory.createWXAPI(this, ShareDataLocal.as().getStringValue(BuildConfig.KEY_WX_APPID,null), false);
         //注意：
         //第三方开发者如果使用透明界面来实现WXEntryActivity，需要判断handleIntent的返回值，如果返回值为false，则说明入参不合法未被SDK处理，应finish当前透明界面，避免外部通过传递非法参数的Intent导致停留在透明界面，引起用户的疑惑
         try {

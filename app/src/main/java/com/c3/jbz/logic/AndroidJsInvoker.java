@@ -45,7 +45,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public class AndroidJsInvoker {
     private Handler handler;
     public static final String tag = "AndroidJsInvoker";
-    private IWXAPI iwxapi;
     private static final int THUMB_SIZE = 150;
     private static final int thumbDataMaxLen='耀';//缩略图数据最大长度，微信要求
     private Context context;
@@ -53,9 +52,14 @@ public class AndroidJsInvoker {
     public AndroidJsInvoker(Handler handler, Context context) {
         this.handler = handler;
         this.context=context;
+    }
+
+    private IWXAPI getIWXAPI(){
         //初始化微信API对象
-        iwxapi= WXAPIFactory.createWXAPI(context, BuildConfig.wxAppId,true);
-        iwxapi.registerApp(BuildConfig.wxAppId);
+        String wxAppId=ShareDataLocal.as().getStringValue(BuildConfig.KEY_WX_APPID,null);
+        IWXAPI iwxapi= WXAPIFactory.createWXAPI(context, wxAppId,true);
+        iwxapi.registerApp(wxAppId);
+        return  iwxapi;
     }
 
     /**
@@ -172,7 +176,7 @@ public class AndroidJsInvoker {
             req.transaction = buildTransaction(transaction);
             req.message = mediaMessage;
             req.scene = isTimeLine?SendMessageToWX.Req.WXSceneTimeline:SendMessageToWX.Req.WXSceneSession;
-            iwxapi.sendReq(req);
+            getIWXAPI().sendReq(req);
         }
         handler.sendEmptyMessage(MainPresenter.MSG_LOADED_IMG);
     }
@@ -342,7 +346,7 @@ public class AndroidJsInvoker {
             request.nonceStr= reqParam.getString("noncestr");
             request.timeStamp= reqParam.getString("timestamp");
             request.sign=reqParam.getString("sign");
-            boolean result=iwxapi.sendReq(request);
+            boolean result=getIWXAPI().sendReq(request);
             Log.d(tag, "sendReq:" + result);
         } catch (JSONException e) {
             e.printStackTrace();
@@ -368,30 +372,6 @@ public class AndroidJsInvoker {
 
     }
 
-    public void payment_old(String prepayId) {
-        Log.d(tag, "payment:" + prepayId);
-        if(!checkWXStatus())
-            return;
-        PayReq request = new PayReq();
-        request.appId = BuildConfig.wxAppId;
-        request.partnerId = BuildConfig.wxPartnerId;
-        request.prepayId= prepayId;
-        request.packageValue = "Sign=WXPay";
-        request.nonceStr= ToolsUtil.createRandom(false,32);
-        request.timeStamp= String.valueOf(System.currentTimeMillis()/1000);
-        SortedMap<Object, Object> parameters = new TreeMap<Object, Object>();
-        parameters.put("appid", request.appId);
-        parameters.put("noncestr", request.nonceStr);
-        parameters.put("package", request.packageValue);
-        parameters.put("partnerid", request.partnerId);
-        parameters.put("prepayid", request.prepayId);
-        parameters.put("timestamp", request.timeStamp);
-        request.sign= ToolsUtil.createWXSign(parameters);
-        Log.d(tag, "request.sign:" + request.sign);
-        boolean result=iwxapi.sendReq(request);
-        Log.d(tag, "sendReq:" + result);
-    }
-
     private String buildTransaction(final String type) {
         return (type == null) ? String.valueOf(System.currentTimeMillis()) : type + System.currentTimeMillis();
     }
@@ -401,7 +381,8 @@ public class AndroidJsInvoker {
      * @return
      */
     private boolean checkWXStatus(){
-        if(!this.iwxapi.isWXAppInstalled()){
+        IWXAPI iwxapi=getIWXAPI();
+        if(!iwxapi.isWXAppInstalled()){
             handler.sendEmptyMessage(MainPresenter.MSG_ERR_NOT_INSTALL_WX);
             return false;
         }
@@ -443,8 +424,8 @@ public class AndroidJsInvoker {
     }
 
     @JavascriptInterface
-    public String getAppId(int type) {
-        String appid=type==0?BuildConfig.wxAppId:BuildConfig.aliAppId;
-        return  appid;
+    public void setAppId(int type,String appId) {
+        Log.d(tag,"type:"+type+"|appId:"+appId);
+        ShareDataLocal.as().setStringValue(type==0?BuildConfig.KEY_WX_APPID:BuildConfig.KEY_ALI_APPID,appId);
     }
 }
