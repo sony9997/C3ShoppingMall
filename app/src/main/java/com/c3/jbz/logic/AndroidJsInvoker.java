@@ -424,8 +424,13 @@ public class AndroidJsInvoker {
     }
 
     @JavascriptInterface
-    public void setAppId(int type,String appId) {
-        Log.d(tag,"type:"+type+"|appId:"+appId);
-        ShareDataLocal.as().setStringValue(type==0?BuildConfig.KEY_WX_APPID:BuildConfig.KEY_ALI_APPID,appId);
+    public void setAppId(String wxAppid,String aliAppId) {
+        Log.d(tag,"wxAppid:"+wxAppid+"|aliAppId:"+aliAppId);
+        if(!TextUtils.isEmpty(wxAppid)){
+            ShareDataLocal.as().setStringValue(BuildConfig.KEY_WX_APPID,wxAppid);
+        }
+        if(!TextUtils.isEmpty(aliAppId)){
+            ShareDataLocal.as().setStringValue(BuildConfig.KEY_ALI_APPID,aliAppId);
+        }
     }
 }

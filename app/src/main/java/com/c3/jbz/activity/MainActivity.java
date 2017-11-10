@@ -179,7 +179,7 @@ public class MainActivity extends MvpActivity<MainView, MainPresenter> implement
 
         // 修改ua使得web端正确判断
         String ua = webViewSettings.getUserAgentString();
-        webViewSettings.setUserAgentString(ua+";JBZBrowser");
+        webViewSettings.setUserAgentString(ua+BuildConfig.SUFFIX_USER_AGENT);
         webView.setDownloadListener(downloadListener);
         webView.addJavascriptInterface(jsObject, "androidInvoker");
         webView.loadUrl(url);

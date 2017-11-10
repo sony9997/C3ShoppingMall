@@ -24,8 +24,8 @@
 			function shareTimeLineUrl(surl,title,text,imgurl) {
 				androidInvoker.shareTimeLineUrl(surl,title,text,imgurl);
 			}
-			function setAppId(type,appid) {
-				androidInvoker.setAppId(type,appid);
+			function setAppId(wxappid,zfbappid) {
+				androidInvoker.setAppId(wxappid,zfbappid);
 			}
 
 			function payment(paytype) {
@@ -68,8 +68,7 @@
 				androidInvoker.setShowHeader(isShow);
 			}
 
-			setAppId(0,'wxf5f118813820e57f');//设置微信appid
-			setAppId(1,'2015052600090779');//设置支付宝appid
+			setAppId('wxf5f118813820e57f','2015052600090779');//设置微信appid,设置支付宝appid
 		</script>
 	</head>
 	<body>

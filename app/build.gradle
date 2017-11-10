@@ -13,6 +13,7 @@ android {
         buildConfigField("String", "KEY_USERID", "\"KEY_USERID\"")//用户id
         buildConfigField("String", "KEY_WX_APPID", "\"KEY_WX_APPID\"")//微信appid
         buildConfigField("String", "KEY_ALI_APPID", "\"KEY_ALI_APPID\"")//支付宝appid
+        buildConfigField("String", "SUFFIX_USER_AGENT", "\";JBZBrowser\"")//浏览器的user-agent后缀
         buildConfigField("String", "WEB_JS_NAME_ISTOP", "\"javascript:isTopLevelPage()\"")
         buildConfigField("String", "WEB_JS_NAME_goShare", "\"javascript:goShare()\"")
         buildConfigField("String", "WEB_JS_NAME_handleWXRespEvent", "\"javascript:handleWXRespEvent(%d,%d,'%s')\"")
@@ -47,7 +48,7 @@ android {
 
     //多包名设置
     productFlavors {
-        //https://t.jubaozan.cn/client/start.do?deviceType=1&deviceId=%s&siteId=1123&versionCode=${defaultConfig.versionCode} 测试环境地址
+        //https://wx.jubaozan.cn/client/start.do?deviceType=1&deviceId=%s&siteId=1123&versionCode=${defaultConfig.versionCode} 测试环境地址
         //\"file:///android_asset/login.html?deviceType=1&deviceId=%s&siteId=123&versionCode=${defaultConfig.versionCode}\"
 //        https://m.c3tech.cn/client/start.do?deviceType=1&deviceId=%s&siteId=1263&versionCode=${defaultConfig.versionCode}
         jubaozan {
