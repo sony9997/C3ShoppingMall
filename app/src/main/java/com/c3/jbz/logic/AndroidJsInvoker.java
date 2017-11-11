@@ -347,7 +347,7 @@ public class AndroidJsInvoker {
             request.nonceStr= reqParam.getString("noncestr");
             request.timeStamp= reqParam.getString("timestamp");
             request.sign=reqParam.getString("sign");
-            checkSign(request);
+//            checkSign(request);
             boolean result=getIWXAPI().sendReq(request);
             Log.d(tag, "sendReq:" + result);
         } catch (JSONException e) {
