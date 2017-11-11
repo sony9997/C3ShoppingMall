@@ -37,8 +37,11 @@ import com.c3.jbz.view.MainView;
 import com.hannesdorfmann.mosby3.mvp.MvpActivity;
 import com.tencent.mm.opensdk.constants.ConstantsAPI;
 import com.tencent.mm.opensdk.modelbase.BaseResp;
+import com.tencent.mm.opensdk.modelpay.PayReq;
 
 import java.util.Map;
+import java.util.SortedMap;
+import java.util.TreeMap;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;

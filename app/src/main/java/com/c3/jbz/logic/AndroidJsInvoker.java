@@ -30,6 +30,7 @@ import com.tencent.mm.opensdk.openapi.WXAPIFactory;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.w3c.dom.Text;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -342,15 +343,31 @@ public class AndroidJsInvoker {
             request.appId = reqParam.getString("appid");
             request.partnerId = reqParam.getString("partnerid");
             request.prepayId= reqParam.getString("prepayid");
-            request.packageValue = reqParam.getString("appid");
+            request.packageValue = reqParam.getString("package");
             request.nonceStr= reqParam.getString("noncestr");
             request.timeStamp= reqParam.getString("timestamp");
             request.sign=reqParam.getString("sign");
+            checkSign(request);
             boolean result=getIWXAPI().sendReq(request);
             Log.d(tag, "sendReq:" + result);
         } catch (JSONException e) {
             e.printStackTrace();
         }
+    }
+
+    private void checkSign(PayReq request){
+        String localSign=null;
+        SortedMap<Object, Object> parameters = new TreeMap<Object, Object>();
+        parameters.put("appid", request.appId);
+        parameters.put("noncestr", request.nonceStr);
+        parameters.put("package", request.packageValue);
+        parameters.put("partnerid", request.partnerId);
+        parameters.put("prepayid", request.prepayId);
+        parameters.put("timestamp", request.timeStamp);
+        String sign= ToolsUtil.createWXSign(parameters);
+        Log.d(tag,"request.sign:"+request.sign);
+        Log.d(tag,"local.sign:"+sign);
+        Log.d(tag,"equals:"+ TextUtils.equals(request.sign,sign));
     }
 
     private void aliPayment(String orderInfo){

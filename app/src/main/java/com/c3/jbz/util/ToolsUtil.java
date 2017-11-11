@@ -173,7 +173,7 @@ public final class ToolsUtil {
                 sb.append(k + "=" + v + "&");
             }
         }
-//        sb.append("key=" + BuildConfig.wxBizSecretKey);//KEY是商户秘钥
+        sb.append("key=QX5J8mnwyc7hZt2ZjiaZnyZQvzpOPW99");//KEY是商户秘钥
         String characterEncoding = "UTF-8";
         String sign = MD5Util.MD5Encode(sb.toString(), characterEncoding).toUpperCase();
         return sign;
