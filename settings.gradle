@@ -1,1 +1,1 @@
-include ':app', ':SignTest'
+include ':app'
