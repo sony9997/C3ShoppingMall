@@ -34,12 +34,12 @@ android {
             storeFile file('jubaozan.keystore')//签名文件路径
             storePassword 'jubaozan20171002'//签名密码
         }
-        //签名2sign_jubaozan2
-        sign_jubaozan2 {
-            keyAlias 'jubaozan'//别名
-            keyPassword 'jubaozan20171002'//别名密码
-            storeFile file('jubaozan.keystore')//签名文件路径
-            storePassword 'jubaozan20171002'//签名密码
+        //签名2xbj
+        sign_xbj {
+            keyAlias 'xbj'//别名
+            keyPassword 'xbj20171211'//别名密码
+            storeFile file('xbj.jks')//签名文件路径
+            storePassword 'xbj20171211'//签名密码
         }
 
         //...你可以配置多个
@@ -55,17 +55,20 @@ android {
             applicationId = "com.c3.jbz"
             resValue("string", "app_name", "全心官方商城")//应用名
             buildConfigField("String", "mainUrl",
-                    "\"https://m.c3tech.cn/client/start.do?deviceType=1&deviceId=%s&siteId=1263&versionCode=${defaultConfig.versionCode}\"")
+                    "\"https://wx.jubaozan.cn/client/start.do?deviceType=1&deviceId=%s&siteId=1263&versionCode=${defaultConfig.versionCode}\"")
 //h5页面首页
             signingConfig signingConfigs.sign_jubaozan
         }
-        jubaozan2 {
-            applicationId = "com.c3.jbz"
-            resValue("string", "app_name", "全心官方商城")//应用名
+        
+        //https://wx.jubaozan.cn/client/start.do?deviceType=1&deviceId=%s&siteId=1473&versionCode=${defaultConfig.versionCode} 测试环境地址
+        //https://m.c3tech.cn/client/start.do?deviceType=1&deviceId=%s&siteId=1473&versionCode=${defaultConfig.versionCode} 正式环境
+        xbj {
+            applicationId = "com.c3.xbj"
+            resValue("string", "app_name", "熊本家")//应用名
             buildConfigField("String", "mainUrl",
-                    "\"https://t.jubaozan.cn/client/start.do?deviceType=1&deviceId=%s&siteId=1123&versionCode=${defaultConfig.versionCode}\"")
+                    "\"https://wx.jubaozan.cn/client/start.do?deviceType=1&deviceId=%s&siteId=1473&versionCode=${defaultConfig.versionCode}\"")
 //h5页面首页
-            signingConfig signingConfigs.sign_jubaozan
+            signingConfig signingConfigs.sign_xbj
         }
 
     }
