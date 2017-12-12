@@ -33,10 +33,10 @@
             android:launchMode="singleTop"
             android:theme="@style/FullscreenTheme" />
         <activity
-            android:name=".wxapi.WXEntryActivity"
+            android:name="${pkgname}.wxapi.WXEntryActivity"
             android:exported="true"
             android:launchMode="singleTop" />
-        <activity android:name=".wxapi.WXPayEntryActivity" android:exported="true"
+        <activity android:name="${pkgname}.wxapi.WXPayEntryActivity" android:exported="true"
             android:launchMode="singleTop" ></activity>
         <activity
             android:name="com.alipay.sdk.app.H5PayActivity"
