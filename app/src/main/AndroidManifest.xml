@@ -33,11 +33,19 @@
             android:launchMode="singleTop"
             android:theme="@style/FullscreenTheme" />
         <activity
-            android:name="${pkgname}.wxapi.WXEntryActivity"
+            android:name=".wxapi.WXEntryActivity"
             android:exported="true"
             android:launchMode="singleTop" />
-        <activity android:name="${pkgname}.wxapi.WXPayEntryActivity" android:exported="true"
+        <activity-alias
+            android:name="${pkgname}.wxapi.WXEntryActivity"
+            android:targetActivity=".wxapi.WXEntryActivity" android:exported="true"
+            android:launchMode="singleTop"/>
+        <activity android:name=".wxapi.WXPayEntryActivity" android:exported="true"
             android:launchMode="singleTop" ></activity>
+        <activity-alias
+            android:name="${pkgname}.wxapi.WXPayEntryActivity"
+            android:targetActivity=".wxapi.WXPayEntryActivity" android:exported="true"
+            android:launchMode="singleTop"/>
         <activity
             android:name="com.alipay.sdk.app.H5PayActivity"
             android:configChanges="orientation|keyboardHidden|navigation|screenSize"
