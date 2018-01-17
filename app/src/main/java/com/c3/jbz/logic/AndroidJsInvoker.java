@@ -5,8 +5,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Handler;
 import android.os.Message;
+import android.support.v4.content.FileProvider;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
@@ -33,6 +35,7 @@ import org.json.JSONObject;
 import org.w3c.dom.Text;
 
 import java.io.File;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.SortedMap;
@@ -272,7 +275,7 @@ public class AndroidJsInvoker {
                         int max=9;//微信朋友圈限制了最多传9个图片
                         for (String imgUrl:imgUrls){
                             File file=ToolsUtil.getBitmapFileSync(imgUrl,true);
-                            imageUris.add(Uri.fromFile(file));
+                            imageUris.add(getSystemNFileUri(file));
                             max--;
                             if(max==0)
                                 break;
@@ -289,6 +292,18 @@ public class AndroidJsInvoker {
         }
     }
 
+    /**
+     * android 7系统下获取文件URI
+     * @param file
+     */
+    private Uri getSystemNFileUri(File file){
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            String authorities= context.getPackageName()+".fileprovider";
+            return FileProvider.getUriForFile(context, authorities, file);
+        }
+        return Uri.fromFile(file);
+    }
+
     private static final String COMP_CLS_NAME_TIMELINE="com.tencent.mm.ui.tools.ShareToTimeLineUI";
     private static final String COMP_CLS_NAME_SESSION="com.tencent.mm.ui.tools.ShareImgUI";
     private static final Intent getShareImgIntent(String text, ArrayList<Uri> imageUris, boolean isTimeLine){
@@ -300,6 +315,10 @@ public class AndroidJsInvoker {
         intent.setType("image/*");
         intent.putExtra(isTimeLine?"Kdescription":Intent.EXTRA_TEXT, text);
         intent.putParcelableArrayListExtra(Intent.EXTRA_STREAM, imageUris);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            // 给目标应用一个临时授权
+            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+        }
         return intent;
     }
 
