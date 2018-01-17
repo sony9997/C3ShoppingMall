@@ -11,6 +11,7 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.StrictMode;
 import android.support.annotation.NonNull;
 import android.text.TextUtils;
 import android.util.Log;
@@ -80,6 +81,12 @@ public class MainActivity extends MvpActivity<MainView, MainPresenter> implement
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
+        // android 7.0系统解决拍照的问题
+        if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.N){
+            StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
+            StrictMode.setVmPolicy(builder.build());
+            builder.detectFileUriExposure();
+        }
 
         ButterKnife.bind(this);
         toast=Toast.makeText(this,"",Toast.LENGTH_SHORT);

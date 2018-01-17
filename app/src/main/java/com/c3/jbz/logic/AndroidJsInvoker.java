@@ -35,6 +35,7 @@ import org.json.JSONObject;
 import org.w3c.dom.Text;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Map;
@@ -275,7 +276,7 @@ public class AndroidJsInvoker {
                         int max=9;//微信朋友圈限制了最多传9个图片
                         for (String imgUrl:imgUrls){
                             File file=ToolsUtil.getBitmapFileSync(imgUrl,true);
-                            imageUris.add(getSystemNFileUri(file));
+                            imageUris.add(getSystemNFileUri(context,file));
                             max--;
                             if(max==0)
                                 break;
@@ -296,10 +297,18 @@ public class AndroidJsInvoker {
      * android 7系统下获取文件URI
      * @param file
      */
-    private Uri getSystemNFileUri(File file){
+    public static final Uri getSystemNFileUri(Context context,File file){
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            String authorities= BuildConfig.APPLICATION_ID+".fileprovider";
-            return FileProvider.getUriForFile(context, authorities, file);
+//            String authorities= BuildConfig.APPLICATION_ID+".fileprovider";
+//            return FileProvider.getUriForFile(context, authorities, file);
+            //修复微信在7.0崩溃的问题
+            Uri uri = null;
+            try {
+                uri = Uri.parse(android.provider.MediaStore.Images.Media.insertImage(context.getContentResolver(), file.getAbsolutePath(), file.getName(), null));
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            }
+            return uri;
         }
         return Uri.fromFile(file);
     }

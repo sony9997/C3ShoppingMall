@@ -21,6 +21,7 @@ import android.widget.TextView;
 
 import com.c3.jbz.R;
 import com.c3.jbz.activity.MainActivity;
+import com.c3.jbz.logic.AndroidJsInvoker;
 import com.c3.jbz.util.ImageFilePath;
 
 import java.io.File;
@@ -77,7 +78,7 @@ public class C3WebChromeClient extends WebChromeClient {
             if (photoFile != null) {
                 mCameraPhotoPath = "file:" + photoFile.getAbsolutePath();
                 takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT,
-                        Uri.fromFile(photoFile));
+                        AndroidJsInvoker.getSystemNFileUri(activity,photoFile));
             } else {
                 takePictureIntent = null;
             }

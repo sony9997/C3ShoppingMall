@@ -23,7 +23,9 @@ import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.SortedMap;
@@ -228,13 +230,26 @@ public final class ToolsUtil {
      */
     public static void verifyStoragePermissions(Activity activity) {
         if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
+            List<String> psl=new ArrayList<>(2);
+
             // Check if we have write permission
             int permission = ActivityCompat.checkSelfPermission(activity,
                     Manifest.permission.WRITE_EXTERNAL_STORAGE);
 
             if (permission != PackageManager.PERMISSION_GRANTED) {
-                // We don't have permission so prompt the user
-                ActivityCompat.requestPermissions(activity, PERMISSIONS_STORAGE,
+                psl.add(Manifest.permission.READ_EXTERNAL_STORAGE);
+                psl.add(Manifest.permission.WRITE_EXTERNAL_STORAGE);
+            }
+
+            permission = ActivityCompat.checkSelfPermission(activity,
+                    Manifest.permission.READ_PHONE_STATE);
+            if (permission != PackageManager.PERMISSION_GRANTED) {
+                psl.add(Manifest.permission.READ_PHONE_STATE);
+            }
+
+            if(!psl.isEmpty()){
+                String[] pers=new String[psl.size()];
+                ActivityCompat.requestPermissions(activity, psl.toArray(pers),
                         REQUEST_EXTERNAL_STORAGE);
             }
         }
