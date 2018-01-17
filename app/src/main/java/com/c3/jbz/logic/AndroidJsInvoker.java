@@ -298,7 +298,7 @@ public class AndroidJsInvoker {
      */
     private Uri getSystemNFileUri(File file){
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            String authorities= context.getPackageName()+".fileprovider";
+            String authorities= BuildConfig.APPLICATION_ID+".fileprovider";
             return FileProvider.getUriForFile(context, authorities, file);
         }
         return Uri.fromFile(file);
