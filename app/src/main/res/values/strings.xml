@@ -24,4 +24,11 @@
     <string name="title_fresh"><u>刷新重试</u></string>
     <string name="title_go2Setting"><u>设置网络</u></string>
     <string name="title_nonetwork">无法连接到网络，请稍后再试</string>
+    <string name="title_activity_messages">MessagesActivity</string>
+    <string name="action_settings">Settings</string>
+    <string-array name="section_format">
+        <item>消息</item>
+        <item>公告</item>
+        <item>物流</item>
+    </string-array>
 </resources>

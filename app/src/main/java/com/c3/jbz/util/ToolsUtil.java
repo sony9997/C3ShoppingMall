@@ -2,6 +2,8 @@ package com.c3.jbz.util;
 
 import android.Manifest;
 import android.app.Activity;
+import android.app.ActivityManager;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
@@ -10,6 +12,7 @@ import android.os.Environment;
 import android.provider.Settings;
 import android.support.v4.app.ActivityCompat;
 import android.telephony.TelephonyManager;
+import android.text.TextUtils;
 
 import com.c3.jbz.BuildConfig;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
@@ -55,21 +58,21 @@ public final class ToolsUtil {
      * @param save2DCIM 是否保存到相册
      * @return
      */
-    public static File getBitmapFileSync(String imageUrl,boolean save2DCIM) {
+    public static File getBitmapFileSync(String imageUrl, boolean save2DCIM) {
         DisplayImageOptions options = new DisplayImageOptions.Builder()
                 .cacheOnDisk(true)
                 .build();
         ImageLoader.getInstance().loadImageSync(imageUrl, options);
-        File file=null;
-        if(save2DCIM){
-            File source=ImageLoader.getInstance().getDiskCache().get(imageUrl);
+        File file = null;
+        if (save2DCIM) {
+            File source = ImageLoader.getInstance().getDiskCache().get(imageUrl);
             File dir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM);
-            String fileName=imageUrl.substring(imageUrl.lastIndexOf("/")+1);
-            file=new File(dir,fileName);
-            copyFile(source.getAbsolutePath(),file.getAbsolutePath());
+            String fileName = imageUrl.substring(imageUrl.lastIndexOf("/") + 1);
+            file = new File(dir, fileName);
+            copyFile(source.getAbsolutePath(), file.getAbsolutePath());
             source.delete();
-        }else
-            file= ImageLoader.getInstance().getDiskCache().get(imageUrl);
+        } else
+            file = ImageLoader.getInstance().getDiskCache().get(imageUrl);
 
         return file;
     }
@@ -182,6 +185,7 @@ public final class ToolsUtil {
 
     /**
      * 获取设备唯一ID
+     *
      * @param context
      * @return
      */
@@ -224,13 +228,15 @@ public final class ToolsUtil {
     private static String[] PERMISSIONS_STORAGE = {
             Manifest.permission.READ_EXTERNAL_STORAGE,
             Manifest.permission.WRITE_EXTERNAL_STORAGE};
+
     /**
      * 验证扩展卡读写权限
+     *
      * @param activity
      */
     public static void verifyStoragePermissions(Activity activity) {
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
-            List<String> psl=new ArrayList<>(2);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            List<String> psl = new ArrayList<>(2);
 
             // Check if we have write permission
             int permission = ActivityCompat.checkSelfPermission(activity,
@@ -247,11 +253,36 @@ public final class ToolsUtil {
                 psl.add(Manifest.permission.READ_PHONE_STATE);
             }
 
-            if(!psl.isEmpty()){
-                String[] pers=new String[psl.size()];
+            if (!psl.isEmpty()) {
+                String[] pers = new String[psl.size()];
                 ActivityCompat.requestPermissions(activity, psl.toArray(pers),
                         REQUEST_EXTERNAL_STORAGE);
             }
         }
+    }
+
+    /**
+     * 判断某个Activity 界面是否在前台
+     *
+     * @param context
+     * @param className 某个界面名称
+     * @return
+     */
+    public static boolean isForeground(Context context, String className) {
+        if (context == null || TextUtils.isEmpty(className)) {
+            return false;
+        }
+
+        ActivityManager am = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
+        List<ActivityManager.RunningTaskInfo> list = am.getRunningTasks(1);
+        if (list != null && list.size() > 0) {
+            ComponentName cpn = list.get(0).topActivity;
+            if (className.equals(cpn.getClassName())) {
+                return true;
+            }
+        }
+
+        return false;
+
     }
 }
