@@ -8,6 +8,7 @@ import android.text.TextUtils;
 import com.c3.jbz.BuildConfig;
 import com.c3.jbz.activity.MessagesActivity;
 import com.c3.jbz.db.AppDatabase;
+import com.c3.jbz.db.DateConverter;
 import com.c3.jbz.fragment.LogisticsFragment;
 import com.c3.jbz.fragment.MessageFragment;
 import com.c3.jbz.fragment.NoticeFragment;
@@ -16,7 +17,10 @@ import com.c3.jbz.vo.MessageInfo;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.threeten.bp.Clock;
+import org.threeten.bp.LocalDate;
 import org.threeten.bp.LocalDateTime;
+import org.threeten.bp.LocalTime;
 
 import cn.jpush.android.api.JPushInterface;
 
@@ -25,7 +29,7 @@ import cn.jpush.android.api.JPushInterface;
  * @date 2018/1/26
  */
 
-public final class MessagePresenter  {
+public final class MessagePresenter {
     private MessagesActivity messagesActivity;
     private AppDatabase appDatabase;
 
@@ -56,9 +60,14 @@ public final class MessagePresenter  {
 
                             switch (type) {
                                 case BuildConfig.MSG_TYPE_NORMAL: {
-                                    String comment = jsonObject.getString("comment");
-                                    String detailUrl = jsonObject.getString("detailUrl");
-                                    MessageInfo messageInfo = new MessageInfo(title, content, notificationId, msgId, comment, detailUrl, LocalDateTime.now());
+                                    String comment = jsonObject.has("comment")?jsonObject.getString("comment"):null;
+                                    String detailUrl = jsonObject.has("detailUrl")?jsonObject.getString("detailUrl"):null;
+                                    long pushTime = jsonObject.has("pushTime")?jsonObject.getLong("pushTime"):0;
+                                    if(pushTime==0){
+                                        pushTime=System.currentTimeMillis();
+                                    }
+                                    MessageInfo messageInfo = new MessageInfo(title, content, notificationId, msgId, comment, detailUrl,
+                                            DateConverter.toDate(pushTime), LocalDateTime.now());
                                     appDatabase.messageInfoDao().insertMessageInfo(messageInfo);
                                     break;
                                 }
@@ -73,7 +82,7 @@ public final class MessagePresenter  {
                             AppExecutors.as().mainThread().execute(new Runnable() {
                                 @Override
                                 public void run() {
-                                    messagesActivity.selectTab(type,notificationId);
+                                    messagesActivity.selectTab(type, notificationId);
                                 }
                             });
                         } catch (JSONException e) {
@@ -85,11 +94,11 @@ public final class MessagePresenter  {
         }
     }
 
-    public AppDatabase getAppDatabase(){
+    public AppDatabase getAppDatabase() {
         return appDatabase;
     }
 
-    public MessagesActivity getMessagesActivity(){
+    public MessagesActivity getMessagesActivity() {
         return messagesActivity;
     }
 }

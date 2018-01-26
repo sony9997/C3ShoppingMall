@@ -22,11 +22,15 @@ public class MessageInfo {
     public String comment;
     public String detailUrl;
     /**
-     * 推送时间
+     * 业务服务器后台　推送时间
      */
     public org.threeten.bp.LocalDateTime pushTime;
+    /**
+     * 接收到消息的时间
+     */
+    public org.threeten.bp.LocalDateTime receiveTime;
 
-    public MessageInfo(String title, String content, int notificationId, String msgId, String comment, String detailUrl, LocalDateTime pushTime) {
+    public MessageInfo(String title, String content, int notificationId, @NonNull String msgId, String comment, String detailUrl, LocalDateTime pushTime, LocalDateTime receiveTime) {
         this.title = title;
         this.content = content;
         this.notificationId = notificationId;
@@ -34,6 +38,7 @@ public class MessageInfo {
         this.comment = comment;
         this.detailUrl = detailUrl;
         this.pushTime = pushTime;
+        this.receiveTime = receiveTime;
     }
 
     @Override
@@ -46,6 +51,7 @@ public class MessageInfo {
                 ", comment='" + comment + '\'' +
                 ", detailUrl='" + detailUrl + '\'' +
                 ", pushTime=" + pushTime +
+                ", receiveTime=" + receiveTime +
                 '}';
     }
 }

@@ -31,4 +31,7 @@
         <item>公告</item>
         <item>物流</item>
     </string-array>
+    <string name="title_msg">消息中心</string>
+    <string name="title_choice_all">全选</string>
+    <string name="title_delete">删除</string>
 </resources>

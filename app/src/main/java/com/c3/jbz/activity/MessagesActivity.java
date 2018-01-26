@@ -10,6 +10,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
+import android.view.View;
 
 import com.c3.jbz.BuildConfig;
 import com.c3.jbz.R;
@@ -18,8 +19,9 @@ import com.c3.jbz.fragment.MessageFragment;
 import com.c3.jbz.fragment.MessageView;
 import com.c3.jbz.fragment.NoticeFragment;
 import com.c3.jbz.presenter.MessagePresenter;
+import com.c3.jbz.util.ToolsUtil;
 
-public class MessagesActivity extends AppCompatActivity implements TabLayout.OnTabSelectedListener{
+public class MessagesActivity extends AppCompatActivity implements TabLayout.OnTabSelectedListener,View.OnClickListener{
 
     /**
      * The {@link android.support.v4.view.PagerAdapter} that will provide
@@ -39,11 +41,13 @@ public class MessagesActivity extends AppCompatActivity implements TabLayout.OnT
     private TabLayout tabLayout;
 
     private MessagePresenter messagePresenter;
+    private View tvChoiceAll;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_messages);
+        ToolsUtil.setStatusBarColor(this);
         messagePresenter = new MessagePresenter(this);
 
         // Create the adapter that will return a fragment for each of the three
@@ -62,6 +66,10 @@ public class MessagesActivity extends AppCompatActivity implements TabLayout.OnT
         messagePresenter.parseBunlde(getIntent().getExtras());
 
         tabLayout.addOnTabSelectedListener(this);
+        tvChoiceAll=findViewById(R.id.tv_choice_all);
+        tvChoiceAll.setOnClickListener(this);
+        findViewById(R.id.tv_delete).setOnClickListener(this);
+        findViewById(R.id.iv_back).setOnClickListener(this);
     }
 
     @Override
@@ -90,6 +98,24 @@ public class MessagesActivity extends AppCompatActivity implements TabLayout.OnT
     @Override
     public void onTabReselected(TabLayout.Tab tab) {
 
+    }
+
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()){
+            case R.id.iv_back:{
+                finish();
+                break;
+            }
+            case R.id.tv_choice_all:{
+                tvChoiceAll.setSelected(!tvChoiceAll.isSelected());
+                break;
+            }
+            case R.id.tv_delete:{
+                tvChoiceAll.setSelected(!tvChoiceAll.isSelected());
+                break;
+            }
+        }
     }
 
 

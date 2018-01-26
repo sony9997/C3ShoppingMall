@@ -4,16 +4,93 @@
     android:id="@+id/main_content"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.c3.jbz.activity.MessagesActivity" android:orientation="vertical">
+    android:orientation="vertical"
+    tools:context="com.c3.jbz.activity.MessagesActivity">
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/top_bg">
+
+        <ImageButton
+            android:id="@+id/iv_back"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="0"
+            android:background="@drawable/selector_back"
+            android:paddingBottom="2dp"
+            android:paddingLeft="1dp"
+            android:paddingRight="1dp"
+            android:paddingTop="2dp"
+            android:src="@mipmap/back" />
+
+        <TextView
+            android:id="@+id/tv_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:ellipsize="end"
+            android:gravity="center"
+            android:maxLines="1"
+            android:text="@string/title_msg"
+            android:textColor="@android:color/white"
+            android:textSize="18sp" />
+
+    </FrameLayout>
 
     <android.support.design.widget.TabLayout
         android:id="@+id/tab_layout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:layout_weight="0" />
 
     <android.support.v4.view.ViewPager
         android:id="@+id/viewPager"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        android:layout_weight="1" />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="0">
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_alignParentTop="true"
+            android:background="@color/black_overlay" />
+
+        <TextView
+            android:id="@+id/v_middle"
+            android:layout_width="80dp"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true" />
+
+
+        <TextView
+            android:id="@+id/tv_choice_all"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toLeftOf="@id/v_middle"
+            android:drawablePadding="1dp"
+            android:drawableTop="@drawable/selector_choice_all"
+            android:padding="10dp"
+            android:text="@string/title_choice_all"
+            android:textColor="@drawable/selector_text_choice_all"
+            android:textSize="14sp" android:textIsSelectable="true"/>
+
+        <TextView
+            android:id="@+id/tv_delete"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@id/v_middle"
+            android:drawablePadding="1dp"
+            android:drawableTop="@drawable/selector_choice_all"
+            android:padding="10dp"
+            android:text="@string/title_delete"
+            android:textColor="@drawable/selector_text_delete"
+            android:textSize="14sp" />
+    </RelativeLayout>
 
 </LinearLayout>

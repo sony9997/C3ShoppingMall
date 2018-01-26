@@ -81,6 +81,7 @@ public class MainActivity extends MvpActivity<MainView, MainPresenter> implement
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
+        ToolsUtil.setStatusBarColor(this);
         // android 7.0系统解决拍照的问题
         if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.N){
             StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
