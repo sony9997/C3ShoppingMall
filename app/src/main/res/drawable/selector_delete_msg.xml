@@ -1,0 +1,5 @@
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item android:drawable="@mipmap/deleteunpressed" android:state_pressed="false" />
+    <item android:drawable="@mipmap/deletepressed" android:state_pressed="true" />
+</selector>

@@ -4,13 +4,17 @@ import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.design.widget.TabItem;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
+import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
+import android.widget.TextView;
 
 import com.c3.jbz.BuildConfig;
 import com.c3.jbz.R;
@@ -21,7 +25,7 @@ import com.c3.jbz.fragment.NoticeFragment;
 import com.c3.jbz.presenter.MessagePresenter;
 import com.c3.jbz.util.ToolsUtil;
 
-public class MessagesActivity extends AppCompatActivity implements TabLayout.OnTabSelectedListener,View.OnClickListener{
+public class MessagesActivity extends AppCompatActivity implements TabLayout.OnTabSelectedListener, View.OnClickListener {
 
     /**
      * The {@link android.support.v4.view.PagerAdapter} that will provide
@@ -42,6 +46,7 @@ public class MessagesActivity extends AppCompatActivity implements TabLayout.OnT
 
     private MessagePresenter messagePresenter;
     private View tvChoiceAll;
+    private String[] tabs = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,6 +54,7 @@ public class MessagesActivity extends AppCompatActivity implements TabLayout.OnT
         setContentView(R.layout.activity_messages);
         ToolsUtil.setStatusBarColor(this);
         messagePresenter = new MessagePresenter(this);
+        tabs = getResources().getStringArray(R.array.section_format);
 
         // Create the adapter that will return a fragment for each of the three
         // primary sections of the activity.
@@ -62,12 +68,25 @@ public class MessagesActivity extends AppCompatActivity implements TabLayout.OnT
         tabLayout = (TabLayout) findViewById(R.id.tab_layout);
         // tabLayout使用viewPager接收的tabSectionAdapter里设置的title
         tabLayout.setupWithViewPager(mViewPager);
+        for (int i = 0; i < tabLayout.getTabCount(); i++) {
+            TabLayout.Tab tab = tabLayout.getTabAt(i);
+            if (tab != null) {
+                tab.setCustomView(mSectionsPagerAdapter.getTabView(i));
+            }
+        }
 
         messagePresenter.parseBunlde(getIntent().getExtras());
-
         tabLayout.addOnTabSelectedListener(this);
-        tvChoiceAll=findViewById(R.id.tv_choice_all);
-        tvChoiceAll.setOnClickListener(this);
+        tvChoiceAll = findViewById(R.id.tv_choice_all);
+        tvChoiceAll.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                if (event.getAction() == MotionEvent.ACTION_UP) {
+                    tvChoiceAll.setSelected(!tvChoiceAll.isSelected());
+                }
+                return false;
+            }
+        });
         findViewById(R.id.tv_delete).setOnClickListener(this);
         findViewById(R.id.iv_back).setOnClickListener(this);
     }
@@ -102,16 +121,12 @@ public class MessagesActivity extends AppCompatActivity implements TabLayout.OnT
 
     @Override
     public void onClick(View v) {
-        switch (v.getId()){
-            case R.id.iv_back:{
+        switch (v.getId()) {
+            case R.id.iv_back: {
                 finish();
                 break;
             }
-            case R.id.tv_choice_all:{
-                tvChoiceAll.setSelected(!tvChoiceAll.isSelected());
-                break;
-            }
-            case R.id.tv_delete:{
+            case R.id.tv_delete: {
                 tvChoiceAll.setSelected(!tvChoiceAll.isSelected());
                 break;
             }
@@ -157,18 +172,38 @@ public class MessagesActivity extends AppCompatActivity implements TabLayout.OnT
         @Override
         public int getCount() {
             // Show 3 total pages.
-            return 3;
+            return tabs.length;
         }
 
         @Override
         public CharSequence getPageTitle(int position) {
-            return getResources().getStringArray(R.array.section_format)[position];
+            return tabs[position];
+        }
+
+        public View getTabView(int position) {
+            View view = LayoutInflater.from(getApplicationContext()).inflate(R.layout.tab_custom, null);
+            TextView tv = (TextView) view.findViewById(R.id.tv_tab_title);
+            tv.setText(tabs[position]);
+
+            if(messagePresenter.isRedDotNeedShow(position)){
+                View redDot=view.findViewById(R.id.iv_dot);
+                redDot.setVisibility(View.VISIBLE);
+            }
+            return view;
         }
     }
 
-    public void selectTab(int index,int notificationId) {
-        NotificationManager notificationManager= (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-        notificationManager.cancel(notificationId);
-        tabLayout.getTabAt(index).select();
+    public void selectTab(int index, int notificationId) {
+        if (index >= 0 && index < tabLayout.getTabCount()) {
+            NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+            notificationManager.cancel(notificationId);
+            tabLayout.getTabAt(index).select();
+        }
+    }
+
+    public void updateRedDotState(int position, boolean show) {
+        if (position >= 0 && position < tabLayout.getTabCount()) {
+            tabLayout.getTabAt(position).getCustomView().findViewById(R.id.iv_dot).setVisibility(show ? View.VISIBLE : View.INVISIBLE);
+        }
     }
 }

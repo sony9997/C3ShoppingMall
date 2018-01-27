@@ -9,11 +9,13 @@ import com.c3.jbz.BuildConfig;
 import com.c3.jbz.activity.MessagesActivity;
 import com.c3.jbz.db.AppDatabase;
 import com.c3.jbz.db.DateConverter;
+import com.c3.jbz.db.ShareDataLocal;
 import com.c3.jbz.fragment.LogisticsFragment;
 import com.c3.jbz.fragment.MessageFragment;
 import com.c3.jbz.fragment.NoticeFragment;
 import com.c3.jbz.util.AppExecutors;
 import com.c3.jbz.vo.MessageInfo;
+import com.c3.jbz.vo.Notice;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -32,6 +34,7 @@ import cn.jpush.android.api.JPushInterface;
 public final class MessagePresenter {
     private MessagesActivity messagesActivity;
     private AppDatabase appDatabase;
+    public static final String KEY_SHOW_REDDOT_FORMAT="KEY_SHOW_REDDOT_%d";
 
     public MessagePresenter(MessagesActivity messagesActivity) {
         this.messagesActivity = messagesActivity;
@@ -48,8 +51,6 @@ public final class MessagePresenter {
             AppExecutors.as().diskIO().execute(new Runnable() {
                 @Override
                 public void run() {
-                    String title = bundle.getString(JPushInterface.EXTRA_NOTIFICATION_TITLE);
-                    String content = bundle.getString(JPushInterface.EXTRA_ALERT);
                     final int notificationId = bundle.getInt(JPushInterface.EXTRA_NOTIFICATION_ID);
                     String msgId = bundle.getString(JPushInterface.EXTRA_MSG_ID);
                     String extra = bundle.getString(JPushInterface.EXTRA_EXTRA);
@@ -60,18 +61,29 @@ public final class MessagePresenter {
 
                             switch (type) {
                                 case BuildConfig.MSG_TYPE_NORMAL: {
-                                    String comment = jsonObject.has("comment")?jsonObject.getString("comment"):null;
-                                    String detailUrl = jsonObject.has("detailUrl")?jsonObject.getString("detailUrl"):null;
-                                    long pushTime = jsonObject.has("pushTime")?jsonObject.getLong("pushTime"):0;
-                                    if(pushTime==0){
-                                        pushTime=System.currentTimeMillis();
+                                    String title= jsonObject.has("title")?jsonObject.getString("title"):null;
+                                    String body = jsonObject.has("body")?jsonObject.getString("body"):null;
+                                    String head = jsonObject.has("head")?jsonObject.getString("head"):null;
+                                    String foot = jsonObject.has("foot")?jsonObject.getString("foot"):null;
+                                    String clickLink = jsonObject.has("clickLink")?jsonObject.getString("clickLink"):null;
+                                    long date = jsonObject.has("date")?jsonObject.getLong("date"):0;
+                                    if(date==0){
+                                        date=System.currentTimeMillis();
                                     }
-                                    MessageInfo messageInfo = new MessageInfo(title, content, notificationId, msgId, comment, detailUrl,
-                                            DateConverter.toDate(pushTime), LocalDateTime.now());
+                                    MessageInfo messageInfo = new MessageInfo(msgId,title, body,head,foot, DateConverter.toDate(date),
+                                            clickLink, notificationId, LocalDateTime.now());
                                     appDatabase.messageInfoDao().insertMessageInfo(messageInfo);
                                     break;
                                 }
                                 case BuildConfig.MSG_TYPE_NOTICE: {
+                                    String title= jsonObject.has("title")?jsonObject.getString("title"):null;
+                                    long date = jsonObject.has("date")?jsonObject.getLong("date"):0;
+                                    if(date==0){
+                                        date=System.currentTimeMillis();
+                                    }
+                                    String clickLink = jsonObject.has("clickLink")?jsonObject.getString("clickLink"):null;
+                                    Notice notice=new Notice(msgId,title,DateConverter.toDate(date),clickLink,notificationId,LocalDateTime.now());
+                                    appDatabase.noticeDao().insertNotice(notice);
                                     break;
                                 }
                                 case BuildConfig.MSG_TYPE_LOGISTICS: {
@@ -82,6 +94,7 @@ public final class MessagePresenter {
                             AppExecutors.as().mainThread().execute(new Runnable() {
                                 @Override
                                 public void run() {
+                                    updateRedDotState(type,true);
                                     messagesActivity.selectTab(type, notificationId);
                                 }
                             });
@@ -92,6 +105,15 @@ public final class MessagePresenter {
                 }
             });
         }
+    }
+
+    public void updateRedDotState(int position,boolean show){
+        ShareDataLocal.as().setBooleanValue(String.format(KEY_SHOW_REDDOT_FORMAT,position),true);
+        messagesActivity.updateRedDotState(position,show);
+    }
+
+    public boolean isRedDotNeedShow(int position){
+        return ShareDataLocal.as().getBooleanValue(String.format(KEY_SHOW_REDDOT_FORMAT,position));
     }
 
     public AppDatabase getAppDatabase() {

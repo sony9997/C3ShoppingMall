@@ -7,26 +7,14 @@ import org.threeten.bp.LocalDateTime;
 
 /**
  * @author hedong
- * @date 2018/1/26
+ * @date 2018/1/27
  */
 @Entity(primaryKeys = "msgId")
-public class MessageInfo {
+public class Logistics {
     @NonNull
     public String msgId;
 
     public String title;
-    /**
-     * 正文
-     */
-    public String body;
-    /**
-     * 头部
-     */
-    public String head;
-    /**
-     * 尾部
-     */
-    public String foot;
     /**
      * 业务服务器后台　推送时间
      */
@@ -41,14 +29,12 @@ public class MessageInfo {
     /**
      * 接收到极光推送的消息的时间
      */
+
     public org.threeten.bp.LocalDateTime receiveTime;
 
-    public MessageInfo(@NonNull String msgId, String title, String body, String head, String foot, LocalDateTime date, String clickLink, int notificationId, LocalDateTime receiveTime) {
+    public Logistics(@NonNull String msgId, String title, LocalDateTime date, String clickLink, int notificationId, LocalDateTime receiveTime) {
         this.msgId = msgId;
         this.title = title;
-        this.body = body;
-        this.head = head;
-        this.foot = foot;
         this.date = date;
         this.clickLink = clickLink;
         this.notificationId = notificationId;
@@ -57,12 +43,9 @@ public class MessageInfo {
 
     @Override
     public String toString() {
-        return "MessageInfo{" +
+        return "Logistics{" +
                 "msgId='" + msgId + '\'' +
                 ", title='" + title + '\'' +
-                ", body='" + body + '\'' +
-                ", head='" + head + '\'' +
-                ", foot='" + foot + '\'' +
                 ", date=" + date +
                 ", clickLink='" + clickLink + '\'' +
                 ", notificationId=" + notificationId +

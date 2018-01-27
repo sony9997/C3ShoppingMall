@@ -69,7 +69,7 @@
         <activity
             android:name=".activity.MessagesActivity"
             android:label="@string/title_activity_messages"
-            android:theme="@style/AppTheme" android:launchMode="singleTask">
+            android:theme="@style/AppTheme" android:launchMode="singleTask" android:configChanges="orientation|keyboardHidden|screenSize">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

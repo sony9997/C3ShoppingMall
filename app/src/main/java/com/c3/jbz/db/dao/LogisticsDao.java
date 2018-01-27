@@ -7,22 +7,22 @@ import android.arch.persistence.room.Insert;
 import android.arch.persistence.room.OnConflictStrategy;
 import android.arch.persistence.room.Query;
 
-import com.c3.jbz.vo.MessageInfo;
+import com.c3.jbz.vo.Logistics;
 
 import java.util.List;
 
 /**
  * @author hedong
- * @date 2018/1/26
+ * @date 2018/1/27
  */
 @Dao
-public interface MessageInfoDao {
-    @Query("SELECT * FROM MessageInfo order by date desc")
-    LiveData<List<MessageInfo>> loadAllMessageInfo();
+public interface LogisticsDao {
+    @Query("SELECT * FROM Notice order by date desc")
+    LiveData<List<Logistics>> loadAllLogistics();
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    void insertMessageInfo(MessageInfo messageInfo);
+    void insertLogistics(Logistics logistics);
 
     @Delete
-    void deleteMessageInfo(MessageInfo... messageInfo);
+    void deleteLogistics(Logistics... logistics);
 }

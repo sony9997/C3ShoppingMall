@@ -23,6 +23,9 @@ public class MessageFragment extends Fragment implements MessageView{
     // TODO: Customize parameters
     private int mColumnCount = 1;
     private MessagePresenter messagePresenter;
+    private MessageRecyclerViewAdapter messageRecyclerViewAdapter;
+    private RecyclerView recyclerView;
+    private View emptyView=null;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -41,18 +44,32 @@ public class MessageFragment extends Fragment implements MessageView{
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_message_list, container, false);
 
-        // Set the adapter
-        if (view instanceof RecyclerView) {
+        recyclerView = (RecyclerView)view.findViewById(R.id.list);
+        emptyView=view.findViewById(R.id.tv_empty);
+        if(recyclerView!=null){
             Context context = view.getContext();
-            RecyclerView recyclerView = (RecyclerView) view;
             if (mColumnCount <= 1) {
                 recyclerView.setLayoutManager(new LinearLayoutManager(context));
             } else {
                 recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
             }
-            recyclerView.setAdapter(new MessageRecyclerViewAdapter(messagePresenter));
+            messageRecyclerViewAdapter=new MessageRecyclerViewAdapter(messagePresenter);
+            recyclerView.setAdapter(messageRecyclerViewAdapter);
         }
+
         return view;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if(messageRecyclerViewAdapter.getItemCount()>0){
+            recyclerView.setVisibility(View.VISIBLE);
+            emptyView.setVisibility(View.INVISIBLE);
+        }else {
+            recyclerView.setVisibility(View.INVISIBLE);
+            emptyView.setVisibility(View.VISIBLE);
+        }
     }
 
     @Override

@@ -45,12 +45,12 @@ public class MessageRecyclerViewAdapter extends RecyclerView.Adapter<MessageRecy
 
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
-        List<MessageInfo> mValues=listLiveData.getValue();
+        List<MessageInfo> mValues=listLiveData!=null?listLiveData.getValue():null;
         if(mValues==null||mValues.isEmpty())
             return;
         holder.mItem = mValues.get(position);
         holder.mIdView.setText(mValues.get(position).title);
-        holder.mContentView.setText(mValues.get(position).content);
+        holder.mContentView.setText(mValues.get(position).body);
 
         holder.mView.setOnClickListener(new View.OnClickListener() {
             @Override
