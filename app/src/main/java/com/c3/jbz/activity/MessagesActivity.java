@@ -4,16 +4,21 @@ import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.design.widget.TabItem;
+import android.support.annotation.NonNull;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
+import android.util.SparseArray;
+import android.util.SparseIntArray;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.TextView;
 
 import com.c3.jbz.BuildConfig;
@@ -25,8 +30,12 @@ import com.c3.jbz.fragment.NoticeFragment;
 import com.c3.jbz.presenter.MessagePresenter;
 import com.c3.jbz.util.ToolsUtil;
 
-public class MessagesActivity extends AppCompatActivity implements TabLayout.OnTabSelectedListener, View.OnClickListener {
+import org.threeten.bp.format.DateTimeFormatter;
 
+public class MessagesActivity<MessageData> extends AppCompatActivity implements TabLayout.OnTabSelectedListener, View.OnClickListener {
+    private static final String tag = "message actvity";
+    public static final DateTimeFormatter DEFAULT_TIME_FORMAT = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+    public static final DateTimeFormatter LIST_ITEM_TIME_FORMAT = DateTimeFormatter.ofPattern("yyyy-MM-dd");
     /**
      * The {@link android.support.v4.view.PagerAdapter} that will provide
      * fragments for each of the sections. We use a
@@ -45,12 +54,14 @@ public class MessagesActivity extends AppCompatActivity implements TabLayout.OnT
     private TabLayout tabLayout;
 
     private MessagePresenter messagePresenter;
-    private View tvChoiceAll;
+    private CheckBox tvChoiceAll;
     private String[] tabs = null;
 
+    private SparseArray<MessageView> subMessageView=new SparseArray<MessageView>(3);
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Log.d(tag, "onCreate");
         setContentView(R.layout.activity_messages);
         ToolsUtil.setStatusBarColor(this);
         messagePresenter = new MessagePresenter(this);
@@ -77,14 +88,11 @@ public class MessagesActivity extends AppCompatActivity implements TabLayout.OnT
 
         messagePresenter.parseBunlde(getIntent().getExtras());
         tabLayout.addOnTabSelectedListener(this);
-        tvChoiceAll = findViewById(R.id.tv_choice_all);
-        tvChoiceAll.setOnTouchListener(new View.OnTouchListener() {
+        tvChoiceAll = (CheckBox) findViewById(R.id.cb_choice_all);
+        tvChoiceAll.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                if (event.getAction() == MotionEvent.ACTION_UP) {
-                    tvChoiceAll.setSelected(!tvChoiceAll.isSelected());
-                }
-                return false;
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                subMessageView.get(tabLayout.getSelectedTabPosition()).checkedAll(isChecked);
             }
         });
         findViewById(R.id.tv_delete).setOnClickListener(this);
@@ -94,6 +102,7 @@ public class MessagesActivity extends AppCompatActivity implements TabLayout.OnT
     @Override
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
+        Log.d(tag, "onNewIntent");
         if (messagePresenter != null)
             messagePresenter.parseBunlde(intent.getExtras());
     }
@@ -111,7 +120,7 @@ public class MessagesActivity extends AppCompatActivity implements TabLayout.OnT
 
     @Override
     public void onTabUnselected(TabLayout.Tab tab) {
-
+        messagePresenter.updateRedDotState(tab.getPosition(), false);
     }
 
     @Override
@@ -127,12 +136,13 @@ public class MessagesActivity extends AppCompatActivity implements TabLayout.OnT
                 break;
             }
             case R.id.tv_delete: {
-                tvChoiceAll.setSelected(!tvChoiceAll.isSelected());
+                subMessageView.get(tabLayout.getSelectedTabPosition()).deleteMessageDatas(tvChoiceAll.isChecked());
+                tvChoiceAll.setChecked(false);
+                messagePresenter.updateRedDotState(tabLayout.getSelectedTabPosition(), false);
                 break;
             }
         }
     }
-
 
     /**
      * A {@link FragmentPagerAdapter} that returns a fragment corresponding to
@@ -165,6 +175,7 @@ public class MessagesActivity extends AppCompatActivity implements TabLayout.OnT
             }
             if (messageView != null) {
                 messageView.setMessagePresenter(messagePresenter);
+                subMessageView.put(position,messageView);
             }
             return (Fragment) messageView;
         }
@@ -185,8 +196,8 @@ public class MessagesActivity extends AppCompatActivity implements TabLayout.OnT
             TextView tv = (TextView) view.findViewById(R.id.tv_tab_title);
             tv.setText(tabs[position]);
 
-            if(messagePresenter.isRedDotNeedShow(position)){
-                View redDot=view.findViewById(R.id.iv_dot);
+            if (messagePresenter.isRedDotNeedShow(position)) {
+                View redDot = view.findViewById(R.id.iv_dot);
                 redDot.setVisibility(View.VISIBLE);
             }
             return view;
@@ -194,6 +205,7 @@ public class MessagesActivity extends AppCompatActivity implements TabLayout.OnT
     }
 
     public void selectTab(int index, int notificationId) {
+        Log.d(tag,"selectTab:"+index);
         if (index >= 0 && index < tabLayout.getTabCount()) {
             NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
             notificationManager.cancel(notificationId);
@@ -204,6 +216,12 @@ public class MessagesActivity extends AppCompatActivity implements TabLayout.OnT
     public void updateRedDotState(int position, boolean show) {
         if (position >= 0 && position < tabLayout.getTabCount()) {
             tabLayout.getTabAt(position).getCustomView().findViewById(R.id.iv_dot).setVisibility(show ? View.VISIBLE : View.INVISIBLE);
+        }
+    }
+
+    public void addData2SubFragment(@NonNull MessageData messageData,int type){
+        if(type>=0&&type<subMessageView.size()) {
+            subMessageView.get(type).addData(messageData);
         }
     }
 }

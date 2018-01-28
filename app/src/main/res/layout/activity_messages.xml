@@ -70,17 +70,18 @@
             android:layout_centerInParent="true" />
 
 
-        <TextView
-            android:id="@+id/tv_choice_all"
+        <CheckBox
+            android:id="@+id/cb_choice_all"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_toLeftOf="@id/v_middle"
             android:drawablePadding="1dp"
+            android:button="@null"
             android:drawableTop="@drawable/selector_choice_all"
             android:padding="10dp"
             android:text="@string/title_choice_all"
             android:textColor="@drawable/selector_text_choice_all"
-            android:textSize="14sp" android:textIsSelectable="true" style="@style/baseTextStyle"/>
+            android:textSize="14sp" style="@style/baseTextStyle"/>
 
         <TextView
             android:id="@+id/tv_delete"

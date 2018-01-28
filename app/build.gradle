@@ -24,6 +24,8 @@ android {
         buildConfigField("int", "MSG_TYPE_NORMAL", "0")//消息类型，一般消息
         buildConfigField("int", "MSG_TYPE_NOTICE", "1")//消息类型，通知
         buildConfigField("int", "MSG_TYPE_LOGISTICS", "2")//消息类型，物流
+        buildConfigField("int", "LIST_MAX_LEN", "100")//最大消息列表长度
+        buildConfigField("String", "KEY_OTHER_URL", "\"KEY_OTHER_URL\"")//外部url
         ndk {
             //选择要添加的对应cpu类型的.so库。
             abiFilters 'armeabi', 'armeabi-v7a', 'arm64-v8a'

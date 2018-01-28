@@ -4,6 +4,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 
 import com.c3.jbz.activity.MessagesActivity;
 import com.c3.jbz.util.ToolsUtil;
@@ -31,6 +32,7 @@ public class PushMsgReceiver extends BroadcastReceiver {
 
     private void sendMsg(Context context,Intent intent){
         Bundle bundle=intent.getExtras();
+        Log.d("message push receiver:","sendMsg:"+bundle);
         if(bundle!=null){
             Intent si=new Intent(context,MessagesActivity.class);
             si.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP|Intent.FLAG_ACTIVITY_NEW_TASK);

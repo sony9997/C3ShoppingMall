@@ -124,6 +124,10 @@ public class ShareDataLocal {
 		return getSharedPreferences().getBoolean(key, defaultValue);
 	}
 
+	public boolean containsKey(String key){
+		return getSharedPreferences().contains(key);
+	}
+
 	public void register(SharedPreferences.OnSharedPreferenceChangeListener onSharedPreferenceChangeListener) {
 		getSharedPreferences().registerOnSharedPreferenceChangeListener(onSharedPreferenceChangeListener);
 	}

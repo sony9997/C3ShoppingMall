@@ -29,7 +29,7 @@ public interface MainView extends MvpView {
     /**
      * 加载主页
      */
-    public void loadMainPage();
+    public void loadMainPage(String url);
 
     /**
      * 初始化主页参数

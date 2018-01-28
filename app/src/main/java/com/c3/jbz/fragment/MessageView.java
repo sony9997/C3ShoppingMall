@@ -7,6 +7,12 @@ import com.c3.jbz.presenter.MessagePresenter;
  * @date 2018/1/26
  */
 
-public interface MessageView {
+public interface MessageView<MessageData> {
     void setMessagePresenter(MessagePresenter messagePresenter);
+
+    void addData(MessageData data);
+
+    void deleteMessageDatas(boolean isAll);
+
+    void checkedAll(boolean checked);
 }

@@ -17,12 +17,12 @@ import java.util.List;
  */
 @Dao
 public interface MessageInfoDao {
-    @Query("SELECT * FROM MessageInfo order by date desc")
+    @Query("SELECT * FROM MessageInfo order by receiveTime desc")
     LiveData<List<MessageInfo>> loadAllMessageInfo();
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insertMessageInfo(MessageInfo messageInfo);
 
     @Delete
-    void deleteMessageInfo(MessageInfo... messageInfo);
+    void deleteMessageInfo(List<MessageInfo> messageInfo);
 }

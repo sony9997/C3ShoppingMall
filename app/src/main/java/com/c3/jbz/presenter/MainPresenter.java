@@ -51,7 +51,7 @@ public class MainPresenter extends MvpBasePresenter<MainView> implements Handler
     /**
      * 加载主页
      */
-    public void loadMainPage(){
+    public void loadMainPage(String url){
         if(handler==null){
             handler=new Handler(Looper.getMainLooper(),this);
         }
@@ -69,12 +69,12 @@ public class MainPresenter extends MvpBasePresenter<MainView> implements Handler
         C3WXEventHandler.as().init(this);
         androidJsInvoker=new AndroidJsInvoker(handler,context);
 
-        go2MainPage();
+        go2MainPage(url);
     }
 
-    private void go2MainPage(){
+    private void go2MainPage(String otherUrl){
         //加载主页面
-        String url=String.format(BuildConfig.mainUrl, ToolsUtil.getUniqueId(context));
+        String url=otherUrl!=null?otherUrl:String.format(BuildConfig.mainUrl, ToolsUtil.getUniqueId(context));
         if(isLogin()){
             url+="&userId="+ShareDataLocal.as().getStringValue(BuildConfig.KEY_USERID,null);
         }
@@ -123,7 +123,7 @@ public class MainPresenter extends MvpBasePresenter<MainView> implements Handler
                 break;
             }
             case MSG_LOGOUT:{
-                go2MainPage();
+                go2MainPage(null);
                 break;
             }
             case MSG_SHOWSHARE:{

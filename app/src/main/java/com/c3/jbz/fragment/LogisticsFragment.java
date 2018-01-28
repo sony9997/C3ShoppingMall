@@ -11,26 +11,24 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.c3.jbz.R;
-import com.c3.jbz.fragment.dummy.DummyContent;
-import com.c3.jbz.fragment.dummy.DummyContent.DummyItem;
 import com.c3.jbz.presenter.MessagePresenter;
-
-import java.util.List;
+import com.c3.jbz.vo.Logistics;
 
 /**
  * A fragment representing a list of Items.
  * <p/>
- * Activities containing this fragment MUST implement the {@link OnListFragmentInteractionListener}
  * interface.
  */
-public class LogisticsFragment extends Fragment implements MessageView{
+public class LogisticsFragment extends Fragment implements MessageView<Logistics>{
 
     // TODO: Customize parameter argument names
     private static final String ARG_COLUMN_COUNT = "column-count";
     // TODO: Customize parameters
     private int mColumnCount = 1;
-    private OnListFragmentInteractionListener mListener;
     private MessagePresenter messagePresenter;
+    private RecyclerView recyclerView;
+    private View emptyView=null;
+    private LogisticsRecyclerViewAdapter logisticsRecyclerViewAdapter;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -39,23 +37,10 @@ public class LogisticsFragment extends Fragment implements MessageView{
     public LogisticsFragment() {
     }
 
-    // TODO: Customize parameter initialization
-    @SuppressWarnings("unused")
-    public static LogisticsFragment newInstance(int columnCount) {
-        LogisticsFragment fragment = new LogisticsFragment();
-        Bundle args = new Bundle();
-        args.putInt(ARG_COLUMN_COUNT, columnCount);
-        fragment.setArguments(args);
-        return fragment;
-    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        if (getArguments() != null) {
-            mColumnCount = getArguments().getInt(ARG_COLUMN_COUNT);
-        }
     }
 
     @Override
@@ -63,38 +48,31 @@ public class LogisticsFragment extends Fragment implements MessageView{
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_logistics_list, container, false);
 
-        // Set the adapter
-        if (view instanceof RecyclerView) {
+        recyclerView = (RecyclerView)view.findViewById(R.id.list);
+        emptyView=view.findViewById(R.id.tv_empty);
+        if(recyclerView!=null){
             Context context = view.getContext();
-            RecyclerView recyclerView = (RecyclerView) view;
             if (mColumnCount <= 1) {
                 recyclerView.setLayoutManager(new LinearLayoutManager(context));
             } else {
                 recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
             }
-            recyclerView.setAdapter(new LogisticsRecyclerViewAdapter(DummyContent.ITEMS, mListener));
+            logisticsRecyclerViewAdapter=new LogisticsRecyclerViewAdapter(messagePresenter);
+            recyclerView.setAdapter(logisticsRecyclerViewAdapter);
         }
         return view;
     }
 
-
     @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        if(mListener!=null) {
-            if (context instanceof OnListFragmentInteractionListener) {
-                mListener = (OnListFragmentInteractionListener) context;
-            } else {
-                throw new RuntimeException(context.toString()
-                        + " must implement OnListFragmentInteractionListener");
-            }
+    public void onResume() {
+        super.onResume();
+        if(logisticsRecyclerViewAdapter.getItemCount()>0){
+            recyclerView.setVisibility(View.VISIBLE);
+            emptyView.setVisibility(View.INVISIBLE);
+        }else {
+            recyclerView.setVisibility(View.INVISIBLE);
+            emptyView.setVisibility(View.VISIBLE);
         }
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        mListener = null;
     }
 
     @Override
@@ -102,18 +80,18 @@ public class LogisticsFragment extends Fragment implements MessageView{
         this.messagePresenter=messagePresenter;
     }
 
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p/>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
-    public interface OnListFragmentInteractionListener {
-        // TODO: Update argument type and name
-        void onListFragmentInteraction(DummyItem item);
+    @Override
+    public void addData(Logistics logistics) {
+
+    }
+
+    @Override
+    public void deleteMessageDatas(boolean isAll) {
+
+    }
+
+    @Override
+    public void checkedAll(boolean checked) {
+
     }
 }

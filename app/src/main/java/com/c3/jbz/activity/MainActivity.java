@@ -83,20 +83,36 @@ public class MainActivity extends MvpActivity<MainView, MainPresenter> implement
         setContentView(R.layout.main);
         ToolsUtil.setStatusBarColor(this);
         // android 7.0系统解决拍照的问题
-        if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.N){
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
             StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
             StrictMode.setVmPolicy(builder.build());
             builder.detectFileUriExposure();
         }
 
         ButterKnife.bind(this);
-        toast=Toast.makeText(this,"",Toast.LENGTH_SHORT);
-        c3WebChromeClient=new C3WebChromeClient(this,pbMain,tv_title);
+        toast = Toast.makeText(this, "", Toast.LENGTH_SHORT);
+        c3WebChromeClient = new C3WebChromeClient(this, pbMain, tv_title);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
             ToolsUtil.verifyStoragePermissions(this);
-        loadMainPage();
+
+        Intent intent = getIntent();
+        String otherUrl = null;
+        if (intent != null) {
+            otherUrl = intent.getStringExtra(BuildConfig.KEY_OTHER_URL);
+        }
+        loadMainPage(otherUrl);
     }
 
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        String otherUrl = null;
+        if (intent != null) {
+            otherUrl = intent.getStringExtra(BuildConfig.KEY_OTHER_URL);
+            if (otherUrl != null)
+                loadMainPage(otherUrl);
+        }
+    }
 
     @NonNull
     @Override
@@ -117,15 +133,15 @@ public class MainActivity extends MvpActivity<MainView, MainPresenter> implement
 
     @Override
     public void toast(int msgId) {
-        if(toast!=null) {
+        if (toast != null) {
             toast.setText(msgId);
             toast.show();
         }
     }
 
     @Override
-    public void loadMainPage() {
-        getPresenter().loadMainPage();
+    public void loadMainPage(String url) {
+        getPresenter().loadMainPage(url);
     }
 
     @SuppressLint("JavascriptInterface")
@@ -136,18 +152,18 @@ public class MainActivity extends MvpActivity<MainView, MainPresenter> implement
             public void onPageStarted(WebView view, String url, Bitmap favicon) {
                 Log.d("onPageStarted", url);
                 super.onPageStarted(view, url, favicon);
-                loadError=false;
+                loadError = false;
             }
 
             @Override
             public void onPageFinished(WebView view, String url) {
                 hideLoading();
-                if(tv_title!=null)
+                if (tv_title != null)
                     tv_title.setText(view.getTitle());
-                if(loadError){
+                if (loadError) {
                     webView.setVisibility(View.GONE);
                     ll_empty.setVisibility(View.VISIBLE);
-                }else{
+                } else {
                     webView.setVisibility(View.VISIBLE);
                     ll_empty.setVisibility(View.GONE);
                 }
@@ -160,7 +176,7 @@ public class MainActivity extends MvpActivity<MainView, MainPresenter> implement
                     startActivity(intent);
                     return true;
                 }
-                return super.shouldOverrideUrlLoading(view,url);
+                return super.shouldOverrideUrlLoading(view, url);
             }
 
             /**
@@ -190,7 +206,7 @@ public class MainActivity extends MvpActivity<MainView, MainPresenter> implement
 
         // 修改ua使得web端正确判断
         String ua = webViewSettings.getUserAgentString();
-        webViewSettings.setUserAgentString(ua+BuildConfig.SUFFIX_USER_AGENT);
+        webViewSettings.setUserAgentString(ua + BuildConfig.SUFFIX_USER_AGENT);
         webView.setDownloadListener(downloadListener);
         webView.addJavascriptInterface(jsObject, "androidInvoker");
         webView.loadUrl(url);
@@ -276,29 +292,29 @@ public class MainActivity extends MvpActivity<MainView, MainPresenter> implement
 
     @Override
     public void handleWXRespEvent(BaseResp resp) {
-        String errStr=resp.errStr;
-        errStr=errStr!=null&&errStr.trim().length()>0?errStr:"";
-        webView.evaluateJavascript(String.format(BuildConfig.WEB_JS_NAME_handleWXRespEvent,resp.getType(),resp.errCode,errStr), null);
-        switch (resp.getType()){
-            case ConstantsAPI.COMMAND_SENDMESSAGE_TO_WX:{
-                if(resp.errCode==BaseResp.ErrCode.ERR_OK){
+        String errStr = resp.errStr;
+        errStr = errStr != null && errStr.trim().length() > 0 ? errStr : "";
+        webView.evaluateJavascript(String.format(BuildConfig.WEB_JS_NAME_handleWXRespEvent, resp.getType(), resp.errCode, errStr), null);
+        switch (resp.getType()) {
+            case ConstantsAPI.COMMAND_SENDMESSAGE_TO_WX: {
+                if (resp.errCode == BaseResp.ErrCode.ERR_OK) {
                     toast.setText(R.string.title_share_success);
-                }else if(resp.errCode==BaseResp.ErrCode.ERR_USER_CANCEL){
+                } else if (resp.errCode == BaseResp.ErrCode.ERR_USER_CANCEL) {
                     toast.setText(R.string.title_share_cancel);
-                }else {
-                    errStr=errStr.length()>0?errStr:getString(R.string.title_share_faild);
+                } else {
+                    errStr = errStr.length() > 0 ? errStr : getString(R.string.title_share_faild);
                     toast.setText(errStr);
                 }
                 toast.show();
                 break;
             }
-            case ConstantsAPI.COMMAND_PAY_BY_WX:{
-                if(resp.errCode==BaseResp.ErrCode.ERR_OK){
+            case ConstantsAPI.COMMAND_PAY_BY_WX: {
+                if (resp.errCode == BaseResp.ErrCode.ERR_OK) {
                     toast.setText(R.string.title_pay_success);
-                }else if(resp.errCode==BaseResp.ErrCode.ERR_USER_CANCEL){
+                } else if (resp.errCode == BaseResp.ErrCode.ERR_USER_CANCEL) {
                     toast.setText(R.string.title_pay_cancel);
-                }else {
-                    errStr=errStr.length()>0?errStr:getString(R.string.title_pay_faild);
+                } else {
+                    errStr = errStr.length() > 0 ? errStr : getString(R.string.title_pay_faild);
                     toast.setText(errStr);
                 }
                 toast.show();
@@ -309,14 +325,14 @@ public class MainActivity extends MvpActivity<MainView, MainPresenter> implement
 
     @Override
     public void setShowShareButton(boolean isShow) {
-        if(iv_share!=null)
-            iv_share.setVisibility(isShow?View.VISIBLE:View.INVISIBLE);
+        if (iv_share != null)
+            iv_share.setVisibility(isShow ? View.VISIBLE : View.INVISIBLE);
     }
 
     @Override
     public void setShowHeader(boolean isShow) {
-        if(ll_header!=null)
-            ll_header.setVisibility(isShow?View.VISIBLE:View.INVISIBLE);
+        if (ll_header != null)
+            ll_header.setVisibility(isShow ? View.VISIBLE : View.INVISIBLE);
     }
 
     @Override
@@ -327,18 +343,16 @@ public class MainActivity extends MvpActivity<MainView, MainPresenter> implement
          */
         String resultInfo = payResult.getResult();// 同步返回需要验证的信息
         String resultStatus = payResult.getResultStatus();
-        webView.evaluateJavascript(String.format(BuildConfig.WEB_JS_NAME_handleALIRespEvent,resultStatus), null);
+        webView.evaluateJavascript(String.format(BuildConfig.WEB_JS_NAME_handleALIRespEvent, resultStatus), null);
         // 判断resultStatus 为9000则代表支付成功
         if (TextUtils.equals(resultStatus, "9000")) {
             // 该笔订单是否真实支付成功，需要依赖服务端的异步通知。
             toast.setText(R.string.title_pay_success);
-        }
-        else if(TextUtils.equals(resultStatus,"6001")){
+        } else if (TextUtils.equals(resultStatus, "6001")) {
             toast.setText(R.string.title_pay_cancel);
-        }
-        else {
+        } else {
             // 该笔订单真实的支付结果，需要依赖服务端的异步通知。
-            toast.setText(getString(R.string.title_pay_faild)+"errorCode:"+resultStatus);
+            toast.setText(getString(R.string.title_pay_faild) + "errorCode:" + resultStatus);
         }
         toast.show();
     }
@@ -346,9 +360,9 @@ public class MainActivity extends MvpActivity<MainView, MainPresenter> implement
     @Override
     protected void onDestroy() {
         hideLoading();
-        if(toast!=null){
+        if (toast != null) {
             toast.cancel();
-            toast=null;
+            toast = null;
         }
         super.onDestroy();
     }
@@ -371,31 +385,32 @@ public class MainActivity extends MvpActivity<MainView, MainPresenter> implement
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        c3WebChromeClient.onActivityResult(requestCode,resultCode,data);
+        c3WebChromeClient.onActivityResult(requestCode, resultCode, data);
     }
 
     @OnClick(R.id.iv_back)
-    public void goPre(View view){
+    public void goPre(View view) {
         checkTopLevelPage();
     }
+
     @OnClick(R.id.iv_share)
-    public void goShare(View view){
+    public void goShare(View view) {
         webView.evaluateJavascript(BuildConfig.WEB_JS_NAME_goShare, null);
     }
 
-    public void setLoadError(boolean loadError){
-        this.loadError=loadError;
+    public void setLoadError(boolean loadError) {
+        this.loadError = loadError;
     }
 
     @OnClick(R.id.tv_set)
-    public void go2SettingNetwork(View view){
-        Intent intent=null;
+    public void go2SettingNetwork(View view) {
+        Intent intent = null;
         //判断手机系统的版本  即API大于10 就是3.0或以上版本
-        if(android.os.Build.VERSION.SDK_INT>10){
+        if (android.os.Build.VERSION.SDK_INT > 10) {
             intent = new Intent(android.provider.Settings.ACTION_WIRELESS_SETTINGS);
-        }else{
+        } else {
             intent = new Intent();
-            ComponentName component = new ComponentName("com.android.settings","com.android.settings.WirelessSettings");
+            ComponentName component = new ComponentName("com.android.settings", "com.android.settings.WirelessSettings");
             intent.setComponent(component);
             intent.setAction("android.intent.action.VIEW");
         }
@@ -403,7 +418,7 @@ public class MainActivity extends MvpActivity<MainView, MainPresenter> implement
     }
 
     @OnClick(R.id.tv_fresh)
-    public void urlReload(View view){
+    public void urlReload(View view) {
         if (webView != null) {
             webView.reload();
         }
