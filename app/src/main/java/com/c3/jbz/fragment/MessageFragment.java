@@ -98,6 +98,7 @@ public class MessageFragment extends Fragment implements MessageView<MessageInfo
         if (messageRecyclerViewAdapter != null) {
             messageRecyclerViewAdapter.addData(messageInfo);
         }
+        checkContent();
     }
 
     @Override

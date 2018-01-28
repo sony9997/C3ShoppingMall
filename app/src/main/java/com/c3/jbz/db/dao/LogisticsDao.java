@@ -17,12 +17,12 @@ import java.util.List;
  */
 @Dao
 public interface LogisticsDao {
-    @Query("SELECT * FROM Notice order by receiveTime desc")
+    @Query("SELECT * FROM logistics order by receiveTime desc")
     LiveData<List<Logistics>> loadAllLogistics();
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insertLogistics(Logistics logistics);
 
     @Delete
-    void deleteLogistics(Logistics... logistics);
+    void deleteLogistics(List<Logistics> logistics);
 }

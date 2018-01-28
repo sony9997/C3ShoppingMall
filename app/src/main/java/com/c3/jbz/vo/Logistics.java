@@ -1,6 +1,7 @@
 package com.c3.jbz.vo;
 
 import android.arch.persistence.room.Entity;
+import android.arch.persistence.room.Ignore;
 import android.support.annotation.NonNull;
 
 import org.threeten.bp.LocalDateTime;
@@ -24,6 +25,10 @@ public class Logistics {
      */
     public String clickLink;
 
+    public String body;
+
+    public String imageUrl;
+
     public int notificationId;
 
     /**
@@ -32,11 +37,16 @@ public class Logistics {
 
     public org.threeten.bp.LocalDateTime receiveTime;
 
-    public Logistics(@NonNull String msgId, String title, LocalDateTime date, String clickLink, int notificationId, LocalDateTime receiveTime) {
+    @Ignore
+    public boolean isChecked;
+
+    public Logistics(@NonNull String msgId, String title, LocalDateTime date, String clickLink, String body, String imageUrl, int notificationId, LocalDateTime receiveTime) {
         this.msgId = msgId;
         this.title = title;
         this.date = date;
         this.clickLink = clickLink;
+        this.body = body;
+        this.imageUrl = imageUrl;
         this.notificationId = notificationId;
         this.receiveTime = receiveTime;
     }
@@ -48,8 +58,11 @@ public class Logistics {
                 ", title='" + title + '\'' +
                 ", date=" + date +
                 ", clickLink='" + clickLink + '\'' +
+                ", body='" + body + '\'' +
+                ", imageUrl='" + imageUrl + '\'' +
                 ", notificationId=" + notificationId +
                 ", receiveTime=" + receiveTime +
+                ", isChecked=" + isChecked +
                 '}';
     }
 }

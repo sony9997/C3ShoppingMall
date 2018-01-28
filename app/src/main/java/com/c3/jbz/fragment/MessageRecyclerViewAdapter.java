@@ -55,9 +55,9 @@ public class MessageRecyclerViewAdapter extends RecyclerView.Adapter<MessageRecy
 
         holder.tv_pushtime.setText(DEFAULT_TIME_FORMAT.format(messageInfo.receiveTime));
         holder.tv_title.setText(messageInfo.title);
-        holder.tv_body.setText(messageInfo.title);
-        holder.tv_head.setText(messageInfo.title);
-        holder.tv_foot.setText(messageInfo.title);
+        holder.tv_body.setText(messageInfo.body);
+        holder.tv_head.setText(messageInfo.head);
+        holder.tv_foot.setText(messageInfo.foot);
         holder.tv_date.setText(LIST_ITEM_TIME_FORMAT.format(messageInfo.date));
         View tvDetail=holder.tv_detail;
         tvDetail.setTag(messageInfo.clickLink);

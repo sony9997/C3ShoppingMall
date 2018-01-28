@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent" android:background="@android:color/white">
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/list"
@@ -14,7 +14,7 @@
         android:layout_marginRight="16dp"
         app:layoutManager="LinearLayoutManager"
         tools:context="com.c3.jbz.fragment.NoticeFragment"
-        tools:listitem="@layout/fragment_notice" />
+        tools:listitem="@layout/fragment_notice"/>
 
     <TextView
         android:id="@+id/tv_empty"

@@ -24,5 +24,5 @@ public interface NoticeDao {
     void insertNotice(Notice notice);
 
     @Delete
-    void deleteNotice(Notice... notices);
+    void deleteNotice(List<Notice> notices);
 }

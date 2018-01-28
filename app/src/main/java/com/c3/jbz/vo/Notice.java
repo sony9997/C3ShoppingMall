@@ -1,6 +1,7 @@
 package com.c3.jbz.vo;
 
 import android.arch.persistence.room.Entity;
+import android.arch.persistence.room.Ignore;
 import android.support.annotation.NonNull;
 
 import org.threeten.bp.LocalDateTime;
@@ -31,6 +32,9 @@ public class Notice {
      */
     public org.threeten.bp.LocalDateTime receiveTime;
 
+    @Ignore
+    public boolean isChecked;
+
     public Notice(@NonNull String msgId, String title, LocalDateTime date, String clickLink, int notificationId, LocalDateTime receiveTime) {
         this.msgId = msgId;
         this.title = title;
@@ -49,6 +53,7 @@ public class Notice {
                 ", clickLink='" + clickLink + '\'' +
                 ", notificationId=" + notificationId +
                 ", receiveTime=" + receiveTime +
+                ", isChecked=" + isChecked +
                 '}';
     }
 }
