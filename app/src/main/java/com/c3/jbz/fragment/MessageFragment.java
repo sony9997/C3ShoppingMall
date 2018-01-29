@@ -10,13 +10,12 @@ import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.c3.jbz.R;
-import com.c3.jbz.dummy.DummyContent;
-import com.c3.jbz.dummy.DummyContent.DummyItem;
 import com.c3.jbz.presenter.MessagePresenter;
 import com.c3.jbz.vo.MessageInfo;
 
@@ -102,9 +101,9 @@ public class MessageFragment extends Fragment implements MessageView<MessageInfo
     }
 
     @Override
-    public void deleteMessageDatas(boolean isAll) {
+    public void deleteMessageDatas() {
         if (messageRecyclerViewAdapter != null) {
-            messageRecyclerViewAdapter.deleteMessageDatas(isAll);
+            messageRecyclerViewAdapter.deleteMessageDatas();
         }
     }
 

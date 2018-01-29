@@ -25,9 +25,19 @@ public class Logistics {
      */
     public String clickLink;
 
-    public String body;
+    /**
+     * 物流状态
+     */
+    public String status;
 
-    public String imageUrl;
+    /**
+     * 商品截图
+     */
+    public String goodsPic;
+    /**
+     * 货运单号
+     */
+    public String expressNo;
 
     public int notificationId;
 
@@ -40,13 +50,14 @@ public class Logistics {
     @Ignore
     public boolean isChecked;
 
-    public Logistics(@NonNull String msgId, String title, LocalDateTime date, String clickLink, String body, String imageUrl, int notificationId, LocalDateTime receiveTime) {
+    public Logistics(@NonNull String msgId, String title, LocalDateTime date, String clickLink, String status, String goodsPic, String expressNo, int notificationId, LocalDateTime receiveTime) {
         this.msgId = msgId;
         this.title = title;
         this.date = date;
         this.clickLink = clickLink;
-        this.body = body;
-        this.imageUrl = imageUrl;
+        this.status = status;
+        this.goodsPic = goodsPic;
+        this.expressNo = expressNo;
         this.notificationId = notificationId;
         this.receiveTime = receiveTime;
     }
@@ -58,8 +69,9 @@ public class Logistics {
                 ", title='" + title + '\'' +
                 ", date=" + date +
                 ", clickLink='" + clickLink + '\'' +
-                ", body='" + body + '\'' +
-                ", imageUrl='" + imageUrl + '\'' +
+                ", status='" + status + '\'' +
+                ", goodsPic='" + goodsPic + '\'' +
+                ", expressNo='" + expressNo + '\'' +
                 ", notificationId=" + notificationId +
                 ", receiveTime=" + receiveTime +
                 ", isChecked=" + isChecked +

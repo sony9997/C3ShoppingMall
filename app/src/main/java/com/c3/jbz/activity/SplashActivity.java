@@ -7,6 +7,7 @@ import android.os.Handler;
 
 import com.c3.jbz.R;
 import com.c3.jbz.db.ShareDataLocal;
+import com.c3.jbz.util.ToolsUtil;
 
 /**
  * An example full-screen activity that shows and hides the system UI (i.e.
@@ -20,6 +21,7 @@ public class SplashActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.splash);
+        ToolsUtil.setStatusBarColor(this);
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {

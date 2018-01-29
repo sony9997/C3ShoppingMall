@@ -2,6 +2,7 @@ package com.c3.jbz.presenter;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.MainThread;
 import android.text.TextUtils;
 import android.util.Log;
 
@@ -32,7 +33,8 @@ public final class MessagePresenter {
     private static final String tag = "message";
     private MessagesActivity messagesActivity;
     private AppDatabase appDatabase;
-    public static final String KEY_SHOW_REDDOT_FORMAT = "KEY_SHOW_REDDOT_%d";
+    public static final String KEY_SHOW_REDDOT_FORMAT_PRE = "KEY_SHOW_REDDOT_";
+    public static final String KEY_SHOW_REDDOT_FORMAT = KEY_SHOW_REDDOT_FORMAT_PRE + "%d";
 
     public MessagePresenter(MessagesActivity messagesActivity) {
         this.messagesActivity = messagesActivity;
@@ -44,6 +46,7 @@ public final class MessagePresenter {
      *
      * @param bundle
      */
+    @MainThread
     public void parseBunlde(final Bundle bundle) {
         Log.d(tag, "parseBunlde:" + bundle);
         if (bundle != null) {
@@ -97,20 +100,21 @@ public final class MessagePresenter {
                         case BuildConfig.MSG_TYPE_LOGISTICS: {
                             String title = jsonObject.has("title") ? jsonObject.getString("title") : null;
                             long date = jsonObject.has("date") ? jsonObject.getLong("date") : 0;
-                            String body = jsonObject.has("body") ? jsonObject.getString("body") : null;
+                            String status = jsonObject.has("status") ? jsonObject.getString("status") : null;
                             if (date == 0) {
                                 date = System.currentTimeMillis();
                             }
                             String clickLink = jsonObject.has("clickLink") ? jsonObject.getString("clickLink") : null;
-                            String imageUrl = jsonObject.has("imageUrl") ? jsonObject.getString("imageUrl") : null;
-                            final Logistics logistics = new Logistics(msgId, title, DateConverter.toDate(date), clickLink, body, imageUrl, notificationId, LocalDateTime.now());
+                            String goodsPic = jsonObject.has("goodsPic") ? jsonObject.getString("goodsPic") : null;
+                            String expressNo = jsonObject.has("expressNo") ? jsonObject.getString("expressNo") : null;
+                            final Logistics logistics = new Logistics(msgId, title, DateConverter.toDate(date), clickLink, status, goodsPic, expressNo, notificationId, LocalDateTime.now());
                             AppExecutors.as().diskIO().execute(new Runnable() {
                                 @Override
                                 public void run() {
                                     appDatabase.logisticsDao().insertLogistics(logistics);
                                 }
                             });
-                            addData=logistics;
+                            addData = logistics;
                             break;
                         }
                         default:
@@ -118,8 +122,9 @@ public final class MessagePresenter {
                             return;
                     }
                     updateRedDotState(type, true);
-                    messagesActivity.selectTab(type, notificationId);
-                    if (addData != null) {
+                    if (messagesActivity != null)
+                        messagesActivity.selectTab(type, notificationId);
+                    if (addData != null && messagesActivity != null) {
                         messagesActivity.addData2SubFragment(addData, type);
                     }
                 } catch (JSONException e) {
@@ -129,27 +134,15 @@ public final class MessagePresenter {
         }
     }
 
+    @MainThread
     public void updateRedDotState(int position, boolean show) {
         ShareDataLocal.as().setBooleanValue(String.format(KEY_SHOW_REDDOT_FORMAT, position), show);
-        messagesActivity.updateRedDotState(position, show);
+        if (messagesActivity != null)
+            messagesActivity.updateRedDotState(position, show);
     }
 
     public static final boolean isRedDotNeedShow(int position) {
         return ShareDataLocal.as().getBooleanValue(String.format(KEY_SHOW_REDDOT_FORMAT, position));
-    }
-
-    public static final boolean isRedDotNeedShow() {
-        int max = 10;
-        for (int i = 0; i < max; i++) {
-            String key = String.format(KEY_SHOW_REDDOT_FORMAT, i);
-            if (!ShareDataLocal.as().containsKey(key)) {
-                continue;
-            }
-            if (ShareDataLocal.as().getBooleanValue(key)) {
-                return true;
-            }
-        }
-        return false;
     }
 
     public AppDatabase getAppDatabase() {

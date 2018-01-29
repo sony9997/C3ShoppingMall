@@ -10,7 +10,6 @@ import android.widget.TextView;
 
 import com.c3.jbz.BuildConfig;
 import com.c3.jbz.R;
-import com.c3.jbz.dummy.DummyContent.DummyItem;
 import com.c3.jbz.presenter.MessagePresenter;
 import com.c3.jbz.util.AppExecutors;
 import com.c3.jbz.vo.MessageInfo;
@@ -22,7 +21,6 @@ import static com.c3.jbz.activity.MessagesActivity.DEFAULT_TIME_FORMAT;
 import static com.c3.jbz.activity.MessagesActivity.LIST_ITEM_TIME_FORMAT;
 
 /**
- * {@link RecyclerView.Adapter} that can display a {@link DummyItem} and makes a call to the
  * specified
  * TODO: Replace the implementation with code for your data type.
  */
@@ -90,48 +88,31 @@ public class MessageRecyclerViewAdapter extends RecyclerView.Adapter<MessageRecy
         notifyDataSetChanged();
     }
 
-    public void deleteMessageDatas(boolean isAll){
-
-        if(isAll){
-            AppExecutors.as().diskIO().execute(new Runnable() {
-                @Override
-                public void run() {
-                    messagePresenter.getAppDatabase().messageInfoDao().deleteMessageInfo(listData);
-                    AppExecutors.as().mainThread().execute(new Runnable() {
-                        @Override
-                        public void run() {
-                            listData.clear();
-                            notifyDataSetChanged();
-                        }
-                    });
-                }
-            });
-        }else {
-            final List<MessageInfo> list=new ArrayList<MessageInfo>(0);
-            final List<MessageInfo> dellist=new ArrayList<MessageInfo>(0);
-            for (MessageInfo messageInfo:listData){
-                if(messageInfo.isChecked){
-                    dellist.add(messageInfo);
-                }else {
-                    list.add(messageInfo);
-                }
+    public void deleteMessageDatas(){
+        final List<MessageInfo> list=new ArrayList<MessageInfo>(0);
+        final List<MessageInfo> dellist=new ArrayList<MessageInfo>(0);
+        for (MessageInfo messageInfo:listData){
+            if(messageInfo.isChecked){
+                dellist.add(messageInfo);
+            }else {
+                list.add(messageInfo);
             }
-            AppExecutors.as().diskIO().execute(new Runnable() {
-                @Override
-                public void run() {
-                    messagePresenter.getAppDatabase().messageInfoDao().deleteMessageInfo(dellist);
-                    AppExecutors.as().mainThread().execute(new Runnable() {
-                        @Override
-                        public void run() {
-                            listData.clear();
-                            listData=null;
-                            listData=list;
-                            notifyDataSetChanged();
-                        }
-                    });
-                }
-            });
         }
+        AppExecutors.as().diskIO().execute(new Runnable() {
+            @Override
+            public void run() {
+                messagePresenter.getAppDatabase().messageInfoDao().deleteMessageInfo(dellist);
+                AppExecutors.as().mainThread().execute(new Runnable() {
+                    @Override
+                    public void run() {
+                        listData.clear();
+                        listData=null;
+                        listData=list;
+                        notifyDataSetChanged();
+                    }
+                });
+            }
+        });
     }
 
     private CompoundButton.OnCheckedChangeListener onCheckedChangeListener=new CompoundButton.OnCheckedChangeListener() {

@@ -12,7 +12,7 @@ public interface MessageView<MessageData> {
 
     void addData(MessageData data);
 
-    void deleteMessageDatas(boolean isAll);
+    void deleteMessageDatas();
 
     void checkedAll(boolean checked);
 }

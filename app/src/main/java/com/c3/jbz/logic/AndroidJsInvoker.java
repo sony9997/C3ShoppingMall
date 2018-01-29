@@ -43,6 +43,8 @@ import java.util.SortedMap;
 import java.util.TreeMap;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import cn.jpush.android.api.JPushInterface;
+
 /**
  * Created by hedong on 2017/10/3.
  */
@@ -74,6 +76,9 @@ public class AndroidJsInvoker {
     public void loginOk(String userId) {
         Log.d(tag, "loginOK:" + userId);
         ShareDataLocal.as().setStringValue(BuildConfig.KEY_USERID,userId);
+        //设置推送别名
+        JPushInterface.setAlias(context,0,userId);
+        handler.sendEmptyMessage(MainPresenter.MSG_LOGIN);
     }
 
     /**

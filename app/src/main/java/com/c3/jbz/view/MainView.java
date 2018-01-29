@@ -71,4 +71,6 @@ public interface MainView extends MvpView {
      */
     public void handleAliRespEvent(Map<String, String> result);
 
+    void login();
+
 }

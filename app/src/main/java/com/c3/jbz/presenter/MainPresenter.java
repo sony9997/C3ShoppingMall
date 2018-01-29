@@ -41,6 +41,7 @@ public class MainPresenter extends MvpBasePresenter<MainView> implements Handler
     public static final int MSG_SHOWSHARE=4;//设置分享按钮是否显示
     public static final int MSG_SHOWHEADER=5;//设置页眉是否显示
     public static final int MSG_ALIPAY_RESULT=6;//支付宝支付返回结果
+    public static final int MSG_LOGIN=7;//登入
     public static final int MSG_ERR_NOT_INSTALL_WX=-1;//未安装微信
     public static final int MSG_ERR_NOT_SUPPORT_WX=-2;//不支持的微信api
 
@@ -85,7 +86,7 @@ public class MainPresenter extends MvpBasePresenter<MainView> implements Handler
      * 是否登陆
      * @return
      */
-    private boolean isLogin(){
+    public boolean isLogin(){
         return ShareDataLocal.as().getStringValue(BuildConfig.KEY_USERID,null)!=null;
     }
 
@@ -124,6 +125,10 @@ public class MainPresenter extends MvpBasePresenter<MainView> implements Handler
             }
             case MSG_LOGOUT:{
                 go2MainPage(null);
+                break;
+            }
+            case MSG_LOGIN:{
+                getView().login();
                 break;
             }
             case MSG_SHOWSHARE:{

@@ -10,7 +10,6 @@ import android.widget.TextView;
 
 import com.c3.jbz.BuildConfig;
 import com.c3.jbz.R;
-import com.c3.jbz.dummy.DummyContent.DummyItem;
 import com.c3.jbz.presenter.MessagePresenter;
 import com.c3.jbz.util.AppExecutors;
 import com.c3.jbz.vo.Notice;
@@ -21,7 +20,6 @@ import java.util.List;
 import static com.c3.jbz.activity.MessagesActivity.DEFAULT_TIME_FORMAT;
 
 /**
- * {@link RecyclerView.Adapter} that can display a {@link DummyItem} and makes a call to the
  * TODO: Replace the implementation with code for your data type.
  */
 public class NoticeRecyclerViewAdapter extends RecyclerView.Adapter<NoticeRecyclerViewAdapter.ViewHolder> {
@@ -56,7 +54,7 @@ public class NoticeRecyclerViewAdapter extends RecyclerView.Adapter<NoticeRecycl
         holder.ll_item.setTag(messageInfo.clickLink);
         holder.ll_item.setOnClickListener(onClickListener);
 
-        CheckBox checkBox= holder.cb_msg;
+        CheckBox checkBox = holder.cb_msg;
         checkBox.setOnCheckedChangeListener(null);
         checkBox.setChecked(messageInfo.isChecked);
         checkBox.setTag(messageInfo);
@@ -92,7 +90,7 @@ public class NoticeRecyclerViewAdapter extends RecyclerView.Adapter<NoticeRecycl
             tv_title = (TextView) view.findViewById(R.id.tv_title);
             tv_date = (TextView) view.findViewById(R.id.tv_date);
             cb_msg = (CheckBox) view.findViewById(R.id.cb_msg);
-            ll_item=view.findViewById(R.id.ll_item);
+            ll_item = view.findViewById(R.id.ll_item);
         }
 
     }
@@ -113,48 +111,31 @@ public class NoticeRecyclerViewAdapter extends RecyclerView.Adapter<NoticeRecycl
         notifyDataSetChanged();
     }
 
-    public void deleteMessageDatas(boolean isAll) {
-
-        if (isAll) {
-            AppExecutors.as().diskIO().execute(new Runnable() {
-                @Override
-                public void run() {
-                    messagePresenter.getAppDatabase().noticeDao().deleteNotice(listData);
-                    AppExecutors.as().mainThread().execute(new Runnable() {
-                        @Override
-                        public void run() {
-                            listData.clear();
-                            notifyDataSetChanged();
-                        }
-                    });
-                }
-            });
-        } else {
-            final List<Notice> list = new ArrayList<Notice>(0);
-            final List<Notice> dellist = new ArrayList<Notice>(0);
-            for (Notice messageInfo : listData) {
-                if (messageInfo.isChecked) {
-                    dellist.add(messageInfo);
-                } else {
-                    list.add(messageInfo);
-                }
+    public void deleteMessageDatas() {
+        final List<Notice> list = new ArrayList<Notice>(0);
+        final List<Notice> dellist = new ArrayList<Notice>(0);
+        for (Notice messageInfo : listData) {
+            if (messageInfo.isChecked) {
+                dellist.add(messageInfo);
+            } else {
+                list.add(messageInfo);
             }
-            AppExecutors.as().diskIO().execute(new Runnable() {
-                @Override
-                public void run() {
-                    messagePresenter.getAppDatabase().noticeDao().deleteNotice(dellist);
-                    AppExecutors.as().mainThread().execute(new Runnable() {
-                        @Override
-                        public void run() {
-                            listData.clear();
-                            listData = null;
-                            listData = list;
-                            notifyDataSetChanged();
-                        }
-                    });
-                }
-            });
         }
+        AppExecutors.as().diskIO().execute(new Runnable() {
+            @Override
+            public void run() {
+                messagePresenter.getAppDatabase().noticeDao().deleteNotice(dellist);
+                AppExecutors.as().mainThread().execute(new Runnable() {
+                    @Override
+                    public void run() {
+                        listData.clear();
+                        listData = null;
+                        listData = list;
+                        notifyDataSetChanged();
+                    }
+                });
+            }
+        });
     }
 
     private CompoundButton.OnCheckedChangeListener onCheckedChangeListener = new CompoundButton.OnCheckedChangeListener() {

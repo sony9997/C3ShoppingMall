@@ -294,6 +294,16 @@ public final class ToolsUtil {
 
     }
 
+    public static String getForegroundActivity(Context context){
+        ActivityManager am = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
+        List<ActivityManager.RunningTaskInfo> list = am.getRunningTasks(1);
+        if (list != null && list.size() > 0) {
+            ComponentName cpn = list.get(0).topActivity;
+            return cpn.getClassName();
+        }
+        return null;
+    }
+
     /**
      * 设置状态栏颜色，着色模式(非全屏)
      *

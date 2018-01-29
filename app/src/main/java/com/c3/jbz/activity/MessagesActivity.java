@@ -1,7 +1,9 @@
 package com.c3.jbz.activity;
 
+import android.app.AlertDialog;
 import android.app.NotificationManager;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -13,14 +15,13 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.util.SparseArray;
-import android.util.SparseIntArray;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.c3.jbz.BuildConfig;
 import com.c3.jbz.R;
 import com.c3.jbz.fragment.LogisticsFragment;
@@ -31,6 +32,8 @@ import com.c3.jbz.presenter.MessagePresenter;
 import com.c3.jbz.util.ToolsUtil;
 
 import org.threeten.bp.format.DateTimeFormatter;
+
+import cn.jpush.android.api.JPushInterface;
 
 public class MessagesActivity<MessageData> extends AppCompatActivity implements TabLayout.OnTabSelectedListener, View.OnClickListener {
     private static final String tag = "message actvity";
@@ -57,7 +60,8 @@ public class MessagesActivity<MessageData> extends AppCompatActivity implements 
     private CheckBox tvChoiceAll;
     private String[] tabs = null;
 
-    private SparseArray<MessageView> subMessageView=new SparseArray<MessageView>(3);
+    private SparseArray<MessageView> subMessageView = new SparseArray<MessageView>(3);
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -97,6 +101,9 @@ public class MessagesActivity<MessageData> extends AppCompatActivity implements 
         });
         findViewById(R.id.tv_delete).setOnClickListener(this);
         findViewById(R.id.iv_back).setOnClickListener(this);
+        Log.d(tag, "RegistrationID:" + JPushInterface.getRegistrationID(this.getApplicationContext()));
+        NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        notificationManager.cancelAll();
     }
 
     @Override
@@ -111,6 +118,7 @@ public class MessagesActivity<MessageData> extends AppCompatActivity implements 
     protected void onDestroy() {
         super.onDestroy();
         messagePresenter = null;
+        Glide.get(this).clearMemory();
     }
 
     @Override
@@ -136,9 +144,24 @@ public class MessagesActivity<MessageData> extends AppCompatActivity implements 
                 break;
             }
             case R.id.tv_delete: {
-                subMessageView.get(tabLayout.getSelectedTabPosition()).deleteMessageDatas(tvChoiceAll.isChecked());
-                tvChoiceAll.setChecked(false);
-                messagePresenter.updateRedDotState(tabLayout.getSelectedTabPosition(), false);
+                AlertDialog.Builder b = new AlertDialog.Builder(this);
+                b.setTitle(R.string.alert_title);
+                b.setMessage(R.string.delete_tips);
+                b.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        subMessageView.get(tabLayout.getSelectedTabPosition()).deleteMessageDatas();
+                        tvChoiceAll.setChecked(false);
+                        messagePresenter.updateRedDotState(tabLayout.getSelectedTabPosition(), false);
+                    }
+                });
+                b.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+
+                    }
+                });
+                b.create().show();
                 break;
             }
         }
@@ -175,7 +198,7 @@ public class MessagesActivity<MessageData> extends AppCompatActivity implements 
             }
             if (messageView != null) {
                 messageView.setMessagePresenter(messagePresenter);
-                subMessageView.put(position,messageView);
+                subMessageView.put(position, messageView);
             }
             return (Fragment) messageView;
         }
@@ -205,12 +228,16 @@ public class MessagesActivity<MessageData> extends AppCompatActivity implements 
     }
 
     public void selectTab(int index, int notificationId) {
-        Log.d(tag,"selectTab:"+index);
+        Log.d(tag, "selectTab:" + index);
         if (index >= 0 && index < tabLayout.getTabCount()) {
-            NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-            notificationManager.cancel(notificationId);
+            cancelNotification(notificationId);
             tabLayout.getTabAt(index).select();
         }
+    }
+
+    public void cancelNotification(int notificationId) {
+        NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        notificationManager.cancel(notificationId);
     }
 
     public void updateRedDotState(int position, boolean show) {
@@ -219,8 +246,8 @@ public class MessagesActivity<MessageData> extends AppCompatActivity implements 
         }
     }
 
-    public void addData2SubFragment(@NonNull MessageData messageData,int type){
-        if(type>=0&&type<subMessageView.size()) {
+    public void addData2SubFragment(@NonNull MessageData messageData, int type) {
+        if (type >= 0 && type < subMessageView.size()) {
             subMessageView.get(type).addData(messageData);
         }
     }

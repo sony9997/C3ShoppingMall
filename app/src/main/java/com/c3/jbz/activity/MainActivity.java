@@ -3,16 +3,19 @@ package com.c3.jbz.activity;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.StrictMode;
 import android.support.annotation.NonNull;
+import android.support.v4.content.LocalBroadcastManager;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -22,7 +25,6 @@ import android.webkit.ValueCallback;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
-import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -31,23 +33,24 @@ import android.widget.Toast;
 import com.c3.jbz.BuildConfig;
 import com.c3.jbz.R;
 import com.c3.jbz.comp.C3WebChromeClient;
+import com.c3.jbz.db.ShareDataLocal;
 import com.c3.jbz.presenter.MainPresenter;
+import com.c3.jbz.presenter.MessagePresenter;
 import com.c3.jbz.util.PayResult;
 import com.c3.jbz.util.ToolsUtil;
 import com.c3.jbz.view.MainView;
 import com.hannesdorfmann.mosby3.mvp.MvpActivity;
 import com.tencent.mm.opensdk.constants.ConstantsAPI;
 import com.tencent.mm.opensdk.modelbase.BaseResp;
-import com.tencent.mm.opensdk.modelpay.PayReq;
 
+import java.util.Iterator;
 import java.util.Map;
-import java.util.SortedMap;
-import java.util.TreeMap;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
+import static com.c3.jbz.R.id.bottom;
 import static com.c3.jbz.R.id.pb_main;
 
 /**
@@ -76,6 +79,11 @@ public class MainActivity extends MvpActivity<MainView, MainPresenter> implement
     private C3WebChromeClient c3WebChromeClient;
     private Toast toast;
     private boolean loadError;
+    @BindView(R.id.rl_goto_msg)
+    View rl_goto_msg;
+
+    @BindView(R.id.iv_hadmsg)
+    View iv_hadmsg;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -101,6 +109,7 @@ public class MainActivity extends MvpActivity<MainView, MainPresenter> implement
             otherUrl = intent.getStringExtra(BuildConfig.KEY_OTHER_URL);
         }
         loadMainPage(otherUrl);
+        LocalBroadcastManager.getInstance(this).registerReceiver(msgBroadcastReceiver,new IntentFilter(BuildConfig.KEY_HAVE_MSG));
     }
 
     @Override
@@ -147,6 +156,7 @@ public class MainActivity extends MvpActivity<MainView, MainPresenter> implement
     @SuppressLint("JavascriptInterface")
     @Override
     public void initMainPage(String url, Object jsObject) {
+        rl_goto_msg.setVisibility(getPresenter().isLogin() ? View.VISIBLE : View.INVISIBLE);
         webView.setWebViewClient(new WebViewClient() {
             @Override
             public void onPageStarted(WebView view, String url, Bitmap favicon) {
@@ -326,7 +336,7 @@ public class MainActivity extends MvpActivity<MainView, MainPresenter> implement
     @Override
     public void setShowShareButton(boolean isShow) {
         if (iv_share != null)
-            iv_share.setVisibility(isShow ? View.VISIBLE : View.INVISIBLE);
+            iv_share.setVisibility(isShow ? View.VISIBLE : View.GONE);
     }
 
     @Override
@@ -358,6 +368,11 @@ public class MainActivity extends MvpActivity<MainView, MainPresenter> implement
     }
 
     @Override
+    public void login() {
+        rl_goto_msg.setVisibility(View.VISIBLE);
+    }
+
+    @Override
     protected void onDestroy() {
         hideLoading();
         if (toast != null) {
@@ -365,6 +380,7 @@ public class MainActivity extends MvpActivity<MainView, MainPresenter> implement
             toast = null;
         }
         super.onDestroy();
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(msgBroadcastReceiver);
     }
 
     @Override
@@ -423,4 +439,43 @@ public class MainActivity extends MvpActivity<MainView, MainPresenter> implement
             webView.reload();
         }
     }
+
+    @OnClick(R.id.rl_goto_msg)
+    public void go2MessageCenter(View view) {
+        Intent intent = new Intent(this, MessagesActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(intent);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        checkHadMsg();
+    }
+
+    private void checkHadMsg() {
+        if (rl_goto_msg.getVisibility() == View.VISIBLE) {
+            int show = View.INVISIBLE;
+            Map<String, ?> all = ShareDataLocal.as().getSharedPreferences().getAll();
+            if (all != null) {
+                Iterator<String> iterator = all.keySet().iterator();
+                while (iterator.hasNext()) {
+                    String key = iterator.next();
+                    if (key.startsWith(MessagePresenter.KEY_SHOW_REDDOT_FORMAT_PRE) && ShareDataLocal.as().getBooleanValue(key)) {
+                        show = View.VISIBLE;
+                        break;
+                    }
+                }
+            }
+            iv_hadmsg.setVisibility(show);
+        }
+    }
+
+    private BroadcastReceiver msgBroadcastReceiver=new BroadcastReceiver(){
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            iv_hadmsg.setVisibility(View.VISIBLE);
+        }
+    };
 }

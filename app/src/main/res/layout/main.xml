@@ -7,11 +7,11 @@
     tools:context=".activity.MainActivity">
 
     <LinearLayout
+        android:id="@+id/ll_header"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/ll_header"
         android:background="@color/top_bg"
-        android:orientation="horizontal" android:visibility="gone">
+        android:orientation="horizontal">
 
         <ImageButton
             android:id="@+id/iv_back"
@@ -36,6 +36,32 @@
             android:textColor="@android:color/white"
             android:textSize="18sp" />
 
+        <RelativeLayout
+            android:id="@+id/rl_goto_msg"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_weight="0"
+            android:visibility="invisible" android:layout_marginRight="8dp">
+
+            <ImageView
+                android:id="@+id/iv_msg"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:paddingTop="3dp"
+                android:src="@mipmap/message" />
+
+            <ImageView
+                android:id="@+id/iv_hadmsg"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignTop="@id/iv_msg"
+                android:layout_toRightOf="@id/iv_msg"
+                android:src="@drawable/red_dot"
+                android:visibility="invisible" />
+        </RelativeLayout>
+
         <ImageButton
             android:id="@+id/iv_share"
             android:layout_width="wrap_content"
@@ -46,7 +72,8 @@
             android:paddingLeft="1dp"
             android:paddingRight="1dp"
             android:paddingTop="2dp"
-            android:src="@mipmap/share" android:visibility="invisible"/>
+            android:src="@mipmap/share"
+            android:visibility="gone" />
 
     </LinearLayout>
 
@@ -74,7 +101,8 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:gravity="center"
-            android:orientation="vertical" android:visibility="gone">
+            android:orientation="vertical"
+            android:visibility="gone">
 
             <ImageView
                 android:layout_width="wrap_content"
@@ -100,17 +128,19 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginRight="10dp"
+                    android:autoLink="all"
                     android:text="@string/title_fresh"
                     android:textColor="@android:color/black"
-                    android:textSize="20sp" android:autoLink="all"/>
+                    android:textSize="20sp" />
 
                 <TextView
                     android:id="@+id/tv_set"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:autoLink="all"
                     android:text="@string/title_go2Setting"
                     android:textColor="@android:color/black"
-                    android:textSize="20sp" android:autoLink="all"/>
+                    android:textSize="20sp" />
             </LinearLayout>
         </LinearLayout>
     </FrameLayout>

@@ -9,9 +9,10 @@ import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 import com.c3.jbz.BuildConfig;
 import com.c3.jbz.R;
-import com.c3.jbz.fragment.dummy.DummyContent.DummyItem;
 import com.c3.jbz.presenter.MessagePresenter;
 import com.c3.jbz.util.AppExecutors;
 import com.c3.jbz.vo.Logistics;
@@ -19,19 +20,20 @@ import com.c3.jbz.vo.Logistics;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.c3.jbz.activity.MessagesActivity.DEFAULT_TIME_FORMAT;
+import static com.c3.jbz.activity.MessagesActivity.LIST_ITEM_TIME_FORMAT;
 
 /**
- * {@link RecyclerView.Adapter} that can display a {@link DummyItem} and makes a call to the
  * TODO: Replace the implementation with code for your data type.
  */
 public class LogisticsRecyclerViewAdapter extends RecyclerView.Adapter<LogisticsRecyclerViewAdapter.ViewHolder> {
 
     private MessagePresenter messagePresenter;
     private List<Logistics> listData;
+    private RequestOptions requestOptions = new RequestOptions();
 
     public LogisticsRecyclerViewAdapter(MessagePresenter messagePresenter) {
         this.messagePresenter = messagePresenter;
+        requestOptions.placeholder(R.mipmap.empty);
     }
 
     public void setListData(List<Logistics> listData) {
@@ -52,14 +54,18 @@ public class LogisticsRecyclerViewAdapter extends RecyclerView.Adapter<Logistics
         Logistics messageInfo = listData.get(position);
         holder.mItem = messageInfo;
         holder.tv_title.setText(messageInfo.title);
-        holder.tv_date.setText(DEFAULT_TIME_FORMAT.format(messageInfo.date));
+        holder.tv_date.setText(LIST_ITEM_TIME_FORMAT.format(messageInfo.date));
+        holder.tv_status.setText(messageInfo.status);
 
         holder.iv_detail.setTag(messageInfo.clickLink);
         holder.iv_detail.setOnClickListener(onClickListener);
+        Glide.with(messagePresenter.getMessagesActivity())
+                .setDefaultRequestOptions(requestOptions)
+                .load(messageInfo.goodsPic)
+                .into(holder.iv_icon);
 
-        holder.iv_icon.setImageResource(R.mipmap.empty);
-
-        CheckBox checkBox= holder.cb_msg;
+        CheckBox checkBox = holder.cb_msg;
+        checkBox.setText(messagePresenter.getMessagesActivity().getString(R.string.expressno_pre, messageInfo.expressNo));
         checkBox.setOnCheckedChangeListener(null);
         checkBox.setChecked(messageInfo.isChecked);
         checkBox.setTag(messageInfo);
@@ -88,7 +94,7 @@ public class LogisticsRecyclerViewAdapter extends RecyclerView.Adapter<Logistics
         public final TextView tv_date;
         public final ImageView iv_detail;
         public final ImageView iv_icon;
-        public final TextView tv_body;
+        public final TextView tv_status;
         public CheckBox cb_msg;
 
         public ViewHolder(View view) {
@@ -96,7 +102,7 @@ public class LogisticsRecyclerViewAdapter extends RecyclerView.Adapter<Logistics
             mView = view;
             tv_title = (TextView) view.findViewById(R.id.tv_title);
             tv_date = (TextView) view.findViewById(R.id.tv_date);
-            tv_body = (TextView) view.findViewById(R.id.tv_body);
+            tv_status = (TextView) view.findViewById(R.id.tv_status);
             iv_detail = (ImageView) view.findViewById(R.id.iv_detail);
             iv_icon = (ImageView) view.findViewById(R.id.iv_icon);
             cb_msg = (CheckBox) view.findViewById(R.id.cb_msg);
@@ -120,48 +126,31 @@ public class LogisticsRecyclerViewAdapter extends RecyclerView.Adapter<Logistics
         notifyDataSetChanged();
     }
 
-    public void deleteMessageDatas(boolean isAll) {
-
-        if (isAll) {
-            AppExecutors.as().diskIO().execute(new Runnable() {
-                @Override
-                public void run() {
-                    messagePresenter.getAppDatabase().logisticsDao().deleteLogistics(listData);
-                    AppExecutors.as().mainThread().execute(new Runnable() {
-                        @Override
-                        public void run() {
-                            listData.clear();
-                            notifyDataSetChanged();
-                        }
-                    });
-                }
-            });
-        } else {
-            final List<Logistics> list = new ArrayList<Logistics>(0);
-            final List<Logistics> dellist = new ArrayList<Logistics>(0);
-            for (Logistics messageInfo : listData) {
-                if (messageInfo.isChecked) {
-                    dellist.add(messageInfo);
-                } else {
-                    list.add(messageInfo);
-                }
+    public void deleteMessageDatas() {
+        final List<Logistics> list = new ArrayList<Logistics>(0);
+        final List<Logistics> dellist = new ArrayList<Logistics>(0);
+        for (Logistics messageInfo : listData) {
+            if (messageInfo.isChecked) {
+                dellist.add(messageInfo);
+            } else {
+                list.add(messageInfo);
             }
-            AppExecutors.as().diskIO().execute(new Runnable() {
-                @Override
-                public void run() {
-                    messagePresenter.getAppDatabase().logisticsDao().deleteLogistics(dellist);
-                    AppExecutors.as().mainThread().execute(new Runnable() {
-                        @Override
-                        public void run() {
-                            listData.clear();
-                            listData = null;
-                            listData = list;
-                            notifyDataSetChanged();
-                        }
-                    });
-                }
-            });
         }
+        AppExecutors.as().diskIO().execute(new Runnable() {
+            @Override
+            public void run() {
+                messagePresenter.getAppDatabase().logisticsDao().deleteLogistics(dellist);
+                AppExecutors.as().mainThread().execute(new Runnable() {
+                    @Override
+                    public void run() {
+                        listData.clear();
+                        listData = null;
+                        listData = list;
+                        notifyDataSetChanged();
+                    }
+                });
+            }
+        });
     }
 
     private CompoundButton.OnCheckedChangeListener onCheckedChangeListener = new CompoundButton.OnCheckedChangeListener() {
