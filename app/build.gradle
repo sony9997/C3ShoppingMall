@@ -20,7 +20,8 @@ android {
         buildConfigField("String", "WEB_JS_NAME_handleWXRespEvent", "\"javascript:handleWXRespEvent(%d,%d,'%s')\"")
         buildConfigField("String", "WEB_JS_NAME_handleALIRespEvent", "\"javascript:handleALIRespEvent('%s')\"")
 
-        buildConfigField("String", "KEY_MSG_TYPE", "\"KEY_MSG_TYPE\"")//消息类型key
+        buildConfigField("String", "KEY_MSG_TYPE", "\"messageType\"")//消息类型key
+        buildConfigField("String", "KEY_MSG_CONTENT", "\"messageContent\"")//消息内容key
         buildConfigField("int", "MSG_TYPE_NORMAL", "0")//消息类型，一般消息
         buildConfigField("int", "MSG_TYPE_NOTICE", "1")//消息类型，通知
         buildConfigField("int", "MSG_TYPE_LOGISTICS", "2")//消息类型，物流

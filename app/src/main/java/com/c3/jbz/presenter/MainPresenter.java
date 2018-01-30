@@ -6,6 +6,7 @@ import android.net.Uri;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
+import android.text.TextUtils;
 
 import com.c3.jbz.BuildConfig;
 import com.c3.jbz.R;
@@ -74,8 +75,12 @@ public class MainPresenter extends MvpBasePresenter<MainView> implements Handler
     }
 
     private void go2MainPage(String otherUrl){
+        if(!TextUtils.isEmpty(otherUrl)){
+            getView().initMainPage(otherUrl,androidJsInvoker);
+            return;
+        }
         //加载主页面
-        String url=otherUrl!=null?otherUrl:String.format(BuildConfig.mainUrl, ToolsUtil.getUniqueId(context));
+        String url=String.format(BuildConfig.mainUrl, ToolsUtil.getUniqueId(context));
         if(isLogin()){
             url+="&userId="+ShareDataLocal.as().getStringValue(BuildConfig.KEY_USERID,null);
         }

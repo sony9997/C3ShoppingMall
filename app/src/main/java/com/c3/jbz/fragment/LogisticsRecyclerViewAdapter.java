@@ -33,7 +33,7 @@ public class LogisticsRecyclerViewAdapter extends RecyclerView.Adapter<Logistics
 
     public LogisticsRecyclerViewAdapter(MessagePresenter messagePresenter) {
         this.messagePresenter = messagePresenter;
-        requestOptions.placeholder(R.mipmap.empty);
+        requestOptions.placeholder(R.mipmap.empty).fallback(R.mipmap.empty);
     }
 
     public void setListData(List<Logistics> listData) {

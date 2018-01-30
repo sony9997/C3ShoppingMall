@@ -22,6 +22,9 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.threeten.bp.LocalDateTime;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+
 import cn.jpush.android.api.JPushInterface;
 
 /**
@@ -56,16 +59,23 @@ public final class MessagePresenter {
             if (!TextUtils.isEmpty(extra)) {
                 try {
                     JSONObject jsonObject = new JSONObject(extra);
+                    String mc = jsonObject.getString(BuildConfig.KEY_MSG_CONTENT);
+                    if (TextUtils.isEmpty(mc)) {
+                        return;
+                    }
+
+                    JSONObject messageContent = new JSONObject(mc);
                     final int type = jsonObject.getInt(BuildConfig.KEY_MSG_TYPE);
                     Object addData = null;
                     switch (type) {
                         case BuildConfig.MSG_TYPE_NORMAL: {
-                            String title = jsonObject.has("title") ? jsonObject.getString("title") : null;
-                            String body = jsonObject.has("body") ? jsonObject.getString("body") : null;
-                            String head = jsonObject.has("head") ? jsonObject.getString("head") : null;
-                            String foot = jsonObject.has("foot") ? jsonObject.getString("foot") : null;
-                            String clickLink = jsonObject.has("clickLink") ? jsonObject.getString("clickLink") : null;
-                            long date = jsonObject.has("date") ? jsonObject.getLong("date") : 0;
+                            String title = messageContent.has("title") ? messageContent.getString("title") : null;
+                            String body = messageContent.has("body") ? messageContent.getString("body") : null;
+                            String head = messageContent.has("head") ? messageContent.getString("head") : null;
+                            String foot = messageContent.has("foot") ? messageContent.getString("foot") : null;
+                            String clickLink = messageContent.has("clickLink") ? URLDecoder.decode(messageContent.getString("clickLink"), "UTF-8") : null;
+
+                            long date = messageContent.has("date") ? messageContent.getLong("date") : 0;
                             if (date == 0) {
                                 date = System.currentTimeMillis();
                             }
@@ -81,12 +91,12 @@ public final class MessagePresenter {
                             break;
                         }
                         case BuildConfig.MSG_TYPE_NOTICE: {
-                            String title = jsonObject.has("title") ? jsonObject.getString("title") : null;
-                            long date = jsonObject.has("date") ? jsonObject.getLong("date") : 0;
+                            String title = messageContent.has("title") ? messageContent.getString("title") : null;
+                            long date = messageContent.has("date") ? messageContent.getLong("date") : 0;
                             if (date == 0) {
                                 date = System.currentTimeMillis();
                             }
-                            String clickLink = jsonObject.has("clickLink") ? jsonObject.getString("clickLink") : null;
+                            String clickLink = messageContent.has("clickLink") ? URLDecoder.decode(messageContent.getString("clickLink"), "UTF-8") : null;
                             final Notice notice = new Notice(msgId, title, DateConverter.toDate(date), clickLink, notificationId, LocalDateTime.now());
                             AppExecutors.as().diskIO().execute(new Runnable() {
                                 @Override
@@ -98,15 +108,15 @@ public final class MessagePresenter {
                             break;
                         }
                         case BuildConfig.MSG_TYPE_LOGISTICS: {
-                            String title = jsonObject.has("title") ? jsonObject.getString("title") : null;
-                            long date = jsonObject.has("date") ? jsonObject.getLong("date") : 0;
-                            String status = jsonObject.has("status") ? jsonObject.getString("status") : null;
+                            String title = messageContent.has("title") ? messageContent.getString("title") : null;
+                            long date = messageContent.has("date") ? messageContent.getLong("date") : 0;
+                            String status = messageContent.has("status") ? messageContent.getString("status") : null;
                             if (date == 0) {
                                 date = System.currentTimeMillis();
                             }
-                            String clickLink = jsonObject.has("clickLink") ? jsonObject.getString("clickLink") : null;
-                            String goodsPic = jsonObject.has("goodsPic") ? jsonObject.getString("goodsPic") : null;
-                            String expressNo = jsonObject.has("expressNo") ? jsonObject.getString("expressNo") : null;
+                            String clickLink = messageContent.has("clickLink") ? URLDecoder.decode(messageContent.getString("clickLink"), "UTF-8") : null;
+                            String goodsPic = messageContent.has("goodsPic") ? messageContent.getString("goodsPic") : null;
+                            String expressNo = messageContent.has("expressNo") ? messageContent.getString("expressNo") : null;
                             final Logistics logistics = new Logistics(msgId, title, DateConverter.toDate(date), clickLink, status, goodsPic, expressNo, notificationId, LocalDateTime.now());
                             AppExecutors.as().diskIO().execute(new Runnable() {
                                 @Override
@@ -128,6 +138,8 @@ public final class MessagePresenter {
                         messagesActivity.addData2SubFragment(addData, type);
                     }
                 } catch (JSONException e) {
+                    e.printStackTrace();
+                } catch (UnsupportedEncodingException e) {
                     e.printStackTrace();
                 }
             }
