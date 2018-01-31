@@ -50,7 +50,9 @@ public class Logistics {
     @Ignore
     public boolean isChecked;
 
-    public Logistics(@NonNull String msgId, String title, LocalDateTime date, String clickLink, String status, String goodsPic, String expressNo, int notificationId, LocalDateTime receiveTime) {
+    public String userId;
+
+    public Logistics(@NonNull String msgId, String title, LocalDateTime date, String clickLink, String status, String goodsPic, String expressNo, int notificationId, LocalDateTime receiveTime, String userId) {
         this.msgId = msgId;
         this.title = title;
         this.date = date;
@@ -60,6 +62,7 @@ public class Logistics {
         this.expressNo = expressNo;
         this.notificationId = notificationId;
         this.receiveTime = receiveTime;
+        this.userId = userId;
     }
 
     @Override
@@ -75,6 +78,7 @@ public class Logistics {
                 ", notificationId=" + notificationId +
                 ", receiveTime=" + receiveTime +
                 ", isChecked=" + isChecked +
+                ", userId='" + userId + '\'' +
                 '}';
     }
 }

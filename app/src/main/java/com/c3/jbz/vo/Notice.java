@@ -35,13 +35,16 @@ public class Notice {
     @Ignore
     public boolean isChecked;
 
-    public Notice(@NonNull String msgId, String title, LocalDateTime date, String clickLink, int notificationId, LocalDateTime receiveTime) {
+    public String userId;
+
+    public Notice(@NonNull String msgId, String title, LocalDateTime date, String clickLink, int notificationId, LocalDateTime receiveTime, String userId) {
         this.msgId = msgId;
         this.title = title;
         this.date = date;
         this.clickLink = clickLink;
         this.notificationId = notificationId;
         this.receiveTime = receiveTime;
+        this.userId = userId;
     }
 
     @Override
@@ -54,6 +57,7 @@ public class Notice {
                 ", notificationId=" + notificationId +
                 ", receiveTime=" + receiveTime +
                 ", isChecked=" + isChecked +
+                ", userId='" + userId + '\'' +
                 '}';
     }
 }

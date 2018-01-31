@@ -15,7 +15,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.c3.jbz.BuildConfig;
 import com.c3.jbz.R;
+import com.c3.jbz.db.ShareDataLocal;
 import com.c3.jbz.presenter.MessagePresenter;
 import com.c3.jbz.vo.MessageInfo;
 
@@ -63,7 +65,8 @@ public class MessageFragment extends Fragment implements MessageView<MessageInfo
             messageRecyclerViewAdapter = new MessageRecyclerViewAdapter(messagePresenter);
             recyclerView.setAdapter(messageRecyclerViewAdapter);
         }
-        final LiveData<List<MessageInfo>> listLiveData = messagePresenter.getAppDatabase().messageInfoDao().loadAllMessageInfo();
+        String userId= ShareDataLocal.as().getStringValue(BuildConfig.KEY_USERID,null);
+        final LiveData<List<MessageInfo>> listLiveData = messagePresenter.getAppDatabase().messageInfoDao().loadAllMessageInfo(userId);
         listLiveData.observe(messagePresenter.getMessagesActivity(), new Observer<List<MessageInfo>>() {
             @Override
             public void onChanged(@Nullable List<MessageInfo> messageInfos) {

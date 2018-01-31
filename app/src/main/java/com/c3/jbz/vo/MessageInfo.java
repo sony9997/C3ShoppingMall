@@ -44,10 +44,12 @@ public class MessageInfo{
      */
     public org.threeten.bp.LocalDateTime receiveTime;
 
+    public String userId;
+
     @Ignore
     public boolean isChecked;
 
-    public MessageInfo(@NonNull String msgId, String title, String body, String head, String foot, LocalDateTime date, String clickLink, int notificationId, LocalDateTime receiveTime) {
+    public MessageInfo(@NonNull String msgId, String title, String body, String head, String foot, LocalDateTime date, String clickLink, int notificationId, LocalDateTime receiveTime, String userId) {
         this.msgId = msgId;
         this.title = title;
         this.body = body;
@@ -57,6 +59,7 @@ public class MessageInfo{
         this.clickLink = clickLink;
         this.notificationId = notificationId;
         this.receiveTime = receiveTime;
+        this.userId = userId;
     }
 
     @Override
@@ -71,6 +74,7 @@ public class MessageInfo{
                 ", clickLink='" + clickLink + '\'' +
                 ", notificationId=" + notificationId +
                 ", receiveTime=" + receiveTime +
+                ", userId='" + userId + '\'' +
                 ", isChecked=" + isChecked +
                 '}';
     }

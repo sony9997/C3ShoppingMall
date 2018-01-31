@@ -13,7 +13,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.c3.jbz.BuildConfig;
 import com.c3.jbz.R;
+import com.c3.jbz.db.ShareDataLocal;
 import com.c3.jbz.presenter.MessagePresenter;
 import com.c3.jbz.vo.Notice;
 
@@ -63,7 +65,8 @@ public class NoticeFragment extends Fragment implements MessageView<Notice> {
             noticeRecyclerViewAdapter = new NoticeRecyclerViewAdapter(messagePresenter);
             recyclerView.setAdapter(noticeRecyclerViewAdapter);
         }
-        final LiveData<List<Notice>> listLiveData = messagePresenter.getAppDatabase().noticeDao().loadAllNotice();
+        String userId= ShareDataLocal.as().getStringValue(BuildConfig.KEY_USERID,null);
+        final LiveData<List<Notice>> listLiveData = messagePresenter.getAppDatabase().noticeDao().loadAllNotice(userId);
         listLiveData.observe(messagePresenter.getMessagesActivity(), new Observer<List<Notice>>() {
             @Override
             public void onChanged(@Nullable List<Notice> messageInfos) {

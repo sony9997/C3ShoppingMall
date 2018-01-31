@@ -86,8 +86,10 @@ public class AndroidJsInvoker {
      */
     @JavascriptInterface
     public void logoutOk() {
-        Log.d(tag, "logoutOk:" +  ShareDataLocal.as().getStringValue(BuildConfig.KEY_USERID,null));
+        String userId=ShareDataLocal.as().getStringValue(BuildConfig.KEY_USERID,null);
+        Log.d(tag, "logoutOk:" +  userId);
         ShareDataLocal.as().removeValue(BuildConfig.KEY_USERID);
+        JPushInterface.deleteAlias(context,0);
         handler.sendEmptyMessage(MainPresenter.MSG_LOGOUT);
     }
 

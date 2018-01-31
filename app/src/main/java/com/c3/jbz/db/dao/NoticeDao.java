@@ -17,8 +17,8 @@ import java.util.List;
  */
 @Dao
 public interface NoticeDao {
-    @Query("SELECT * FROM Notice order by receiveTime desc")
-    LiveData<List<Notice>> loadAllNotice();
+    @Query("SELECT * FROM Notice where userId=:userId order by receiveTime desc")
+    LiveData<List<Notice>> loadAllNotice(String userId);
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insertNotice(Notice notice);

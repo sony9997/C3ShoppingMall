@@ -17,8 +17,8 @@ import java.util.List;
  */
 @Dao
 public interface LogisticsDao {
-    @Query("SELECT * FROM logistics order by receiveTime desc")
-    LiveData<List<Logistics>> loadAllLogistics();
+    @Query("SELECT * FROM logistics where userId=:userId order by receiveTime desc")
+    LiveData<List<Logistics>> loadAllLogistics(String userId);
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insertLogistics(Logistics logistics);

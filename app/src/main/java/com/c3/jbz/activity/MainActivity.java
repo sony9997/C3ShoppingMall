@@ -455,13 +455,19 @@ public class MainActivity extends MvpActivity<MainView, MainPresenter> implement
 
     private void checkHadMsg() {
         if (rl_goto_msg.getVisibility() == View.VISIBLE) {
+            if(!presenter.isLogin()){
+                rl_goto_msg.setVisibility(View.INVISIBLE);
+                return;
+            }
             int show = View.INVISIBLE;
             Map<String, ?> all = ShareDataLocal.as().getSharedPreferences().getAll();
             if (all != null) {
                 Iterator<String> iterator = all.keySet().iterator();
+                String userId= ShareDataLocal.as().getStringValue(BuildConfig.KEY_USERID,null);
+                String condition=String.format(MessagePresenter.KEY_SHOW_REDDOT_FORMAT_PRE,userId);
                 while (iterator.hasNext()) {
                     String key = iterator.next();
-                    if (key.startsWith(MessagePresenter.KEY_SHOW_REDDOT_FORMAT_PRE) && ShareDataLocal.as().getBooleanValue(key)) {
+                    if (key.startsWith(condition) && ShareDataLocal.as().getBooleanValue(key)) {
                         show = View.VISIBLE;
                         break;
                     }

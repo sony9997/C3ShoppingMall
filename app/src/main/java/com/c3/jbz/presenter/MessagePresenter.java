@@ -36,8 +36,8 @@ public final class MessagePresenter {
     private static final String tag = "message";
     private MessagesActivity messagesActivity;
     private AppDatabase appDatabase;
-    public static final String KEY_SHOW_REDDOT_FORMAT_PRE = "KEY_SHOW_REDDOT_";
-    public static final String KEY_SHOW_REDDOT_FORMAT = KEY_SHOW_REDDOT_FORMAT_PRE + "%d";
+    public static final String KEY_SHOW_REDDOT_FORMAT_PRE = "KEY_SHOW_REDDOT_%s";
+    public static final String KEY_SHOW_REDDOT_FORMAT = KEY_SHOW_REDDOT_FORMAT_PRE + "_%d";
 
     public MessagePresenter(MessagesActivity messagesActivity) {
         this.messagesActivity = messagesActivity;
@@ -58,6 +58,7 @@ public final class MessagePresenter {
             String extra = bundle.getString(JPushInterface.EXTRA_EXTRA);
             if (!TextUtils.isEmpty(extra)) {
                 try {
+                    String userId= ShareDataLocal.as().getStringValue(BuildConfig.KEY_USERID,null);
                     JSONObject jsonObject = new JSONObject(extra);
                     String mc = jsonObject.getString(BuildConfig.KEY_MSG_CONTENT);
                     if (TextUtils.isEmpty(mc)) {
@@ -80,7 +81,7 @@ public final class MessagePresenter {
                                 date = System.currentTimeMillis();
                             }
                             final MessageInfo messageInfo = new MessageInfo(msgId, title, body, head, foot, DateConverter.toDate(date),
-                                    clickLink, notificationId, LocalDateTime.now());
+                                    clickLink, notificationId, LocalDateTime.now(),userId);
                             AppExecutors.as().diskIO().execute(new Runnable() {
                                 @Override
                                 public void run() {
@@ -97,7 +98,7 @@ public final class MessagePresenter {
                                 date = System.currentTimeMillis();
                             }
                             String clickLink = messageContent.has("clickLink") ? URLDecoder.decode(messageContent.getString("clickLink"), "UTF-8") : null;
-                            final Notice notice = new Notice(msgId, title, DateConverter.toDate(date), clickLink, notificationId, LocalDateTime.now());
+                            final Notice notice = new Notice(msgId, title, DateConverter.toDate(date), clickLink, notificationId, LocalDateTime.now(),userId);
                             AppExecutors.as().diskIO().execute(new Runnable() {
                                 @Override
                                 public void run() {
@@ -117,7 +118,7 @@ public final class MessagePresenter {
                             String clickLink = messageContent.has("clickLink") ? URLDecoder.decode(messageContent.getString("clickLink"), "UTF-8") : null;
                             String goodsPic = messageContent.has("goodsPic") ? messageContent.getString("goodsPic") : null;
                             String expressNo = messageContent.has("expressNo") ? messageContent.getString("expressNo") : null;
-                            final Logistics logistics = new Logistics(msgId, title, DateConverter.toDate(date), clickLink, status, goodsPic, expressNo, notificationId, LocalDateTime.now());
+                            final Logistics logistics = new Logistics(msgId, title, DateConverter.toDate(date), clickLink, status, goodsPic, expressNo, notificationId, LocalDateTime.now(),userId);
                             AppExecutors.as().diskIO().execute(new Runnable() {
                                 @Override
                                 public void run() {
@@ -148,13 +149,15 @@ public final class MessagePresenter {
 
     @MainThread
     public void updateRedDotState(int position, boolean show) {
-        ShareDataLocal.as().setBooleanValue(String.format(KEY_SHOW_REDDOT_FORMAT, position), show);
+        String userId= ShareDataLocal.as().getStringValue(BuildConfig.KEY_USERID,null);
+        ShareDataLocal.as().setBooleanValue(String.format(KEY_SHOW_REDDOT_FORMAT,userId, position), show);
         if (messagesActivity != null)
             messagesActivity.updateRedDotState(position, show);
     }
 
     public static final boolean isRedDotNeedShow(int position) {
-        return ShareDataLocal.as().getBooleanValue(String.format(KEY_SHOW_REDDOT_FORMAT, position));
+        String userId= ShareDataLocal.as().getStringValue(BuildConfig.KEY_USERID,null);
+        return ShareDataLocal.as().getBooleanValue(String.format(KEY_SHOW_REDDOT_FORMAT,userId, position));
     }
 
     public AppDatabase getAppDatabase() {

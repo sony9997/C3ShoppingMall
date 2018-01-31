@@ -17,8 +17,8 @@ import java.util.List;
  */
 @Dao
 public interface MessageInfoDao {
-    @Query("SELECT * FROM MessageInfo order by receiveTime desc")
-    LiveData<List<MessageInfo>> loadAllMessageInfo();
+    @Query("SELECT * FROM MessageInfo where userId=:userId order by receiveTime desc")
+    LiveData<List<MessageInfo>> loadAllMessageInfo(String userId);
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insertMessageInfo(MessageInfo messageInfo);
