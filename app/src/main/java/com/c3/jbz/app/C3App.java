@@ -3,9 +3,11 @@ package com.c3.jbz.app;
 import android.app.Application;
 import android.arch.persistence.room.Room;
 
+import com.c3.jbz.BuildConfig;
 import com.c3.jbz.db.AppDatabase;
 import com.c3.jbz.db.ShareDataLocal;
 import com.jakewharton.threetenabp.AndroidThreeTen;
+import com.tencent.bugly.crashreport.CrashReport;
 
 import cn.jpush.android.api.JPushInterface;
 
@@ -27,6 +29,12 @@ public class C3App extends Application {
         JPushInterface.setDebugMode(true);
         // 初始化 JPush
         JPushInterface.init(this);
+
+        CrashReport.UserStrategy strategy = new CrashReport.UserStrategy(getApplicationContext());
+        strategy.setAppChannel(BuildConfig.FLAVOR);
+        strategy.setAppPackageName(getPackageName());
+        strategy.setAppVersion(BuildConfig.VERSION_NAME);
+        CrashReport.initCrashReport(getApplicationContext(), BuildConfig.BUGLY_APP_KEY, true,strategy);
 
         appDatabase= Room.databaseBuilder(this, AppDatabase.class, "xs.db").build();
     }

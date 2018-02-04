@@ -28,6 +28,9 @@ android {
         buildConfigField("int", "LIST_MAX_LEN", "100")//最大消息列表长度
         buildConfigField("String", "KEY_OTHER_URL", "\"KEY_OTHER_URL\"")//外部url
         buildConfigField("String", "KEY_HAVE_MSG", "\"KEY_HAVE_MSG\"")//是否有消息
+
+        buildConfigField("String", "BUGLY_APP_KEY", "\"36a206155e\"")//bugly 的app key
+
         ndk {
             //选择要添加的对应cpu类型的.so库。
             abiFilters 'armeabi', 'armeabi-v7a', 'arm64-v8a'
@@ -71,7 +74,7 @@ android {
             manifestPlaceholders.put("pkgname", applicationId)
             resValue("string", "app_name", "全心官方商城")//应用名
             buildConfigField("String", "mainUrl",
-                    "\"https://m.c3tech.cn/client/start.do?deviceType=1&deviceId=%s&siteId=1263&versionCode=${defaultConfig.versionCode}\"")
+                    "\"https://wx.jubaozan.cn/client/start.do?deviceType=1&deviceId=%s&siteId=1123&versionCode=${defaultConfig.versionCode}\"")
 //h5页面首页
             signingConfig signingConfigs.sign_jubaozan
 
@@ -169,4 +172,7 @@ dependencies {
     }
     compile "com.android.support:support-fragment:26.1.0"
     annotationProcessor 'com.github.bumptech.glide:compiler:4.5.0'
+
+    compile 'com.tencent.bugly:crashreport:latest.release' //其中latest.release指代最新Bugly SDK版本号，也可以指定明确的版本号，例如2.1.9
+    compile 'com.tencent.bugly:nativecrashreport:latest.release' //其中latest.release指代最新Bugly NDK版本号，也可以指定明确的版本号，例如3.0
 }
