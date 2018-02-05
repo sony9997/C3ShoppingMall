@@ -3,31 +3,28 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:gravity="center_horizontal"
-    android:orientation="vertical" android:paddingTop="18dp">
+    android:orientation="vertical" android:paddingTop="@dimen/item_top_margin">
 
     <TextView
         android:id="@+id/tv_pushtime"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="@dimen/height_two"
         android:layout_gravity="center_horizontal"
+        android:gravity="center"
         android:background="@drawable/textview_round_border"
-        android:paddingBottom="3dp"
-        android:paddingLeft="10dp"
-        android:paddingRight="10dp"
-        android:paddingTop="3dp"
+        android:paddingLeft="@dimen/item_pushtime_padding"
+        android:paddingRight="@dimen/item_pushtime_padding"
         android:text="2018-02-02 12:22:12"
-        android:textColor="@android:color/white" />
+        android:textColor="@android:color/white" android:textSize="@dimen/item_pushtime_textsize"/>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="@dimen/base_margin"
         android:background="@android:color/white"
         android:orientation="vertical"
-        android:paddingBottom="6dp"
         android:paddingLeft="12dp"
-        android:paddingRight="12dp"
-        android:paddingTop="6dp">
+        android:paddingRight="12dp">
 
         <TextView
             android:id="@+id/tv_title"
@@ -37,55 +34,54 @@
             android:lines="1"
             android:maxLength="30"
             android:text="会员升级通知"
-            android:textColor="@android:color/black"
-            android:textSize="22sp" />
+            android:textColor="@color/txt_title_color"
+            android:textSize="@dimen/textsize_three" android:layout_marginTop="@dimen/base_margin"/>
 
         <TextView
             android:id="@+id/tv_date"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="2018-02-02"
-            android:textColor="@android:color/darker_gray"
-            android:textSize="15sp" />
+            android:textColor="@color/title_empty"
+            android:textSize="@dimen/textsize_one" android:layout_marginTop="@dimen/base_margin"/>
 
         <TextView
             android:id="@+id/tv_head"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="10dp"
-            android:layout_marginTop="10dp"
+            android:layout_marginTop="@dimen/middle_margin"
             android:ellipsize="end"
-            android:maxLength="100"
+            android:maxLength="160"
             android:maxLines="2"
             android:text="亲爱的某某某"
-            android:textColor="@android:color/black"
-            android:textSize="19sp" />
+            android:textColor="@color/txt_title_color"
+            android:textSize="@dimen/textsize_two" />
 
         <TextView
             android:id="@+id/tv_body"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="这里显示正文可以换行的"
-            android:textColor="@android:color/darker_gray"
-            android:textSize="15sp" />
+            android:textColor="@color/txt_body_color"
+            android:textSize="@dimen/textsize_one" android:layout_marginTop="@dimen/middle_margin"/>
 
         <TextView
             android:id="@+id/tv_foot"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="干的漂亮，继续加油！"
-            android:textColor="@android:color/darker_gray"
-            android:textSize="15sp" android:layout_marginTop="3px"/>
+            android:textColor="@color/txt_body_color"
+            android:textSize="@dimen/textsize_one"/>
 
         <View
             android:layout_width="match_parent"
             android:layout_height="1dp"
-            android:layout_marginTop="10dp"
-            android:background="#ebebeb" />
+            android:layout_marginTop="@dimen/middle_margin"
+            android:background="@color/split_lin" />
 
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="@dimen/height_one"
             android:paddingLeft="4dp"
             android:paddingRight="4dp">
 
@@ -107,8 +103,8 @@
                 android:drawablePadding="5dp"
                 android:drawableRight="@mipmap/rightarrows"
                 android:text="@string/title_detail"
-                android:textColor="#618af0"
-                android:textSize="14sp" />
+                android:textColor="@color/detail_link"
+                android:textSize="@dimen/textsize_two" />
         </RelativeLayout>
     </LinearLayout>
 </LinearLayout>

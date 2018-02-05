@@ -7,6 +7,14 @@
     <color name="black_overlay">#66000000</color>
     <color name="top_bg">#ff3a393e</color>
 
+    <color name="title_empty">#999999</color>
+    <color name="list_bg">#f8f8f8</color>
+    <color name="split_lin">#dddddd</color>
+    <color name="txt_body_color">#666666</color>
+    <color name="txt_title_color">#333333</color>
+
+    <color name="detail_link">#3388ff</color>
+
     <drawable name="none">#00000000</drawable>
     <drawable name="black">#ff000000</drawable>
 </resources>

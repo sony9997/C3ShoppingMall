@@ -2,24 +2,20 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="horizontal">
+    android:orientation="horizontal" >
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="@dimen/item_top_margin"
         android:background="@android:color/white"
-        android:orientation="vertical"
-        android:paddingBottom="6dp"
-        android:paddingLeft="12dp"
-        android:paddingRight="12dp"
-        android:paddingTop="6dp">
+        android:orientation="vertical" android:paddingLeft="@dimen/item_top_margin"  >
 
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="10dp"
-            android:layout_marginTop="10dp">
+            android:layout_marginBottom="@dimen/base_margin"
+            android:layout_marginTop="12dp">
 
             <TextView
                 android:id="@+id/tv_status"
@@ -29,10 +25,10 @@
                 android:layout_alignParentTop="true"
                 android:ellipsize="end"
                 android:lines="1"
-                android:maxLength="30"
+                android:maxLength="50"
                 android:text="会员升级通知"
-                android:textColor="@android:color/black"
-                android:textSize="22sp" />
+                android:textColor="@color/txt_title_color"
+                android:textSize="@dimen/textsize_three" />
 
             <TextView
                 android:id="@+id/tv_date"
@@ -40,59 +36,59 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@id/tv_status"
                 android:text="2018-02-02"
-                android:textColor="@android:color/darker_gray"
-                android:textSize="15sp" />
+                android:textColor="@color/title_empty"
+                android:textSize="@dimen/textsize_one" android:layout_marginTop="@dimen/base_margin"/>
 
             <ImageView
+                android:id="@+id/iv_detail"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentRight="true"
                 android:layout_centerVertical="true"
-                android:padding="10dp"
-                android:src="@mipmap/rightarrows" android:id="@+id/iv_detail"/>
+                android:padding="@dimen/base_margin"
+                android:src="@mipmap/rightarrows" />
         </RelativeLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal" android:gravity="center_vertical">
+            android:gravity="center_vertical"
+            android:orientation="horizontal" android:layout_marginTop="@dimen/middle_margin" android:layout_marginRight="@dimen/item_top_margin">
 
             <ImageView
                 android:id="@+id/iv_icon"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="@dimen/icon_size"
+                android:layout_height="@dimen/icon_size"
                 android:layout_marginRight="5dp"
-                android:layout_weight="0.2"
-                android:src="@mipmap/empty" />
+                android:src="@mipmap/empty"/>
 
             <TextView
                 android:id="@+id/tv_title"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="0.8"
                 android:ellipsize="end"
                 android:lines="3"
-                android:maxLength="150"
-                android:textColor="@android:color/darker_gray"
-                android:textSize="15sp" />
+                android:maxLength="100"
+                android:textColor="@color/txt_body_color"
+                android:textSize="@dimen/textsize_one" />
         </LinearLayout>
 
         <View
             android:layout_width="match_parent"
             android:layout_height="1dp"
-            android:layout_marginTop="10dp"
-            android:background="#ebebeb" />
+            android:layout_marginTop="@dimen/base_margin"
+            android:background="@color/split_lin" android:layout_marginRight="@dimen/item_top_margin"/>
 
         <CheckBox
             android:id="@+id/cb_msg"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="@dimen/height_one"
             android:layout_alignParentLeft="true"
             android:layout_centerVertical="true"
             android:button="@drawable/selector_choice_all"
             android:padding="10dp"
             android:text="运单编号：12345678901"
-            android:textColor="@android:color/black"
-            android:textSize="16sp" />
+            android:textColor="@color/txt_title_color"
+            android:textSize="@dimen/textsize_two" android:gravity="center_vertical"/>
     </LinearLayout>
 </LinearLayout>

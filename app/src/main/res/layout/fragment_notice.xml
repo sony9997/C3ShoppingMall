@@ -1,21 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
+    android:layout_height="@dimen/height_notice"
     android:orientation="vertical">
 
     <View
         android:layout_width="match_parent"
         android:layout_height="1px"
-        android:background="#f8f8f8" />
+        android:background="@color/split_lin" />
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_marginTop="@dimen/middle_margin"
         android:gravity="center_vertical"
-        android:orientation="horizontal"
-        android:paddingBottom="10dp"
-        android:paddingTop="10dp">
+        android:orientation="horizontal">
 
         <CheckBox
             android:id="@+id/cb_msg"
@@ -23,9 +22,9 @@
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
             android:layout_centerVertical="true"
-            android:layout_marginLeft="10dp"
-            android:button="@drawable/selector_choice_all"
-            android:padding="10dp" />
+            android:layout_marginLeft="@dimen/base_margin"
+            android:layout_marginRight="@dimen/base_margin"
+            android:button="@drawable/selector_choice_all" />
 
         <LinearLayout
             android:id="@+id/ll_item"
@@ -38,18 +37,19 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:ellipsize="end"
-                android:maxLength="100"
+                android:maxLength="120"
                 android:text="会员升级通知"
-                android:textColor="@android:color/black"
-                android:textSize="18sp" />
+                android:textColor="@color/txt_title_color"
+                android:textSize="@dimen/textsize_three" />
 
             <TextView
                 android:id="@+id/tv_date"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/base_margin"
                 android:text="2018-02-02"
-                android:textColor="@android:color/darker_gray"
-                android:textSize="14sp" />
+                android:textColor="@color/title_empty"
+                android:textSize="@dimen/textsize_one" />
         </LinearLayout>
     </LinearLayout>
 </LinearLayout>

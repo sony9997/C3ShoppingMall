@@ -5,4 +5,26 @@
     <dimen name="fab_margin">16dp</dimen>
     <dimen name="appbar_padding_top">8dp</dimen>
     <dimen name="text_margin">16dp</dimen>
+
+    <dimen name="text_empty">12sp</dimen>
+
+    <dimen name="list_left_right_margin">16dp</dimen>
+    <dimen name="item_top_margin">16dp</dimen>
+    <dimen name="item_pushtime_padding">8dp</dimen>
+    <dimen name="item_pushtime_textsize">12sp</dimen>
+    <dimen name="msg_bottom_textsize">12sp</dimen>
+
+
+    <dimen name="base_margin">8dp</dimen>
+    <dimen name="middle_margin">16dp</dimen>
+
+    <dimen name="textsize_one">12sp</dimen>
+    <dimen name="textsize_two">13sp</dimen>
+    <dimen name="textsize_three">16sp</dimen>
+
+    <dimen name="height_one">44dp</dimen>
+    <dimen name="height_two">24dp</dimen>
+    <dimen name="height_notice">60dp</dimen>
+
+    <dimen name="icon_size">48dp</dimen>
 </resources>
