@@ -137,10 +137,24 @@ public class MessagesActivity<MessageData> extends AppCompatActivity implements 
     }
 
     @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        hiddenAllRedDot();
+    }
+
+    private void hiddenAllRedDot(){
+        int count=tabLayout.getTabCount();
+        for(int i=0;i<count;i++){
+            messagePresenter.updateRedDotState(i, false);
+        }
+    }
+
+    @Override
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.iv_back: {
                 finish();
+                hiddenAllRedDot();
                 break;
             }
             case R.id.tv_delete: {

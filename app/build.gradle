@@ -1,5 +1,6 @@
 apply plugin: 'com.android.application'
 
+def serverType=1;//0:正式,1：测试,2：本地
 
 android {
     compileSdkVersion 26
@@ -8,8 +9,8 @@ android {
         applicationId "com.c3.jbz"
         minSdkVersion 19
         targetSdkVersion 26
-        versionCode 1
-        versionName "1.0"
+        versionCode 2
+        versionName "1.1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         buildConfigField("String", "KEY_USERID", "\"KEY_USERID\"")//用户id
         buildConfigField("String", "KEY_WX_APPID", "\"KEY_WX_APPID\"")//微信appid
@@ -33,7 +34,7 @@ android {
 
         ndk {
             //选择要添加的对应cpu类型的.so库。
-            abiFilters 'armeabi', 'armeabi-v7a', 'arm64-v8a'
+            abiFilters 'armeabi', 'armeabi-v7a', 'arm64-v8a','x86', 'x86_64'
             // 还可以添加 'x86', 'x86_64', 'mips', 'mips64'
         }
     }
@@ -70,12 +71,25 @@ android {
         //\"file:///android_asset/login.html?deviceType=1&deviceId=%s&siteId=123&versionCode=${defaultConfig.versionCode}\"
 //        https://m.c3tech.cn/client/start.do?deviceType=1&deviceId=%s&siteId=1263&versionCode=${defaultConfig.versionCode}
         flavor_jubaozan {
+            //h5页面首页
+            def serverUrl="\"https://m.c3tech.cn/client/start.do?deviceType=1&deviceId=%s&siteId=1263&versionCode=${defaultConfig.versionCode}\""
+            switch (serverType){
+                case 0:
+                    serverUrl="\"https://m.c3tech.cn/client/start.do?deviceType=1&deviceId=%s&siteId=1263&versionCode=${defaultConfig.versionCode}\""
+                    break;
+                case 1:
+                    serverUrl="\"https://wx.jubaozan.cn/client/start.do?deviceType=1&deviceId=%s&siteId=1123&versionCode=${defaultConfig.versionCode}\""
+                    break;
+                case 2:
+                    serverUrl="\"file:///android_asset/login.html?deviceType=1&deviceId=%s&siteId=123&versionCode=${defaultConfig.versionCode}\""
+                    break;
+            }
+            println("jbz:"+serverUrl)
             applicationId = "com.c3.jbz"
             manifestPlaceholders.put("pkgname", applicationId)
             resValue("string", "app_name", "全心官方商城")//应用名
-            buildConfigField("String", "mainUrl",
-                    "\"https://wx.jubaozan.cn/client/start.do?deviceType=1&deviceId=%s&siteId=1123&versionCode=${defaultConfig.versionCode}\"")
-//h5页面首页
+            buildConfigField("String", "mainUrl",serverUrl)
+
             signingConfig signingConfigs.sign_jubaozan
 
             manifestPlaceholders = [
@@ -88,12 +102,25 @@ android {
         //https://wx.jubaozan.cn/client/start.do?deviceType=1&deviceId=%s&siteId=1473&versionCode=${defaultConfig.versionCode} 测试环境地址
         //https://m.c3tech.cn/client/start.do?deviceType=1&deviceId=%s&siteId=1473&versionCode=${defaultConfig.versionCode} 正式环境
         flavor_xbj {
+            //h5页面首页
+            def serverUrl="\"https://m.c3tech.cn/client/start.do?deviceType=1&deviceId=%s&siteId=1473&versionCode=${defaultConfig.versionCode}\""
+            switch (serverType){
+                case 0:
+                    serverUrl="\"https://m.c3tech.cn/client/start.do?deviceType=1&deviceId=%s&siteId=1473&versionCode=${defaultConfig.versionCode}\""
+                    break;
+                case 1:
+                    serverUrl="\"https://wx.jubaozan.cn/client/start.do?deviceType=1&deviceId=%s&siteId=1473&versionCode=${defaultConfig.versionCode}\""
+                    break;
+                case 2:
+                    serverUrl="\"file:///android_asset/login.html?deviceType=1&deviceId=%s&siteId=123&versionCode=${defaultConfig.versionCode}\""
+                    break;
+            }
+            println("xbj:"+serverUrl)
             applicationId = "com.c3.xbj"
             manifestPlaceholders.put("pkgname", applicationId)
             resValue("string", "app_name", "熊本家")//应用名
-            buildConfigField("String", "mainUrl",
-                    "\"https://wx.jubaozan.cn/client/start.do?deviceType=1&deviceId=%s&siteId=1473&versionCode=${defaultConfig.versionCode}\"")
-//h5页面首页
+            buildConfigField("String", "mainUrl",serverUrl)
+
             signingConfig signingConfigs.sign_xbj
 
             manifestPlaceholders = [
