@@ -111,7 +111,7 @@ public class NoticeRecyclerViewAdapter extends RecyclerView.Adapter<NoticeRecycl
         notifyDataSetChanged();
     }
 
-    public void deleteMessageDatas() {
+    public void deleteMessageDatas(final LogisticsRecyclerViewAdapter.DeleteCallback deleteCallback) {
         final List<Notice> list = new ArrayList<Notice>(0);
         final List<Notice> dellist = new ArrayList<Notice>(0);
         for (Notice messageInfo : listData) {
@@ -132,6 +132,9 @@ public class NoticeRecyclerViewAdapter extends RecyclerView.Adapter<NoticeRecycl
                         listData = null;
                         listData = list;
                         notifyDataSetChanged();
+                        if(deleteCallback!=null){
+                            deleteCallback.onComplate();
+                        }
                     }
                 });
             }

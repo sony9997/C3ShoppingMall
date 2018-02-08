@@ -108,7 +108,12 @@ public class NoticeFragment extends Fragment implements MessageView<Notice> {
     @Override
     public void deleteMessageDatas() {
         if (noticeRecyclerViewAdapter != null) {
-            noticeRecyclerViewAdapter.deleteMessageDatas();
+            noticeRecyclerViewAdapter.deleteMessageDatas(new LogisticsRecyclerViewAdapter.DeleteCallback() {
+                @Override
+                public void onComplate() {
+                    checkContent();
+                }
+            });
         }
     }
 

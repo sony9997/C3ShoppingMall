@@ -106,7 +106,12 @@ public class MessageFragment extends Fragment implements MessageView<MessageInfo
     @Override
     public void deleteMessageDatas() {
         if (messageRecyclerViewAdapter != null) {
-            messageRecyclerViewAdapter.deleteMessageDatas();
+            messageRecyclerViewAdapter.deleteMessageDatas(new LogisticsRecyclerViewAdapter.DeleteCallback() {
+                @Override
+                public void onComplate() {
+                    checkContent();
+                }
+            });
         }
     }
 

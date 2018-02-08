@@ -126,7 +126,11 @@ public class LogisticsRecyclerViewAdapter extends RecyclerView.Adapter<Logistics
         notifyDataSetChanged();
     }
 
-    public void deleteMessageDatas() {
+    public interface DeleteCallback{
+        void onComplate();
+    }
+
+    public void deleteMessageDatas(final DeleteCallback deleteCallback) {
         final List<Logistics> list = new ArrayList<Logistics>(0);
         final List<Logistics> dellist = new ArrayList<Logistics>(0);
         for (Logistics messageInfo : listData) {
@@ -147,6 +151,9 @@ public class LogisticsRecyclerViewAdapter extends RecyclerView.Adapter<Logistics
                         listData = null;
                         listData = list;
                         notifyDataSetChanged();
+                        if(deleteCallback!=null){
+                            deleteCallback.onComplate();
+                        }
                     }
                 });
             }

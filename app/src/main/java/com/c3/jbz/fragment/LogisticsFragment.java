@@ -109,7 +109,12 @@ public class LogisticsFragment extends Fragment implements MessageView<Logistics
     @Override
     public void deleteMessageDatas() {
         if (logisticsRecyclerViewAdapter != null) {
-            logisticsRecyclerViewAdapter.deleteMessageDatas();
+            logisticsRecyclerViewAdapter.deleteMessageDatas(new LogisticsRecyclerViewAdapter.DeleteCallback() {
+                @Override
+                public void onComplate() {
+                    checkContent();
+                }
+            });
         }
     }
 
