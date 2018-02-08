@@ -265,4 +265,8 @@ public class MessagesActivity<MessageData> extends AppCompatActivity implements 
             subMessageView.get(type).addData(messageData);
         }
     }
+
+    public int getCurrentTabPosition(){
+        return tabLayout.getSelectedTabPosition();
+    }
 }

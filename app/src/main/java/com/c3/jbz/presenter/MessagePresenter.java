@@ -155,6 +155,12 @@ public final class MessagePresenter {
             messagesActivity.updateRedDotState(position, show);
     }
 
+    public void updateRedDotStateInCurrentTab(boolean show){
+        if (messagesActivity != null){
+            updateRedDotState(messagesActivity.getCurrentTabPosition(),show);
+        }
+    }
+
     public static final boolean isRedDotNeedShow(int position) {
         String userId= ShareDataLocal.as().getStringValue(BuildConfig.KEY_USERID,null);
         return ShareDataLocal.as().getBooleanValue(String.format(KEY_SHOW_REDDOT_FORMAT,userId, position));
@@ -169,6 +175,7 @@ public final class MessagePresenter {
     }
 
     public void openMainActivity(String url) {
+        updateRedDotStateInCurrentTab(false);
         Intent intent = new Intent(messagesActivity, MainActivity.class);
         intent.putExtra(BuildConfig.KEY_OTHER_URL, url);
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
