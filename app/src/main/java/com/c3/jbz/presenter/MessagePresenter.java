@@ -33,6 +33,7 @@ import cn.jpush.android.api.JPushInterface;
  */
 
 public final class MessagePresenter {
+//    {"bizType":0,"title":"收益通知","body":"收益类型：零售订单\n收益金额：0.44元\n收益时间：2018-02-26 18:34:29\n剩余金额：***","head":"Zoey，恭喜您，获得一笔经销商订单奖励！","foot":"订单号：S20180226183426198005890\n订单金额：44.0元 \n商品名称：团购返现订单测试\n干的漂亮，继续加油！","date":1519641270,"clickLink":"https://wx.jubaozan.cn/front/profitTotal.do?siteId\\u003d1123","statusTitle":"收益通知","statusContent":"Zoey，恭喜您，获得一笔经销商订单奖励！","pushDate":1519641270}
     private static final String tag = "message";
     private MessagesActivity messagesActivity;
     private AppDatabase appDatabase;

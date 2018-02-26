@@ -4,6 +4,7 @@
     <string name="title_activity_splash">SplashActivity</string>
     <string name="exit_msg">是否现在退出？</string>
     <string name="delete_tips">是否确定删除？</string>
+    <string name="notification_tips">通知权限未开启，是否去开启？</string>
     <string name="alert_title">提示</string>
 
     <string name="title_activity_main">MainActivity</string>

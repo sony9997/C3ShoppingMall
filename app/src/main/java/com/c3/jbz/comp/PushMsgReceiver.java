@@ -19,6 +19,7 @@ public class PushMsgReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         String action = intent.getAction();
+
         /**
          * 用户点击了通知。 一般情况下，用户不需要配置此 receiver action。
          如果开发者在 AndroidManifest.xml 里未配置此 receiver action，那么，SDK 会默认打开应用程序的主 Activity，相当于用户点击桌面图标的效果。
@@ -30,7 +31,7 @@ public class PushMsgReceiver extends BroadcastReceiver {
             String className = ToolsUtil.getForegroundActivity(context);
             if (MessagesActivity.class.getName().equals(className)) {
                 sendBundle2MessageActivity(context, intent);
-            } else if (MainActivity.class.getName().equals(className)) {
+            } else {
                 sendHaveMsg2MainActivity(context,intent);
             }
         }

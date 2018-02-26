@@ -2,6 +2,7 @@ package com.c3.jbz.activity;
 
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
+import android.app.AppOpsManager;
 import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
@@ -9,11 +10,13 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.pm.ApplicationInfo;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.StrictMode;
+import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.v4.content.LocalBroadcastManager;
 import android.text.TextUtils;
@@ -36,6 +39,7 @@ import com.c3.jbz.comp.C3WebChromeClient;
 import com.c3.jbz.db.ShareDataLocal;
 import com.c3.jbz.presenter.MainPresenter;
 import com.c3.jbz.presenter.MessagePresenter;
+import com.c3.jbz.util.NotificationsUtils;
 import com.c3.jbz.util.PayResult;
 import com.c3.jbz.util.ToolsUtil;
 import com.c3.jbz.view.MainView;
@@ -43,12 +47,16 @@ import com.hannesdorfmann.mosby3.mvp.MvpActivity;
 import com.tencent.mm.opensdk.constants.ConstantsAPI;
 import com.tencent.mm.opensdk.modelbase.BaseResp;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.Iterator;
 import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import cn.jpush.android.api.JPushInterface;
 
 import static com.c3.jbz.R.id.bottom;
 import static com.c3.jbz.R.id.pb_main;
@@ -90,6 +98,11 @@ public class MainActivity extends MvpActivity<MainView, MainPresenter> implement
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
         ToolsUtil.setStatusBarColor(this);
+        if(!NotificationsUtils.isNotificationEnabled(this)){
+            tipNotificationEnabled();
+        }
+//        JPushInterface.setAlias(this.getApplicationContext(),0, String.valueOf(23788063));
+//        JPushInterface.deleteAlias(this.getApplicationContext(),0);
         // android 7.0系统解决拍照的问题
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
             StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
@@ -109,7 +122,7 @@ public class MainActivity extends MvpActivity<MainView, MainPresenter> implement
             otherUrl = intent.getStringExtra(BuildConfig.KEY_OTHER_URL);
         }
         loadMainPage(otherUrl);
-        LocalBroadcastManager.getInstance(this).registerReceiver(msgBroadcastReceiver,new IntentFilter(BuildConfig.KEY_HAVE_MSG));
+        LocalBroadcastManager.getInstance(this).registerReceiver(msgBroadcastReceiver, new IntentFilter(BuildConfig.KEY_HAVE_MSG));
     }
 
     @Override
@@ -455,7 +468,7 @@ public class MainActivity extends MvpActivity<MainView, MainPresenter> implement
 
     private void checkHadMsg() {
         if (rl_goto_msg.getVisibility() == View.VISIBLE) {
-            if(!presenter.isLogin()){
+            if (!presenter.isLogin()) {
                 rl_goto_msg.setVisibility(View.INVISIBLE);
                 return;
             }
@@ -463,8 +476,8 @@ public class MainActivity extends MvpActivity<MainView, MainPresenter> implement
             Map<String, ?> all = ShareDataLocal.as().getSharedPreferences().getAll();
             if (all != null) {
                 Iterator<String> iterator = all.keySet().iterator();
-                String userId= ShareDataLocal.as().getStringValue(BuildConfig.KEY_USERID,null);
-                String condition=String.format(MessagePresenter.KEY_SHOW_REDDOT_FORMAT_PRE,userId);
+                String userId = ShareDataLocal.as().getStringValue(BuildConfig.KEY_USERID, null);
+                String condition = String.format(MessagePresenter.KEY_SHOW_REDDOT_FORMAT_PRE, userId);
                 while (iterator.hasNext()) {
                     String key = iterator.next();
                     if (key.startsWith(condition) && ShareDataLocal.as().getBooleanValue(key)) {
@@ -477,11 +490,32 @@ public class MainActivity extends MvpActivity<MainView, MainPresenter> implement
         }
     }
 
-    private BroadcastReceiver msgBroadcastReceiver=new BroadcastReceiver(){
+    private BroadcastReceiver msgBroadcastReceiver = new BroadcastReceiver() {
 
         @Override
         public void onReceive(Context context, Intent intent) {
             iv_hadmsg.setVisibility(View.VISIBLE);
         }
     };
+
+    private void tipNotificationEnabled(){
+        AlertDialog.Builder b = new AlertDialog.Builder(this);
+        b.setTitle(R.string.alert_title);
+        b.setMessage(R.string.notification_tips);
+        b.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                Intent intent = new Intent(Settings.ACTION_SETTINGS);
+                startActivity(intent);
+            }
+        });
+        b.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+
+            }
+        });
+        b.create().show();
+    }
+
 }
