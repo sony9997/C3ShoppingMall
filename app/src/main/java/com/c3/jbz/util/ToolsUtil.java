@@ -247,7 +247,7 @@ public final class ToolsUtil {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             List<String> psl = new ArrayList<>(2);
 
-            // Check if we have write permission
+            // Check if we have write permission˙
             int permission = ActivityCompat.checkSelfPermission(activity,
                     Manifest.permission.WRITE_EXTERNAL_STORAGE);
 

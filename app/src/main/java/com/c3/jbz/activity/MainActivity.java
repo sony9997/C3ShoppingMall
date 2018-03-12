@@ -310,13 +310,25 @@ public class MainActivity extends MvpActivity<MainView, MainPresenter> implement
 
     @Override
     public void checkTopLevelPage() {
-        webView.evaluateJavascript(BuildConfig.WEB_JS_NAME_ISTOP, valueCallback);
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+            webView.evaluateJavascript(BuildConfig.WEB_JS_NAME_ISTOP, valueCallback);
+        }else{
+            Toast.makeText(this,R.string.err_system_version,Toast.LENGTH_SHORT).show();
+        }
     }
 
     @Override
     public void handleWXRespEvent(BaseResp resp) {
         String errStr = resp.errStr;
         errStr = errStr != null && errStr.trim().length() > 0 ? errStr : "";
+        if(Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN) {
+            Toast.makeText(this,R.string.err_system_version,Toast.LENGTH_SHORT).show();
+            return;
+        }
+        if(Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN) {
+            Toast.makeText(this,R.string.err_system_version,Toast.LENGTH_SHORT).show();
+            return;
+        }
         webView.evaluateJavascript(String.format(BuildConfig.WEB_JS_NAME_handleWXRespEvent, resp.getType(), resp.errCode, errStr), null);
         switch (resp.getType()) {
             case ConstantsAPI.COMMAND_SENDMESSAGE_TO_WX: {
@@ -366,6 +378,10 @@ public class MainActivity extends MvpActivity<MainView, MainPresenter> implement
          */
         String resultInfo = payResult.getResult();// 同步返回需要验证的信息
         String resultStatus = payResult.getResultStatus();
+        if(Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN) {
+            Toast.makeText(this,R.string.err_system_version,Toast.LENGTH_SHORT).show();
+            return;
+        }
         webView.evaluateJavascript(String.format(BuildConfig.WEB_JS_NAME_handleALIRespEvent, resultStatus), null);
         // 判断resultStatus 为9000则代表支付成功
         if (TextUtils.equals(resultStatus, "9000")) {
@@ -424,6 +440,10 @@ public class MainActivity extends MvpActivity<MainView, MainPresenter> implement
 
     @OnClick(R.id.iv_share)
     public void goShare(View view) {
+        if(Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN) {
+            Toast.makeText(this,R.string.err_system_version,Toast.LENGTH_SHORT).show();
+            return;
+        }
         webView.evaluateJavascript(BuildConfig.WEB_JS_NAME_goShare, null);
     }
 

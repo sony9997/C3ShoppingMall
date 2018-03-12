@@ -39,4 +39,5 @@
     <string name="title_detail">详情</string>
     <string name="expressno_pre">运单编号：%1$s</string>
     <string name="title_empty">暂无记录～～</string>
+    <string name="err_system_version">系统版本过低，不支持此操作！</string>
 </resources>
